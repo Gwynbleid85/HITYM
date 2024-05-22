@@ -7,6 +7,10 @@ import { TileLayer } from 'react-leaflet/TileLayer'
 import { Marker } from "react-leaflet/Marker";
 import { Popup } from "react-leaflet/Popup";
 import { CircleMarker } from "react-leaflet";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 let counter = 0;
 
 const stringToColour = (str: string) => {
@@ -73,9 +77,52 @@ export function Home() {
               <div ref={messagesEndRef} />
               </Paper>
 
-              <Box display="flex" justifyContent="center">
-                <Button variant="contained" onClick={handleClick} sx={{ m:1 }}>Click me ({clicks})</Button>
-              </Box>
+
+              <Grid container spacing={2}>
+                <Grid item xs={4}></Grid>
+                <Grid item xs={4}>
+                  <Button
+                    variant="contained" 
+                    onClick={() => updatePositionRelative(0.01, 0)}
+                    sx={{ m:1 }}>
+                      <KeyboardArrowUpIcon/>
+                    </Button>
+                </Grid>
+                <Grid item xs={4}></Grid>
+                
+                <Grid item xs={2}></Grid>
+                <Grid item xs={2}>
+                  <Button
+                    variant="contained" 
+                    onClick={() => updatePositionRelative(0, -0.01)}
+                    sx={{ m:1 }}>
+                      <KeyboardArrowLeftIcon/>
+                    </Button>
+                </Grid>
+                <Grid item xs={2}></Grid>
+                <Grid item xs={2}>
+                <Button
+                    variant="contained" 
+                    onClick={() => updatePositionRelative(0, 0.01)}
+                    sx={{ m:1 }}>
+                      <KeyboardArrowRightIcon/>
+                    </Button>
+                </Grid>
+                <Grid item xs={2}></Grid>
+
+
+                <Grid item xs={4}></Grid>
+                <Grid item xs={4}>
+                <Button
+                    variant="contained" 
+                    onClick={() => updatePositionRelative(-0.01, 0)}
+                    sx={{ m:1 }}>
+                      <KeyboardArrowRightIcon/>
+                    </Button>
+                </Grid>
+                <Grid item xs={4}></Grid>
+
+              </Grid>
             </Paper>
           </Grid>
           <Grid item xs={8}>
