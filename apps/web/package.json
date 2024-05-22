@@ -1,0 +1,49 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --build && tsc --noEmit",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@fontsource/roboto": "^5.0.13",
+    "@hookform/resolvers": "^3.3.4",
+    "@mui/material": "^5.15.17",
+    "@tanstack/react-query": "^5.29.2",
+    "framer-motion": "^11.2.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.4",
+    "react-leaflet": "^4.2.1",
+    "react-router-dom": "^6.23.0",
+    "react-use-websocket": "^4.8.1",
+    "validator": "^13.11.0",
+    "zod": "^3.23.7"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/openapi": "*",
+    "@repo/typescript-config": "*",
+    "@repo/ui": "*",
+    "@types/leaflet": "^1.9.12",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@types/react-leaflet": "^3.0.0",
+    "@types/validator": "^13.11.9",
+    "@typescript-eslint/parser": "^7.1.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.56.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.0"
+  }
+}

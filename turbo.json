@@ -1,0 +1,26 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env", "**/.env.*local"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "cache": true
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "cache": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "codegen": {
+      "inputs": ["openapi.json"],
+      "cache": false
+    }
+  }
+}

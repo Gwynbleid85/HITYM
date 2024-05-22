@@ -1,0 +1,31 @@
+{
+  "name": "@repo/openapi",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./openapi.json": "./openapi.json",
+    "./queries": "./generated/queries/index.ts",
+    "./requests": "./generated/requests/index.ts",
+    "./queries/suspense": "./generated/queries/suspense.ts"
+  },
+  "scripts": {
+    "clean": "rimraf generated",
+    "codegen": "openapi-rq -i openapi.json -c axios -o generated",
+    "lint": "echo 'No linting configured'",
+    "typecheck": "tsc --build",
+    "build": "tsc --build"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.29.2",
+    "axios": "^1.6.8",
+    "rimraf": "^5.0.5"
+  },
+  "devDependencies": {
+    "@7nohe/openapi-react-query-codegen": "^1.0.6",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "eslint": "^8.57.0",
+    "nodemon": "^3.1.0",
+    "typescript": "^5.3.3"
+  }
+}

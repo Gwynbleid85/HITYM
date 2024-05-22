@@ -1,0 +1,16 @@
+{
+  "extends": "@repo/typescript-config/library.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "esnext",
+    "declaration": true,
+    "verbatimModuleSyntax": false,
+    "moduleResolution": "node",
+    "noUnusedLocals": false,
+    "composite": true,
+    "declarationMap": true,
+    "noEmit": false
+  },
+  "include": ["openapi.json", "generated"],
+  "exclude": ["node_modules", "dist"]
+}

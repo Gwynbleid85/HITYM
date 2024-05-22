@@ -1,0 +1,41 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Even more epic store API.",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx --watch --env-file=.env src/index.ts",
+    "start": "tsc --build && tsx src/index.ts",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@badrap/result": "^0.2.13",
+    "@repo/openapi": "*",
+    "@repo/validation-schemas": "*",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.0",
+    "express-jsdoc-swagger": "^1.8.0",
+    "querystring": "^0.2.1",
+    "redis": "^4.6.13",
+    "uuid": "^9.0.1",
+    "ws": "^8.17.0",
+    "zod": "^3.22.4",
+    "zod-validation-error": "^3.0.3"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/swagger-ui-express": "^4.1.6",
+    "@types/uuid": "^9.0.8",
+    "@types/ws": "^8.5.10",
+    "@typescript-eslint/parser": "^7.1.0",
+    "eslint": "^8.56.0",
+    "tsx": "^4.7.2"
+  }
+}
