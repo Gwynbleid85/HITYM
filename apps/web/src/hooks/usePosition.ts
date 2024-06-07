@@ -36,25 +36,26 @@ const useWebsockets = () => {
 
   // Run when a new WebSocket message is received (lastJsonMessage)
   useEffect(() => {
-    if (isWsMessage(lastJsonMessage)) {
-      const message = lastJsonMessage as WsMessage;      
-      console.log("New message received", message)
-      setLastMessage(message)
-      setMessages([...messages, message])
+    if (!isWsMessage(lastJsonMessage))
+      return;
 
-      switch (message.event) {
-        case "positionChanged":
-          handlePositionChanged(message)
-          break;
-        case "loggedIn":
-          handleLoggedIn(message)
-          break;
-        case "userConnected":
-          handleUserConnected(message);
-          break;
-      }
+    const message = lastJsonMessage as WsMessage;      
+    console.log("New message received", message)
+    setLastMessage(message)
+    setMessages([...messages, message])
 
+    switch (message.event) {
+      case "positionChanged":
+        handlePositionChanged(message)
+        break;
+      case "loggedIn":
+        handleLoggedIn(message)
+        break;
+      case "userConnected":
+        handleUserConnected(message);
+        break;
     }
+
   }, [lastJsonMessage])
 
 

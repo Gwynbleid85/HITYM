@@ -1,51 +1,90 @@
 import { WebSocketServer, WebSocket, type RawData } from "ws"
 import http from "http"
 import { v4 as uuidv4 } from "uuid"
-import { type LoggedInMessage, type WsMessage } from "./types/MessageTypes"
+import { type LoggedInMessage, type SubscribeUserInfoMessage, type WsMessage } from "./types/WsEvents"
+
 const server = http.createServer()
 const wsServer = new WebSocketServer({ server })
 
 const port = 8000
-const connections: {[key: string]: WebSocket} = {}
-
+const connectionPool: {[userId: string]: WebSocket} = {} 
+const broadcastGroups: {[originUserId: string]: string[]} = {} // [originUser: [receiverUsers]]
+const userSubscribedTo: {[userId: string]: string[]} = {} // [receiverUser: [originUsers]]
 
 
 const handleMessage = (message: RawData, user: string) => {
   const parsedMessage = JSON.parse(message.toString());
 
-  if (parsedMessage.event === "positionChanged") {
-    console.log(`User ${user} changed position [ ${parsedMessage.data.x} , ${parsedMessage.data.y} ]`)
-  }
-
   broadcast({sender: user, ...parsedMessage}, [user]);
 }
 
 const handleClose = (code: number, user: string) => {
-  console.log(`Connection closed: ${user}`);
 
-  delete connections[user]
-
-  broadcast({
+  // Notify subscribed users that this user has disconnected
+  broadcastToGroup({
     sender: user,
     event: "userDisconnected",
     code : code
+  }, 
+  broadcastGroups[user] || [])
+
+  // Remove user from broadcast groups
+  for (const broadcastGroupId in userSubscribedTo[user]){
+    const group = broadcastGroups[broadcastGroupId]
+    if(group){
+      broadcastGroups[broadcastGroupId] = group.filter((userId) => userId !== user)
+    }
+  }
+
+  // Remove user from userSubscribedTo
+  delete userSubscribedTo[user];
+  
+  // Remove user from connectionPool
+  delete connectionPool[user];
+  
+}
+
+const handleSubscribeUserInfoMessage = (message: SubscribeUserInfoMessage, user: string) => {
+  const { usersToSubscribe } = message;
+  
+  usersToSubscribe.forEach((userId) => {
+    if(!broadcastGroups[userId]){
+      broadcastGroups[userId] = []
+    }
+    broadcastGroups[userId].push(user)
+
+    if(!userSubscribedTo[user]){
+      userSubscribedTo[user] = []
+    }
+    userSubscribedTo[user].push(userId)
+
+    // Notify subscribed user that this user has connected
+    // Send subscribing user the position of the subscribed user
   })
 }
 
 const broadcast = (message: WsMessage, exclude?: string[]) => {
-  Object.keys(connections).forEach((uuid) => {
+  Object.keys(connectionPool).forEach((uuid) => {
     // Skip excluded connections
     if (exclude?.includes(uuid)) return
     
-    const connection = connections[uuid]
+    const connection = connectionPool[uuid]
     connection?.send(JSON.stringify(message))
   })
+}
+
+const broadcastToGroup = (message: WsMessage, group: string[]) => {
+  group.forEach((uuid) => {
+    const connection = connectionPool[uuid]
+    connection?.send(JSON.stringify(message))
+  })
+
 }
 
 wsServer.on("connection", (connection) => {
   const id = uuidv4();
   console.log(`New connection: ${id}`);
-  connections[id] = connection;
+  connectionPool[id] = connection;
 
   broadcast({
     sender: id,

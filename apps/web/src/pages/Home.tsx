@@ -67,11 +67,11 @@ export function Home() {
                 </Box>
               </Box>
 
-              <Paper variant="elevation" style={{ height: "70vh", overflow: "auto" }}>
+              <Paper variant="elevation" style={{ height: "70vh", overflow: "auto", }}>
                 {messages.map((message, index) => message?(
                   
                   <ListItem key={index}>
-                    <ListItemText primary={message.event} secondary={message.sender} />
+                    <ListItemText primary={message.event} secondary={message.sender} style={{color: stringToColour(message.sender)}}/>
                   </ListItem>
               ):"")}
               <div ref={messagesEndRef} />
@@ -117,7 +117,7 @@ export function Home() {
                     variant="contained" 
                     onClick={() => updatePositionRelative(-0.01, 0)}
                     sx={{ m:1 }}>
-                      <KeyboardArrowRightIcon/>
+                      <KeyboardArrowDownIcon/>
                     </Button>
                 </Grid>
                 <Grid item xs={4}></Grid>
