@@ -7,18 +7,23 @@
     "dev": "tsx --watch --env-file=.env src/index.ts",
     "start": "tsc --build && tsx src/index.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:seed": "tsx seed/seed.ts",
+    "migrate:reset": "prisma migrate reset",
+    "migrate:up": "prisma migrate dev"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@badrap/result": "^0.2.13",
+    "@prisma/client": "^5.15.0",
     "@repo/openapi": "*",
     "@repo/validation-schemas": "*",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.0",
     "express-jsdoc-swagger": "^1.8.0",
+    "faker": "^6.6.6",
     "querystring": "^0.2.1",
     "redis": "^4.6.13",
     "uuid": "^9.0.1",
@@ -27,6 +32,7 @@
     "zod-validation-error": "^3.0.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/cors": "^2.8.17",
@@ -36,6 +42,7 @@
     "@types/ws": "^8.5.10",
     "@typescript-eslint/parser": "^7.1.0",
     "eslint": "^8.56.0",
+    "prisma": "^5.15.0",
     "tsx": "^4.7.2"
   }
 }

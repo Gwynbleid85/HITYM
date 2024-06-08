@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String  @id @default(uuid())
+  email          String  @unique
+  // hashed password (do not store in plain text!)
+  password       String
+  name           String
+  bio            String?
+  // link to the user's profile picture
+  profilePicture String
+
+  inGroups  Group[]      @relation("UsersInGroup")
+  status    UserStatus[] @relation("UserStatus")
+  place     Place[]      @relation("FavoritePlaces")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model UserStatus {
+  id     String @id @default(uuid())
+  user   User   @relation("UserStatus", fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  status String
+  color  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Place {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  imageUrl    String?
+
+  latitude  Float
+  longitude Float
+  events    Event[] @relation("EventsInPlace")
+  users     User[]  @relation("FavoritePlaces")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Group {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  imageUrl    String?
+  users       User[]  @relation("UsersInGroup")
+  events      Event[] @relation("EventsInGroup")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  groupId     String
+  date        DateTime
+  place       Place    @relation("EventsInPlace", fields: [placeId], references: [id])
+  group       Group    @relation("EventsInGroup", fields: [groupId], references: [id])
+  imageUrl    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  placeId   String
+}
