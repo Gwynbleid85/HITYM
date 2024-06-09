@@ -18,6 +18,7 @@ async function main() {
   const users = Array.from({ length: userCount }, generateUser);
 
   const userStatuses = Array.from({ length: userStatusCount }, generateUserStatus);
+
   const places = Array.from({ length: placeCount }, generatePlace);
   const groups = Array.from({ length: groupCount }, generateGroup);
   const events = Array.from({ length: eventCount }, generateEvent);
@@ -38,9 +39,11 @@ async function main() {
     // Create places
     await Promise.all(
       places.map(async (place, placeIndex) => {
+        const creatorIndex = placeIndex % userCount;
         await tx.place.create({
           data: {
             ...place,
+            createdById: users[creatorIndex] ? users[creatorIndex].id : "",
             users: {
               connect: users
                 .filter((_user, userIndex) => userIndex % placeIndex === 0)

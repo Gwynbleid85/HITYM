@@ -21,19 +21,26 @@ model User {
   name           String
   bio            String?
   // link to the user's profile picture
-  profilePicture String
+  profilePicture String?
 
-  inGroups  Group[]      @relation("UsersInGroup")
-  status    UserStatus[] @relation("UserStatus")
-  place     Place[]      @relation("FavoritePlaces")
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  lastActive DateTime?
+
+  // Last position
+  lastLatitude  Float?
+  lastLongitude Float?
+
+  inGroups       Group[]      @relation("UsersInGroup")
+  status         UserStatus[] @relation("UserStatus")
+  place          Place[]      @relation("FavoritePlaces")
+  placeCreatedBy Place[]      @relation("PlaceCreatedBy")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model UserStatus {
   id     String @id @default(uuid())
   user   User   @relation("UserStatus", fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  userId String @unique
   status String
   color  String
 
@@ -42,18 +49,21 @@ model UserStatus {
 }
 
 model Place {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   description String
   imageUrl    String?
 
   latitude  Float
   longitude Float
-  events    Event[] @relation("EventsInPlace")
-  users     User[]  @relation("FavoritePlaces")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  events Event[] @relation("EventsInPlace")
+  users  User[]  @relation("FavoritePlaces")
+
+  createdBy   User     @relation("PlaceCreatedBy", fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Group {
@@ -77,7 +87,7 @@ model Event {
   place       Place    @relation("EventsInPlace", fields: [placeId], references: [id])
   group       Group    @relation("EventsInGroup", fields: [groupId], references: [id])
   imageUrl    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  placeId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  placeId     String
 }
