@@ -85,7 +85,7 @@ export const userRepository = {
   /// Get all users
   /// @param pagination The pagination query
   /// @returns All users
-  async getAll(pagination?: PaginationQuery): Promise<Result<User[]>> {
+  async getAllUsers(pagination?: PaginationQuery): Promise<Result<User[]>> {
     try {
       if (!pagination) {
         const users = await prisma.user.findMany();

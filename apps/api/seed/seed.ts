@@ -77,7 +77,7 @@ async function main() {
     // Create events
     await Promise.all(
       events.map(async (event, eventIndex) => {
-        await tx.event.create({
+        await tx.groupEvent.create({
           data: {
             ...event,
             group: {

@@ -57,7 +57,7 @@ model Place {
   latitude  Float
   longitude Float
 
-  events Event[] @relation("EventsInPlace")
+  events GroupEvent[] @relation("EventsInPlace")
   users  User[]  @relation("FavoritePlaces")
 
   createdBy   User     @relation("PlaceCreatedBy", fields: [createdById], references: [id])
@@ -72,13 +72,13 @@ model Group {
   description String
   imageUrl    String?
   users       User[]  @relation("UsersInGroup")
-  events      Event[] @relation("EventsInGroup")
+  events      GroupEvent[] @relation("EventsInGroup")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Event {
+model GroupEvent {
   id          String   @id @default(uuid())
   name        String
   description String
