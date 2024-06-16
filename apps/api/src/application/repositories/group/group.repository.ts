@@ -1,25 +1,34 @@
 import { Result } from "@badrap/result";
-import type { NewGroup, GroupUpdate } from "./types";
+import type { NewGroup, GroupUpdate, GroupExtended } from "./types";
 import type { GroupEvent, Group, User } from "../../../types";
 import prisma from "../../../client";
 import handleDbExceptions, { NotFoundError, toUser } from "../../../utils";
 
-export const GroupRepository = {
-  /// Create a new group
-  /// @param newGroup The group to create
-  /// @returns The created group
+export const groupRepository = {
+  // Create a new group
+  // @param newGroup The group to create
+  // @returns The created group
   async create(newGroup: NewGroup): Promise<Result<Group>> {
     try {
-      const createdGroup = await prisma.group.create({ data: newGroup });
+      const createdGroup = await prisma.group.create({
+        data: {
+          ...newGroup,
+          users: {
+            connect: {
+              id: newGroup.createdById,
+            },
+          },
+        },
+      });
       return Result.ok(createdGroup);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
   },
 
-  /// Find a group by its ID
-  /// @param id The ID of the group to find
-  /// @returns The group if found
+  // Find a group by its ID
+  // @param id The ID of the group to find
+  // @returns The group if found
   async findById(id: string): Promise<Result<Group>> {
     try {
       const group = await prisma.group.findUnique({ where: { id } });
@@ -32,9 +41,38 @@ export const GroupRepository = {
     }
   },
 
-  /// Get all user groups
-  /// @param userId The ID of the user
-  /// @returns All groups
+  // Find a group by its ID with users and events
+  // @param id The ID of the group to find
+  // @returns The extended group if found
+  async findByIdExtended(id: string): Promise<Result<GroupExtended>> {
+    try {
+      const group = await prisma.group.findUnique({
+        where: { id },
+        include: {
+          users: true,
+          events: {
+            where: { date: { gte: new Date() } },
+            orderBy: { date: "asc" },
+          },
+        },
+      });
+      if (!group) {
+        return Result.err(new NotFoundError());
+      }
+      const { users, events, ...simpleGroup } = group;
+      return Result.ok({
+        ...simpleGroup,
+        users: users.map(toUser),
+        groupEvents: events,
+      });
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
+
+  // Get all user groups
+  // @param userId The ID of the user
+  // @returns All groups
   async getAll(userId: string): Promise<Result<Group[]>> {
     try {
       const groups = await prisma.group.findMany({ where: { users: { some: { id: userId } } } });
@@ -44,9 +82,9 @@ export const GroupRepository = {
     }
   },
 
-  /// Add user to group
-  /// @param userId The ID of the user
-  /// @param groupId The ID of the group
+  // Add user to group
+  // @param userId The ID of the user
+  // @param groupId The ID of the group
   async addUser(userId: string, groupId: string): Promise<Result<void>> {
     try {
       await prisma.group.update({
@@ -63,9 +101,9 @@ export const GroupRepository = {
     }
   },
 
-  /// Remove user from group
-  /// @param userId The ID of the user
-  /// @param groupId The ID of the group
+  // Remove user from group
+  // @param userId The ID of the user
+  // @param groupId The ID of the group
   async removeUser(userId: string, groupId: string): Promise<Result<void>> {
     try {
       await prisma.group.update({
@@ -82,8 +120,8 @@ export const GroupRepository = {
     }
   },
 
-  /// Delete a group
-  /// @param id The ID of the group to delete
+  // Delete a group
+  // @param id The ID of the group to delete
   async delete(id: string): Promise<Result<void>> {
     try {
       await prisma.group.delete({ where: { id } });
@@ -93,9 +131,9 @@ export const GroupRepository = {
     }
   },
 
-  /// Update a group
-  /// @param id The ID of the group to update
-  /// @param group The new group
+  // Update a group
+  // @param id The ID of the group to update
+  // @param group The new group
   async update(id: string, group: GroupUpdate): Promise<Result<Group>> {
     try {
       const updatedGroup = await prisma.group.update({
@@ -108,9 +146,9 @@ export const GroupRepository = {
     }
   },
 
-  /// Update a group image
-  /// @param id The ID of the group to update
-  /// @param imageUrl The new image URL
+  // Update a group image
+  // @param id The ID of the group to update
+  // @param imageUrl The new image URL
   async updateImage(id: string, imageUrl: string): Promise<Result<Group>> {
     try {
       const updatedGroup = await prisma.group.update({
@@ -123,9 +161,9 @@ export const GroupRepository = {
     }
   },
 
-  /// Get group events
-  /// @param groupId The ID of the group
-  /// @returns All events
+  // Get group events
+  // @param groupId The ID of the group
+  // @returns All events
   async getGroupEvents(groupId: string): Promise<Result<GroupEvent[]>> {
     try {
       const events = await prisma.groupEvent.findMany({ where: { groupId } });
@@ -135,9 +173,9 @@ export const GroupRepository = {
     }
   },
 
-  /// Get all users in a group
-  /// @param groupId The ID of the group
-  /// @returns All users
+  // Get all users in a group
+  // @param groupId The ID of the group
+  // @returns All users
   async getGroupUsers(groupId: string): Promise<Result<User[]>> {
     try {
       const users = await prisma.group.findUnique({ where: { id: groupId } }).users();
@@ -150,12 +188,69 @@ export const GroupRepository = {
     }
   },
 
-  /// Get all groups
-  /// @returns All groups
+  // Get all groups
+  // @returns All groups
   async getAllGroups(): Promise<Result<Group[]>> {
     try {
       const groups = await prisma.group.findMany();
       return Result.ok(groups);
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
+
+  // Check if the user is the owner of the group
+  // @param groupId The ID of the group
+  // @param userId The ID of the user
+  // @returns True if the user is the owner
+  async isOwner(groupId: string, userId: string): Promise<boolean> {
+    try {
+      const owner = await prisma.group.findUnique({ where: { id: groupId, createdById: userId } });
+      return owner != null;
+    } catch (e) {
+      return false;
+    }
+  },
+
+  // Check if the user is a member of the group
+  // @param groupId The ID of the group
+  // @param userId The ID of the user
+  // @returns True if the user is a member
+  async isMember(groupId: string, userId: string): Promise<boolean> {
+    try {
+      const group = await prisma.group.findUnique({ where: { id: groupId }, include: { users: true } });
+      if (!group) {
+        return false;
+      }
+      return group.users.some((user) => user.id === userId);
+    } catch (e) {
+      return false;
+    }
+  },
+
+  // Get all groups user is a member of
+  // @param userId The ID of the user
+  // @returns All groups user is a member of
+  async getAllUserGroups(userId: string): Promise<Result<Group[]>> {
+    try {
+      const groups = await prisma.group.findMany({
+        where: { users: { some: { id: userId } } },
+      });
+      return Result.ok(groups);
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
+
+  // Get historical events of a group
+  // @param groupId The ID of the group
+  // @returns All historical events
+  async getHistoricalEvents(groupId: string): Promise<Result<GroupEvent[]>> {
+    try {
+      const events = await prisma.groupEvent.findMany({
+        where: { groupId, date: { lt: new Date() } },
+      });
+      return Result.ok(events);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }

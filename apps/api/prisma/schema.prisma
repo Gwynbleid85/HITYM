@@ -31,8 +31,10 @@ model User {
 
   inGroups       Group[]      @relation("UsersInGroup")
   status         UserStatus[] @relation("UserStatus")
-  place          Place[]      @relation("FavoritePlaces")
+  places         Place[]      @relation("FavoritePlaces")
   placeCreatedBy Place[]      @relation("PlaceCreatedBy")
+  groupCreatedBy Group[]      @relation("GroupCreatedBy")
+  eventCreatedBy GroupEvent[] @relation("EventCreatedBy")
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }
@@ -51,14 +53,14 @@ model UserStatus {
 model Place {
   id          String  @id @default(uuid())
   name        String
-  description String
+  description String?
   imageUrl    String?
 
   latitude  Float
   longitude Float
 
   events GroupEvent[] @relation("EventsInPlace")
-  users  User[]  @relation("FavoritePlaces")
+  users  User[]       @relation("FavoritePlaces")
 
   createdBy   User     @relation("PlaceCreatedBy", fields: [createdById], references: [id])
   createdById String
@@ -67,12 +69,15 @@ model Place {
 }
 
 model Group {
-  id          String  @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
-  description String
+  description String?
   imageUrl    String?
-  users       User[]  @relation("UsersInGroup")
+  users       User[]       @relation("UsersInGroup")
   events      GroupEvent[] @relation("EventsInGroup")
+
+  createdBy   User   @relation("GroupCreatedBy", fields: [createdById], references: [id])
+  createdById String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -81,12 +86,14 @@ model Group {
 model GroupEvent {
   id          String   @id @default(uuid())
   name        String
-  description String
+  description String?
   groupId     String
   date        DateTime
   place       Place    @relation("EventsInPlace", fields: [placeId], references: [id])
   group       Group    @relation("EventsInGroup", fields: [groupId], references: [id])
   imageUrl    String?
+  craetedBy   User     @relation("EventCreatedBy", fields: [createdById], references: [id])
+  createdById String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   placeId     String

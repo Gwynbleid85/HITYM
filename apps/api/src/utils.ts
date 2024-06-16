@@ -3,6 +3,8 @@ import { Prisma } from "@prisma/client";
 import type { ZodSchema, ZodTypeDef } from "zod";
 import { fromZodError } from "zod-validation-error";
 import type { Request, Response } from "express";
+import type { User as PrismaUser, Place as PrismaPlace } from "@prisma/client";
+import type { Place, User } from "./types";
 
 /**
  * Error class
@@ -10,6 +12,7 @@ import type { Request, Response } from "express";
  * @property {string} name.required - Error name
  * @property {string} message.required - Error message
  */
+///TODO: Add multiple error types for swagger
 export class NotFoundError extends Error {}
 export class ConflictError extends Error {}
 export class InternalError extends Error {}
@@ -77,4 +80,48 @@ export const handleRepositoryErrors = (e: Error, res: Response) => {
       message: "Something went wrong.",
     });
   }
+};
+
+export const toUser = (user: PrismaUser): User => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password, lastLatitude, lastLongitude, createdAt, updatedAt, ...userWithoutSensitiveData } = user;
+
+  return {
+    ...userWithoutSensitiveData,
+    lastPosition: {
+      latitude: user.lastLatitude,
+      longitude: user.lastLongitude,
+    },
+  } as User;
+};
+
+export const toPrismaUser = (user: User): PrismaUser => {
+  const { lastPosition, ...userWithoutLastPosition } = user;
+  return {
+    ...userWithoutLastPosition,
+    lastLatitude: lastPosition?.latitude,
+    lastLongitude: lastPosition?.longitude,
+  } as PrismaUser;
+};
+
+export const toPlace = (place: PrismaPlace): Place => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { createdAt, updatedAt, latitude, longitude, ...placeWithoutTimestamps } = place;
+
+  return {
+    ...placeWithoutTimestamps,
+    position: {
+      latitude,
+      longitude,
+    },
+  } as Place;
+};
+
+export const toPrismaPlace = (place: Place): PrismaPlace => {
+  const { position, ...placeWithoutTimestamps } = place;
+  return {
+    ...placeWithoutTimestamps,
+    latitude: position?.latitude,
+    longitude: position?.longitude,
+  } as PrismaPlace;
 };

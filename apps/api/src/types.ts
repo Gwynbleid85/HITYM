@@ -46,7 +46,7 @@ export type UserStatus = {
 export type Place = {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   imageUrl: string | null;
   createdById: string;
   position: Position;
@@ -63,8 +63,9 @@ export type Place = {
 export type Group = {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   imageUrl: string | null;
+  createdById: string;
 };
 
 /**
@@ -75,17 +76,18 @@ export type Group = {
  * @property {string} description.required - Event description
  * @property {string} imageUrl.required - Event image url
  * @property {string} groupId.required - Group ID
- * @property {Date} date.required - Event date
+ * @property {string} date.required - Event date - date-time
  * @property {string} placeId.required - Place ID
  */
 export type GroupEvent = {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   groupId: string;
   date: Date;
   imageUrl: string | null;
   placeId: string;
+  createdById: string;
 };
 
 /**

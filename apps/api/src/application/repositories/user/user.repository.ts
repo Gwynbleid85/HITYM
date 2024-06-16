@@ -2,26 +2,12 @@ import { Result } from "@badrap/result";
 import type { NewUser, UpdateUser, UserWithPassword } from "./types";
 import type { PaginationQuery, Position, User } from "../../../types";
 import prisma from "../../../client";
-import handleDbExceptions, { NotFoundError } from "../../../utils";
-import type { User as PrismaUser } from "@prisma/client";
-
-const toUser = (user: PrismaUser): User => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password, lastLatitude, lastLongitude, createdAt, updatedAt, ...userWithoutSensitiveData } = user;
-
-  return {
-    ...userWithoutSensitiveData,
-    lastPosition: {
-      latitude: user.lastLatitude,
-      longitude: user.lastLongitude,
-    },
-  } as User;
-};
+import handleDbExceptions, { NotFoundError, toUser } from "../../../utils";
 
 export const userRepository = {
-  /// Create a new user
-  /// @param user The user to create
-  /// @returns The created user
+  // Create a new user
+  // @param user The user to create
+  // @returns The created user
   async create(user: NewUser): Promise<Result<User>> {
     try {
       const createdUser = await prisma.user.create({ data: user });
@@ -31,9 +17,9 @@ export const userRepository = {
     }
   },
 
-  /// Get user password hash by their email
-  /// @param email The email of the user
-  /// @returns The user with password hash
+  // Get user password hash by their email
+  // @param email The email of the user
+  // @returns The user with password hash
   async getUserPasswordHash(email: string): Promise<Result<UserWithPassword>> {
     try {
       const user = await prisma.user.findUnique({ where: { email } });
@@ -47,9 +33,9 @@ export const userRepository = {
     }
   },
 
-  /// Find a user by their email
-  /// @param email The email of the user to find
-  /// @returns The user if found
+  // Find a user by their email
+  // @param email The email of the user to find
+  // @returns The user if found
   async findByEmail(email: string): Promise<Result<User>> {
     try {
       const user = await prisma.user.findUnique({ where: { email } });
@@ -62,9 +48,9 @@ export const userRepository = {
     }
   },
 
-  /// Find a user by their ID
-  /// @param id The ID of the user to find
-  /// @returns The user if found
+  // Find a user by their ID
+  // @param id The ID of the user to find
+  // @returns The user if found
   async findById(id: string): Promise<Result<User>> {
     try {
       const user = await prisma.user.findUnique({ where: { id } });
@@ -77,9 +63,9 @@ export const userRepository = {
     }
   },
 
-  /// Get users last position by their ID
-  /// @param id The ID of the user to find
-  /// @returns The user last position if found
+  // Get users last position by their ID
+  // @param id The ID of the user to find
+  // @returns The user last position if found
   async getLastPosition(id: string): Promise<Result<Position>> {
     try {
       const user = await prisma.user.findUnique({
@@ -101,8 +87,8 @@ export const userRepository = {
     }
   },
 
-  /// Delete a user by their ID
-  /// @param id The ID of the user to delete
+  // Delete a user by their ID
+  // @param id The ID of the user to delete
   async delete(id: string): Promise<Result<void>> {
     try {
       await prisma.user.delete({ where: { id } });
@@ -112,9 +98,9 @@ export const userRepository = {
     }
   },
 
-  /// Get all users
-  /// @param pagination The pagination query
-  /// @returns All users
+  // Get all users
+  // @param pagination The pagination query
+  // @returns All users
   async getAllUsers(pagination?: PaginationQuery): Promise<Result<User[]>> {
     try {
       if (!pagination) {
@@ -132,10 +118,10 @@ export const userRepository = {
     }
   },
 
-  /// Update a user name by their ID
-  /// @param id The ID of the user to update
-  /// @param name The new name
-  /// @returns The updated user
+  // Update a user name by their ID
+  // @param id The ID of the user to update
+  // @param name The new name
+  // @returns The updated user
   async updateUser(id: string, user: UpdateUser): Promise<Result<User>> {
     try {
       const updatedUser = await prisma.user.update({
@@ -148,10 +134,10 @@ export const userRepository = {
     }
   },
 
-  /// Update a user's password by their ID
-  /// @param id The ID of the user to update
-  /// @param password The new password
-  /// @returns The updated user
+  // Update a user's password by their ID
+  // @param id The ID of the user to update
+  // @param password The new password
+  // @returns The updated user
   async updatePassword(id: string, password: string): Promise<Result<User>> {
     try {
       const updatedUser = await prisma.user.update({
@@ -164,10 +150,10 @@ export const userRepository = {
     }
   },
 
-  /// Update a user's profile picture by their ID
-  /// @param id The ID of the user to update
-  /// @param profilePicture The new profile picture
-  /// @returns The updated user
+  // Update a user's profile picture by their ID
+  // @param id The ID of the user to update
+  // @param profilePicture The new profile picture
+  // @returns The updated user
   async updateProfilePicture(id: string, profilePicture: string): Promise<Result<User>> {
     try {
       const updatedUser = await prisma.user.update({
@@ -180,10 +166,10 @@ export const userRepository = {
     }
   },
 
-  /// Update last position of a user by their ID
-  /// @param id The ID of the user to update
-  /// @param lastPosition The new last position
-  /// @returns The updated user
+  // Update last position of a user by their ID
+  // @param id The ID of the user to update
+  // @param lastPosition The new last position
+  // @returns The updated user
   async updateLastPosition(id: string, lastPosition: { latitude: number; longitude: number }): Promise<Result<User>> {
     try {
       const updatedUser = await prisma.user.update({
@@ -196,10 +182,10 @@ export const userRepository = {
     }
   },
 
-  /// Update last activity of a user by their ID
-  /// @param id The ID of the user to update
-  /// @param lastActivity The new last activity
-  /// @returns The updated user
+  // Update last activity of a user by their ID
+  // @param id The ID of the user to update
+  // @param lastActivity The new last activity
+  // @returns The updated user
   async updateLastActivity(id: string, lastActivity: Date): Promise<Result<User>> {
     try {
       const updatedUser = await prisma.user.update({
