@@ -29,14 +29,16 @@ model User {
   lastLatitude  Float?
   lastLongitude Float?
 
-  inGroups       Group[]      @relation("UsersInGroup")
-  status         UserStatus[] @relation("UserStatus")
-  places         Place[]      @relation("FavoritePlaces")
-  placeCreatedBy Place[]      @relation("PlaceCreatedBy")
-  groupCreatedBy Group[]      @relation("GroupCreatedBy")
-  eventCreatedBy GroupEvent[] @relation("EventCreatedBy")
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  inGroups       Group[]       @relation("UsersInGroup")
+  status         UserStatus[]  @relation("UserStatus")
+  places         Place[]       @relation("FavoritePlaces")
+  placeCreatedBy Place[]       @relation("PlaceCreatedBy")
+  groupCreatedBy Group[]       @relation("GroupCreatedBy")
+  eventCreatedBy GroupEvent[]  @relation("EventCreatedBy")
+  invitedToGroup GroupInvite[] @relation("InvitedUser")
+  invitedBy      GroupInvite[] @relation("InvitedBy")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 model UserStatus {
@@ -79,6 +81,8 @@ model Group {
   createdBy   User   @relation("GroupCreatedBy", fields: [createdById], references: [id])
   createdById String
 
+  inivites GroupInvite[] @relation("InviteToGroup")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -97,4 +101,20 @@ model GroupEvent {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   placeId     String
+}
+
+model GroupInvite {
+  id String @id @default(uuid())
+
+  groupId String
+  group   Group  @relation("InviteToGroup", fields: [groupId], references: [id])
+
+  invitedUserId String
+  invitedUser   User   @relation("InvitedUser", fields: [invitedUserId], references: [id])
+
+  invitedById String
+  invitedBy User   @relation("InvitedBy", fields: [invitedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -91,6 +91,21 @@ export type GroupEvent = {
 };
 
 /**
+ * Group invite
+ * @typedef {object} GroupInvite
+ * @property {string} id.required - Invite ID
+ * @property {string} groupId.required - Group ID
+ * @property {string} invitedUserId.required - Invited user ID
+ * @property {string} invitedById.required - Invited by user ID
+ */
+export type GroupInvite = {
+  id: string;
+  groupId: string;
+  invitedUserId: string;
+  invitedById: string;
+};
+
+/**
  * Pagination query
  * @typedef {object} PaginationQuery
  * @property {number} page.required - Page number

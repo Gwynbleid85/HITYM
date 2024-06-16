@@ -97,7 +97,7 @@ userRouter.put("/:id/password", auth, userController.updatePassword);
 userRouter.put("/:id/profilePicture", auth, userController.updateProfilePicture);
 
 /**
- * POST /users/user-status
+ * POST /users/:id/user-status
  * @summary Update user status
  * @tags user
  * @security BearerAuth
