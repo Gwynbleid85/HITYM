@@ -1,6 +1,12 @@
 {
   "extends": "@repo/typescript-config/react-app.json",
   "include": ["src"],
-  "compilerOptions": {},
+  "compilerOptions": {
+    /* Resolve paths */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
   "references": [{ "path": "../../packages/openapi" }]
 }
