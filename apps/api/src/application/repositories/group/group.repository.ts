@@ -1,8 +1,8 @@
 import { Result } from "@badrap/result";
 import type { NewGroup, GroupUpdate } from "./types";
-import type { GroupEvent, Group, User } from "../../types";
-import prisma from "../../client";
-import handleDbExceptions, { NotFoundError, toUser } from "../../utils";
+import type { GroupEvent, Group, User } from "../../../types";
+import prisma from "../../../client";
+import handleDbExceptions, { NotFoundError, toUser } from "../../../utils";
 
 export const GroupRepository = {
   /// Create a new group

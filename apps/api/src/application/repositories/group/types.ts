@@ -1,4 +1,4 @@
-import type { Group } from "../../types";
+import type { Group } from "../../../types";
 
 export type NewGroup = Omit<Group, "id" | "imageUrl">;
 

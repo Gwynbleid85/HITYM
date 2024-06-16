@@ -1,8 +1,15 @@
 // eslint-disable-next-line max-classes-per-file
 import { Prisma } from "@prisma/client";
-import type { User } from "./types";
-import type { User as PrismaUser } from "@prisma/client";
+import type { ZodSchema, ZodTypeDef } from "zod";
+import { fromZodError } from "zod-validation-error";
+import type { Request, Response } from "express";
 
+/**
+ * Error class
+ * @typedef {Error} Error
+ * @property {string} name.required - Error name
+ * @property {string} message.required - Error message
+ */
 export class NotFoundError extends Error {}
 export class ConflictError extends Error {}
 export class InternalError extends Error {}
@@ -16,19 +23,58 @@ export default function handleDbExceptions(e: unknown): Error {
       return new ConflictError();
     }
   }
+  console.warn("Unknown DB error: ", e);
+
   return new InternalError();
 }
 
-export const toUser = (user: PrismaUser): User => {
-  let lastPosition = null;
-  if (user.lastLatitude && user.lastLongitude) {
-    lastPosition = {
-      latitude: user.lastLatitude,
-      longitude: user.lastLongitude,
+export const parseRequest = async <Output, Def extends ZodTypeDef = ZodTypeDef, Input = Output>(
+  schema: ZodSchema<Output, Def, Input>,
+  req: Request,
+  res: Response
+) => {
+  const parsedRequest = await schema.safeParseAsync(req);
+
+  if (!parsedRequest.success) {
+    const error = fromZodError(parsedRequest.error);
+    const errorResponse: Error = {
+      name: "ValidationError",
+      message: error.message,
+      cause: error.cause,
     };
+    res.status(400).send(errorResponse);
+    return null;
   }
-  return {
-    ...user,
-    lastPosition: lastPosition,
-  };
+
+  return parsedRequest.data;
+};
+
+export const handleRepositoryErrors = (e: Error, res: Response) => {
+  if (e instanceof NotFoundError) {
+    res.status(404).send({
+      name: e.name || "NotFoundError",
+      message: e.message || "Entity not found",
+      cause: e.cause,
+    });
+  } else if (e instanceof InternalError) {
+    console.log("DB error: ", e);
+    res.status(500).send({
+      name: e.name || "InternalError",
+      message: e.message || "Something went wrong on our side.",
+      cause: e.cause,
+    });
+  } else if (e instanceof ConflictError) {
+    res.status(400).send({
+      name: e.name || "ConflictError",
+      message: e.message || "Conflict",
+      cause: e.cause,
+    });
+  } else {
+    console.log("DB error: ", e);
+
+    res.status(500).send({
+      name: "UnknownError",
+      message: "Something went wrong.",
+    });
+  }
 };

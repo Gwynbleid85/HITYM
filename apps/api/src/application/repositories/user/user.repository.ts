@@ -1,8 +1,22 @@
 import { Result } from "@badrap/result";
-import type { NewUser, UpdateUser } from "./types";
-import type { PaginationQuery, Position, User } from "../../types";
-import prisma from "../../client";
-import handleDbExceptions, { NotFoundError, toUser } from "../../utils";
+import type { NewUser, UpdateUser, UserWithPassword } from "./types";
+import type { PaginationQuery, Position, User } from "../../../types";
+import prisma from "../../../client";
+import handleDbExceptions, { NotFoundError } from "../../../utils";
+import type { User as PrismaUser } from "@prisma/client";
+
+const toUser = (user: PrismaUser): User => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password, lastLatitude, lastLongitude, createdAt, updatedAt, ...userWithoutSensitiveData } = user;
+
+  return {
+    ...userWithoutSensitiveData,
+    lastPosition: {
+      latitude: user.lastLatitude,
+      longitude: user.lastLongitude,
+    },
+  } as User;
+};
 
 export const userRepository = {
   /// Create a new user
@@ -12,6 +26,22 @@ export const userRepository = {
     try {
       const createdUser = await prisma.user.create({ data: user });
       return Result.ok(toUser(createdUser));
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
+
+  /// Get user password hash by their email
+  /// @param email The email of the user
+  /// @returns The user with password hash
+  async getUserPasswordHash(email: string): Promise<Result<UserWithPassword>> {
+    try {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        return Result.err(new NotFoundError());
+      }
+
+      return Result.ok({ ...toUser(user), password: user.password });
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }

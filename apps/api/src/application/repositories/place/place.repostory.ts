@@ -1,8 +1,8 @@
 import { Result } from "@badrap/result";
 import type { NewPlace } from "./type";
-import prisma from "../../client";
-import handleDbExceptions, { NotFoundError } from "../../utils";
-import type { Place } from "../../types";
+import prisma from "../../../client";
+import handleDbExceptions, { NotFoundError } from "../../../utils";
+import type { Place } from "../../../types";
 
 export const PlaceRepository = {
   /// Create a new place

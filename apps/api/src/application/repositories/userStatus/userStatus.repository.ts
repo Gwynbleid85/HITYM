@@ -1,8 +1,8 @@
-import prisma from "../../client";
+import prisma from "../../../client";
 import type { NewUserStatus } from "./types";
 import { Result } from "@badrap/result";
-import handleDbExceptions, { NotFoundError } from "../../utils";
-import type { UserStatus } from "../../types";
+import handleDbExceptions, { NotFoundError } from "../../../utils";
+import type { UserStatus } from "../../../types";
 
 export const userStatusRepository = {
   async upsert(userStatus: NewUserStatus, userId: string): Promise<Result<UserStatus>> {

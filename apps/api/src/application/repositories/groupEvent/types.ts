@@ -1,4 +1,4 @@
-import type { GroupEvent } from "../../types";
+import type { GroupEvent } from "../../../types";
 
 export type NewGroupEvent = Omit<GroupEvent, "id">;
 

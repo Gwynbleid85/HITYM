@@ -1,8 +1,8 @@
 import { Result } from "@badrap/result";
-import type { GroupEvent } from "../../types";
+import type { GroupEvent } from "../../../types";
 import type { GroupEventUpdate, NewGroupEvent } from "./types";
-import prisma from "../../client";
-import handleDbExceptions, { NotFoundError } from "../../utils";
+import prisma from "../../../client";
+import handleDbExceptions, { NotFoundError } from "../../../utils";
 
 export const GroupEventRepository = {
   /// Create a new event for a group
