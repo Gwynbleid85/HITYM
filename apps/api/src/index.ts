@@ -1,108 +1,48 @@
-import { WebSocketServer, WebSocket, type RawData } from "ws"
-import http from "http"
-import { v4 as uuidv4 } from "uuid"
-import { type LoggedInMessage, type SubscribeUserInfoMessage, type WsMessage } from "./types/WsEvents"
+import { WebSocketServer } from "ws";
+import http from "http";
+import { onWsConnection } from "./api/websocket/websocket";
 
-const server = http.createServer()
-const wsServer = new WebSocketServer({ server })
+import express from "express";
+import cors from "cors";
+import { config } from "dotenv";
+import { env } from "process";
+import userRouter from "./api/rest/routers/user.router";
+import expressJSDocSwagger from "express-jsdoc-swagger";
+import { options } from "./swaggerOptions";
 
-const port = 8000
-const connectionPool: {[userId: string]: WebSocket} = {} 
-const broadcastGroups: {[originUserId: string]: string[]} = {} // [originUser: [receiverUsers]]
-const userSubscribedTo: {[userId: string]: string[]} = {} // [receiverUser: [originUsers]]
+config();
+const restPort = env.REST_PORT ?? 3000;
+const wsPort = env.WS_PORT ?? 8000;
 
+const app = express();
 
-const handleMessage = (message: RawData, user: string) => {
-  const parsedMessage = JSON.parse(message.toString());
+expressJSDocSwagger(app)(options);
 
-  broadcast({sender: user, ...parsedMessage}, [user]);
-}
+const server = http.createServer(app);
 
-const handleClose = (code: number, user: string) => {
+const wsServer = new WebSocketServer({ server });
+wsServer.on("connection", onWsConnection);
 
-  // Notify subscribed users that this user has disconnected
-  broadcastToGroup({
-    sender: user,
-    event: "userDisconnected",
-    code : code
-  }, 
-  broadcastGroups[user] || [])
+// CORS middleware
+app.use(cors());
 
-  // Remove user from broadcast groups
-  for (const broadcastGroupId in userSubscribedTo[user]){
-    const group = broadcastGroups[broadcastGroupId]
-    if(group){
-      broadcastGroups[broadcastGroupId] = group.filter((userId) => userId !== user)
-    }
-  }
+// JSON middleware
+app.use(express.json());
 
-  // Remove user from userSubscribedTo
-  delete userSubscribedTo[user];
-  
-  // Remove user from connectionPool
-  delete connectionPool[user];
-  
-}
+// parse URL encoded strings
+app.use(express.urlencoded({ extended: true }));
 
-const handleSubscribeUserInfoMessage = (message: SubscribeUserInfoMessage, user: string) => {
-  const { usersToSubscribe } = message;
-  
-  usersToSubscribe.forEach((userId) => {
-    if(!broadcastGroups[userId]){
-      broadcastGroups[userId] = []
-    }
-    broadcastGroups[userId].push(user)
+app.use("/users", userRouter);
 
-    if(!userSubscribedTo[user]){
-      userSubscribedTo[user] = []
-    }
-    userSubscribedTo[user].push(userId)
+// Default route returning 404
+app.use((_req, res) => {
+  res.status(404).send("Not found");
+});
 
-    // Notify subscribed user that this user has connected
-    // Send subscribing user the position of the subscribed user
-  })
-}
+server.listen(wsPort, () => {
+  console.log(`[${new Date().toISOString()}] Websocket listening on port ${wsPort}`);
+});
 
-const broadcast = (message: WsMessage, exclude?: string[]) => {
-  Object.keys(connectionPool).forEach((uuid) => {
-    // Skip excluded connections
-    if (exclude?.includes(uuid)) return
-    
-    const connection = connectionPool[uuid]
-    connection?.send(JSON.stringify(message))
-  })
-}
-
-const broadcastToGroup = (message: WsMessage, group: string[]) => {
-  group.forEach((uuid) => {
-    const connection = connectionPool[uuid]
-    connection?.send(JSON.stringify(message))
-  })
-
-}
-
-wsServer.on("connection", (connection) => {
-  const id = uuidv4();
-  console.log(`New connection: ${id}`);
-  connectionPool[id] = connection;
-
-  broadcast({
-    sender: id,
-    event: "userConnected"
-  }, [id]);
-
-  const message: LoggedInMessage = {
-    sender: id,
-    event: "loggedIn"
-  }
-  connection.send(JSON.stringify(message));
-
-
-  connection.on("message", (message) => handleMessage(message, id));
-  connection.on("close", (code) => handleClose(code, id));
-  
-})
-
-server.listen(port, () => {
-  console.log(`WebSocket server is running on port ${port}`)
-})
+app.listen(restPort, () => {
+  console.log(`[${new Date().toISOString()}] Rest listening on port ${restPort}`);
+});
