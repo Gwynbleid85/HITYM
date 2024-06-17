@@ -5,10 +5,8 @@ export function MainLayout() {
   return (
     // TODO navbar
     <>
-      <div>
-        <Map />
-        <Outlet />
-      </div>
+      <Map />
+      <Outlet />
     </>
   );
 }
