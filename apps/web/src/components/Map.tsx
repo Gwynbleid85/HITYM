@@ -25,26 +25,10 @@ const stringToColour = (str: string) => {
 };
 
 export function Map() {
-  const { sendJsonMessage, messages, readyState, positions, updatePositionRelative } = useWebsockets();
 
-  const messagesEndRef = useRef<null | HTMLDivElement>(null);
-
-  console.log("Component rendered", (counter += 1));
-
-  const [clicks, setClicks] = useState(0);
-  const handleClick = useCallback(() => {
-    setClicks((clicks) => clicks + 1);
-    updatePositionRelative(0.001, 0.001);
-  }, [clicks, sendJsonMessage]);
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView();
-    }
-  }, [messages]);
 
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100vh", width: "100%" }} className="z-0">
+    <MapContainer center={[51.505, -0.09]} zoom={13} style={{ height: "100vh", width: "100vw" }} className="z-0">
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
