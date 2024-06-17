@@ -20,6 +20,7 @@ userRouter.post("/registration", userController.registerUser);
  * @summary Login user
  * @tags user
  * @param {UserLoginRequest} request.body.required - User login data
+ * TODO: FIx the response type
  * @return {User} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  */

@@ -90,6 +90,7 @@ export const userController = {
     }
 
     // Generate jwt token
+    ///TODO: Make RegisterUserREquest type for swagger
     const token = jwt.sign(
       {
         sub: user.id,

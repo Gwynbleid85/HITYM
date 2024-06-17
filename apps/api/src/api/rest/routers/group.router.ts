@@ -116,7 +116,7 @@ groupRouter.delete("/:id/users/:userId", auth, groupController.removeUser);
  * @tags group
  * @security BearerAuth
  * @param {string} id.path.required - Group ID
- * @return {Array.<Event>} 200 - Events found
+ * @return {Array.<GroupEvent>} 200 - Events found
  * @return {Error} 400 - Bad request
  * @return {Error} 401 - Unauthorized
  * @return {Error} 404 - Not found

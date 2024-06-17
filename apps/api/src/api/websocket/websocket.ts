@@ -118,8 +118,8 @@ const broadcastToGroup = (message: WsMessage, group: string[]) => {
 
 export const onWsConnection = (connection: WebSocket) => {
   const message: AuthRequiredMessage = {
-    sender: "server",
     event: "authRequired",
+    sender: "server",
   };
   connection.send(JSON.stringify(message));
   connection.once("message", (message) => handleAuth(connection, message));
