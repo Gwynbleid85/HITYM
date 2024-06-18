@@ -17,7 +17,7 @@ usersRouter.get("/", auth, userController.getAllUsers);
 /**
  * POST /users/:id/groups/invite
  * @summary Invite user to group
- * @tags groupInvite
+ * @tags group-invite
  * @security BearerAuth
  * @param {InviteUserToGroupRequest} request.body.required - Invite user to group data
  * @param {string} request.params.id.required - User ID
@@ -30,7 +30,7 @@ usersRouter.post("/:id/groups/invites", auth, userController.inviteUserToGroup);
 /**
  * POST /users/:id/groups/invite/:invite_id/accept
  * @summary Accept group invite
- * @tags groupInvite
+ * @tags group-invite
  * @security BearerAuth
  * @param {AcceptGroupInviteRequest} request.body.required - Accept group invite data
  * @param {string} request.params.id.required - User ID
@@ -44,7 +44,7 @@ usersRouter.post("/:id/groups/invites/:invite_id/accept", auth, userController.a
 /**
  * DELETE /users/:id/groups/invite/:invite_id
  * @summary Decline group invite
- * @tags groupInvite
+ * @tags group-invite
  * @security BearerAuth
  * @param {DeclineGroupInviteRequest} request.body.required - Decline group invite data
  * @param {string} request.params.id.required - User ID

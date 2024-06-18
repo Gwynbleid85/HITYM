@@ -171,7 +171,7 @@ userRouter.get("/groups", auth, userController.getUserGroups);
 /**
  * GET /user/groups/invites
  * @summary Get user invites
- * @tags groupInvite
+ * @tags group-invite
  * @security BearerAuth
  * @return {Array.<GroupInviteExtended>} 200 - success response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
