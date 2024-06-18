@@ -7,11 +7,9 @@ import { z } from "zod";
  * @property {string} name.required - User name
  */
 export const userRegistrationDataSchema = z.object({
-  body: z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-    name: z.string().min(2),
-  }),
+  email: z.string().email(),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
 });
 
 /**
@@ -21,10 +19,8 @@ export const userRegistrationDataSchema = z.object({
  * @property {string} password.required - User password
  */
 export const userLoginDataSchema = z.object({
-  body: z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-  }),
+  email: z.string().email(),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
 export const deleteUserSchema = z.object({
