@@ -6,7 +6,7 @@ import auth from "../../../application/middlewares/auth";
 const userRouter = Router();
 
 /**
- * POST /users/registration
+ * POST /user/registration
  * @summary Create new user
  * @tags user
  * @param {UserRegistrationRequest} request.body.required - User registration data
@@ -16,7 +16,7 @@ const userRouter = Router();
 userRouter.post("/registration", userController.registerUser);
 
 /**
- * POST /users/login
+ * POST /user/login
  * @summary Login user
  * @tags user
  * @param {UserLoginRequest} request.body.required - User login data
@@ -27,7 +27,7 @@ userRouter.post("/registration", userController.registerUser);
 userRouter.post("/login", userController.loginUser);
 
 /**
- * GET /users/test/authorization
+ * GET /user/test/authorization
  * @summary Test authorization
  * @tags test
  * @security BearerAuth
@@ -37,7 +37,7 @@ userRouter.post("/login", userController.loginUser);
 userRouter.get("/test/authorization", auth, userController.testAuthorization);
 
 /**
- * DELETE /users/:id
+ * DELETE /user/:id
  * @summary Delete user
  * @tags user
  * @security BearerAuth
@@ -48,7 +48,7 @@ userRouter.get("/test/authorization", auth, userController.testAuthorization);
 userRouter.delete("/", auth, userController.deleteUser);
 
 /**
- * PUT /users/:id
+ * PUT /user/:id
  * @summary Update user
  * @tags user
  * @security BearerAuth
