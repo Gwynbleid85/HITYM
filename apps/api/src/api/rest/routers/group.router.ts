@@ -83,20 +83,6 @@ groupRouter.put("/:id/image", auth, groupController.updateImage);
 groupRouter.delete("/:id", auth, groupController.deleteGroup);
 
 /**
- * POST /groups/:id/users
- * @summary Add user to group
- * @tags group
- * @security BearerAuth
- * @param {AddUserRequest} request.body.required - User ID
- * @param {string} id.path.required - Group ID
- * @return {Group} 200 - Group updated
- * @return {Error} 400 - Bad request
- * @return {Error} 401 - Unauthorized
- * @return {Error} 403 - Forbidden
- */
-groupRouter.post("/:id/users", auth, groupController.addUser);
-
-/**
  * DELETE /groups/:id/users/:userId
  * @summary Remove user from group
  * @tags group

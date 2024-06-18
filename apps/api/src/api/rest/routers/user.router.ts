@@ -168,4 +168,14 @@ userRouter.delete("/places/favorites/:placeId", auth, userController.removeFavor
  */
 userRouter.get("/groups", auth, userController.getUserGroups);
 
+/**
+ * GET /user/groups/invites
+ * @summary Get user invites
+ * @tags groupInvite
+ * @security BearerAuth
+ * @return {Array.<GroupInviteExtended>} 200 - success response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ */
+userRouter.get("/groups/invites", auth, userController.getUserInvites);
+
 export default userRouter;

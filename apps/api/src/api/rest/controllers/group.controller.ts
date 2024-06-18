@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import { handleRepositoryErrors, parseRequest } from "../../../utils";
 import { groupRepository } from "../../../application/repositories/group/group.repository";
 import {
-  addUserSchema,
   createGroupSchema,
   deleteGroupSchema,
   getGroupByIdSchema,
@@ -148,32 +147,6 @@ export const groupController = {
     }
 
     return res.status(204).send();
-  },
-
-  /*
-   * Add user to group
-   * @param req Request object
-   * @param res Response object
-   */
-  ///TODO: Group invites
-  async addUser(req: Request, res: Response) {
-    const request = await parseRequest(addUserSchema, req, res);
-    if (!request) return;
-
-    // Check if executer is member of group
-    const isMember = await groupRepository.isMember(request.params.id, req.user.sub);
-    if (!isMember) {
-      return res.status(403).send();
-    }
-
-    // Add user to group
-    const result = await groupRepository.addUser(request.params.id, request.body.userId);
-    if (result.isErr) {
-      handleRepositoryErrors(result.error, res);
-      return;
-    }
-
-    return res.status(200).json(result.value).send();
   },
 
   /*

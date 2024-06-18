@@ -12,7 +12,6 @@ import type { Place, User } from "./types";
  * @property {string} name.required - Error name
  * @property {string} message.required - Error message
  */
-///TODO: Add multiple error types for swagger
 export class NotFoundError extends Error {}
 export class ConflictError extends Error {}
 export class InternalError extends Error {}

@@ -55,20 +55,6 @@ export const updateImageSchema = z.object({
   }),
 });
 
-/**
- * Add user to group
- * @typedef {object} AddUserRequest
- * @property {string} userId - User ID
- */
-export const addUserSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    userId: z.string(),
-  }),
-});
-
 export const removeUserSchema = z.object({
   params: z.object({
     id: z.string(),
