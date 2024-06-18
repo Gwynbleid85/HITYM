@@ -6,7 +6,6 @@ import {
   inviteUserToGroupSchema,
   removeFavoritePlaceSchema,
   updatePasswordSchema,
-  updateProfilePictureSchema,
   updateUserSchema,
   updateUserStatusSchema,
   userLoginDataSchema,
@@ -197,17 +196,8 @@ export const userController = {
    * @param res Response object
    */
   async updateProfilePicture(req: Request, res: Response) {
-    ///TODO: Allow file upload
-    const request = await parseRequest(updateProfilePictureSchema, req, res);
-    if (!request) return;
-
-    const result = await userRepository.updateProfilePicture(req.user.sub, req.body.profilePicture);
-    if (result.isErr) {
-      handleRepositoryErrors(result.error, res);
-      return;
-    }
-
-    return res.status(200).json(result.value).send();
+    await userRepository.updateProfilePicture(req.user.sub, req.finalImageName);
+    return res.status(200).send();
   },
 
   /*

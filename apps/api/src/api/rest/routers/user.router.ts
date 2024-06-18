@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { userController } from "../controllers/user.controller";
 import auth from "../../../application/middlewares/auth";
+import uploadSingleFile from "../../../application/middlewares/fileUpload";
 
 const userRouter = Router();
 
@@ -76,12 +77,12 @@ userRouter.put("/password", auth, userController.updatePassword);
  * @summary Update user profile picture
  * @tags user
  * @security BearerAuth
- * @param {UpdateProfilePictureRequest} request.body.required - User profile picture data
+ * @param {UpdateImageRequest} request.body.required - User profile picture data - multipart/form-data
  * @return {User} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
-userRouter.put("/profilePicture", auth, userController.updateProfilePicture);
+userRouter.put("/profilePicture", auth, uploadSingleFile("profilePictures"), userController.updateProfilePicture);
 
 /**
  * POST /user/user-status

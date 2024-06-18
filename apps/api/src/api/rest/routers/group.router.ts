@@ -1,6 +1,7 @@
 import { Router } from "express";
 import auth from "../../../application/middlewares/auth";
 import { groupController } from "../controllers/group.controller";
+import uploadSingleFile from "../../../application/middlewares/fileUpload";
 
 const groupRouter = Router();
 
@@ -68,7 +69,7 @@ groupRouter.put("/:id", auth, groupController.updateGroup);
  * @return {Error} 401 - Unauthorized
  * @return {Error} 403 - Forbidden
  */
-groupRouter.put("/:id/image", auth, groupController.updateImage);
+groupRouter.put("/:id/image", auth, uploadSingleFile("groupImages"), groupController.updateImage);
 
 /**
  * DELETE /groups/:id

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { placeController } from "../controllers/place.controller";
 import auth from "../../../application/middlewares/auth";
+import uploadSingleFile from "../../../application/middlewares/fileUpload";
 
 const placeRouter = Router();
 
@@ -53,7 +54,7 @@ placeRouter.put("/:id", auth, placeController.updatePlace);
  * @return {Error} 401 - Unauthorized
  * @return {Error} 403 - Forbidden
  */
-placeRouter.put("/:id/image", auth, placeController.updatePlaceImage);
+placeRouter.put("/:id/image", auth, uploadSingleFile("placeImages"), placeController.updatePlaceImage);
 
 /**
  * DELETE /places/:id

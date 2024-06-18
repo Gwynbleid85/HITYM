@@ -105,23 +105,8 @@ export const groupController = {
    * @param res Response object
    */
   async updateImage(req: Request, res: Response) {
-    const request = await parseRequest(updateImageSchema, req, res);
-    if (!request) return;
-
-    // Check if user is allowed to delete group
-    const isOwner = await groupRepository.isOwner(request.params.id, req.user.sub);
-    if (!isOwner) {
-      return res.status(403).send();
-    }
-
-    // Update group image
-    const result = await groupRepository.updateImage(request.params.id, request.body.imageUrl);
-    if (result.isErr) {
-      handleRepositoryErrors(result.error, res);
-      return;
-    }
-
-    return res.status(200).json(result.value).send();
+    const updatedGroup = await groupRepository.updateImage(req.imageId, req.finalImageName);
+    return res.status(200).json(updatedGroup).send();
   },
 
   /*

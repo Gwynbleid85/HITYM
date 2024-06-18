@@ -52,17 +52,6 @@ export const updatePasswordSchema = z.object({
 });
 
 /**
- * Update user profile picture data
- * @typedef {object} UpdateProfilePictureRequest
- * @property {string} profilePicture.required - User profile picture
- */
-export const updateProfilePictureSchema = z.object({
-  body: z.object({
-    profilePicture: z.string(),
-  }),
-});
-
-/**
  * Update user status data
  * @typedef {object} UpdateUserStatusRequest
  * @property {string} status.required - User status

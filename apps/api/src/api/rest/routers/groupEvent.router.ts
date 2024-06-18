@@ -1,6 +1,7 @@
 import { Router } from "express";
 import auth from "../../../application/middlewares/auth";
 import { groupEventController } from "../controllers/groupEvent.controller";
+import uploadSingleFile from "../../../application/middlewares/fileUpload";
 
 const groupEventRouter = Router();
 
@@ -54,7 +55,7 @@ groupEventRouter.put("/:id", auth, groupEventController.updateGroupEvent);
  * @return {Error} 403 - Forbidden response - application/json
  * @return {Error} 404 - Not found response - application/json
  */
-groupEventRouter.put("/:id/image", auth, groupEventController.updateGroupEventImage);
+groupEventRouter.put("/:id/image", auth, uploadSingleFile("eventImages"), groupEventController.updateGroupEventImage);
 
 /**
  * DELETE /group-events/:id

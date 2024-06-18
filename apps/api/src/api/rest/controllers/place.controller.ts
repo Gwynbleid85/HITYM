@@ -68,25 +68,9 @@ export const placeController = {
    * @param req Request object
    * @param res Response object
    */
-  ///TODO: Allow Image Upload
   async updatePlaceImage(req: Request, res: Response) {
-    const request = await parseRequest(updateImageSchema, req, res);
-    if (!request) return;
-
-    // Check if executor is the creator of the place
-    const isOwner = await placeRepository.isOwner(request.params.id, req.user.sub);
-    if (!isOwner) {
-      return res.status(403).send();
-    }
-
-    // Update place image
-    const result = await placeRepository.updateImage(request.params.id, request.body.imageUrl);
-    if (result.isErr) {
-      handleRepositoryErrors(result.error, res);
-      return;
-    }
-
-    return res.status(200).json(result.value).send();
+    const updatedPlace = await placeRepository.updateImage(req.imageId, req.finalImageName);
+    return res.status(200).json(updatedPlace).send();
   },
 
   /*
