@@ -21,7 +21,7 @@ userRouter.post("/registration", userController.registerUser);
  * @tags user
  * @param {UserLoginRequest} request.body.required - User login data
  * TODO: FIx the response type
- * @return {User} 200 - success response - application/json
+ * @return {UserLoginResult} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  */
 userRouter.post("/login", userController.loginUser);
@@ -41,152 +41,131 @@ userRouter.get("/test/authorization", auth, userController.testAuthorization);
  * @summary Delete user
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @return {string} 204 - success response
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
-userRouter.delete("/:id", auth, userController.deleteUser);
-
-/**
- * GET /users
- * @summary Get all users
- * @tags user
- * @security BearerAuth
- * @return {Array.<SimpleUser>} 200 - success response - application/json
- * @return {Error} 401 - Unauthorized response - application/json
- */
-userRouter.get("/", auth, userController.getAllUsers);
+userRouter.delete("/", auth, userController.deleteUser);
 
 /**
  * PUT /users/:id
  * @summary Update user
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @param {UpdateUserRequest} request.body.required - User data
  * @return {User} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
-userRouter.put("/:id", auth, userController.updateUser);
+userRouter.put("/", auth, userController.updateUser);
 
 /**
- * PUT /users/:id/password
+ * PUT /user/password
  * @summary Update user password
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @param {UpdatePasswordRequest} request.body.required - User password data
  * @return {User} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
-userRouter.put("/:id/password", auth, userController.updatePassword);
+userRouter.put("/password", auth, userController.updatePassword);
 
 /**
- * PUT /users/:id/profilePicture
+ * PUT /user/profilePicture
  * @summary Update user profile picture
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @param {UpdateProfilePictureRequest} request.body.required - User profile picture data
  * @return {User} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
-userRouter.put("/:id/profilePicture", auth, userController.updateProfilePicture);
+userRouter.put("/profilePicture", auth, userController.updateProfilePicture);
 
 /**
- * POST /users/:id/user-status
+ * POST /user/user-status
  * @summary Update user status
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @param {UpdateUserStatusRequest} request.body.required - User status data
  * @return {User} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
-userRouter.post("/:id/user-status", auth, userController.updateUserStatus);
+userRouter.post("/user-status", auth, userController.updateUserStatus);
 
 /**
- * DELETE /users/:id/user-status
+ * DELETE /user/user-status
  * @summary Delete user status
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @return {string} 204 - success response
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
-userRouter.delete("/:id/user-status", auth, userController.deleteUserStatus);
+userRouter.delete("/user-status", auth, userController.deleteUserStatus);
 
 /**
- * GET /users/:id/places
+ * GET /user/places
  * @summary Get all places created by user
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @return {Array.<Place>} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 403 - Forbidden response - application/json
  */
-userRouter.get("/:id/places", auth, userController.getOwnedPlaces);
+userRouter.get("/places", auth, userController.getOwnedPlaces);
 
 /**
- * GET /users/:id/places/favorites
+ * GET /user/places/favorites
  * @summary Get all favorite places of user
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @return {Array.<Place>} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 403 - Forbidden response - application/json
  */
-userRouter.get("/:id/places/favorites", auth, userController.getFavoritePlaces);
+userRouter.get("/places/favorites", auth, userController.getFavoritePlaces);
 
 /**
- * POST /users/:id/places/favorites
+ * POST /user/places/favorites
  * @summary Add favorite place
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @param {AddFavoritePlaceRequest} request.body.required - Favorite place data
  * @return {User} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 403 - Forbidden response - application/json
  */
-userRouter.post("/:id/places/favorites", auth, userController.addFavoritePlace);
+userRouter.post("/places/favorites", auth, userController.addFavoritePlace);
 
 /**
- * DELETE /users/:id/places/favorites/:placeId
+ * DELETE /user/places/favorites/:placeId
  * @summary Remove favorite place
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @param {string} placeId.path.required - Place ID
  * @return {User} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 403 - Forbidden response - application/json
  */
-userRouter.delete("/:id/places/favorites/:placeId", auth, userController.removeFavoritePlace);
+userRouter.delete("/places/favorites/:placeId", auth, userController.removeFavoritePlace);
 
 /**
- * GET /users/:id/groups
+ * GET /user/groups
  * @summary Get all groups user is member of
  * @tags user
  * @security BearerAuth
- * @param {string} id.path.required - User ID
  * @return {Array.<Group>} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 403 - Forbidden response - application/json
  */
-userRouter.get("/:id/groups", auth, userController.getUserGroups);
+userRouter.get("/groups", auth, userController.getUserGroups);
 
 export default userRouter;

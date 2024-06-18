@@ -1,14 +1,12 @@
 import { handleRepositoryErrors, parseRequest } from "../../../utils";
 import type { Request, Response } from "express";
 import {
+  acceptGroupInviteSchema,
   addFavoritePlaceSchema,
-  deleteUserSchema,
-  deleteUserStatusSchema,
-  getFavoritePlacesSchema,
-  getOwnedPlacesSchema,
-  getUserGroupsSchema,
+  inviteUserToGroupSchema,
   removeFavoritePlaceSchema,
   updatePasswordSchema,
+  updateProfilePictureSchema,
   updateUserSchema,
   updateUserStatusSchema,
   userLoginDataSchema,
@@ -18,12 +16,13 @@ import { compareSync, hashSync } from "bcrypt-ts";
 import { userRepository } from "../../../application/repositories/user/user.repository";
 import type { NewUser } from "../../../application/repositories/user/types";
 import { env } from "process";
-import type { User } from "../../../types";
+import type { User, UserLoginResult } from "../../../types";
 import type { Result } from "@badrap/result";
 import jwt from "jsonwebtoken";
 import { userStatusRepository } from "../../../application/repositories/userStatus/userStatus.repository";
 import { placeRepository } from "../../../application/repositories/place/place.repostory";
 import { groupRepository } from "../../../application/repositories/group/group.repository";
+import { groupInviteRepository } from "../../../application/repositories/groupInvite/groupInvite.repository";
 
 export const userController = {
   /*
@@ -90,7 +89,6 @@ export const userController = {
     }
 
     // Generate jwt token
-    ///TODO: Make RegisterUserREquest type for swagger
     const token = jwt.sign(
       {
         sub: user.id,
@@ -107,7 +105,7 @@ export const userController = {
       user_id: user.id,
       name: user.name,
       token: token,
-    });
+    } as UserLoginResult);
   },
 
   /*
@@ -125,10 +123,7 @@ export const userController = {
    * @param res Response object
    */
   async deleteUser(req: Request, res: Response) {
-    const request = await parseRequest(deleteUserSchema, req, res);
-    if (!request) return;
-
-    const result = await userRepository.delete(request.params.id);
+    const result = await userRepository.delete(req.user.sub);
 
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
@@ -169,7 +164,7 @@ export const userController = {
     const request = await parseRequest(updateUserSchema, req, res);
     if (!request) return;
 
-    const result = await userRepository.updateUser(request.params.id, request.body);
+    const result = await userRepository.updateUser(req.user.sub, request.body);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
@@ -187,7 +182,7 @@ export const userController = {
     const request = await parseRequest(updatePasswordSchema, req, res);
     if (!request) return;
 
-    const result = await userRepository.updatePassword(request.params.id, req.body.password);
+    const result = await userRepository.updatePassword(req.user.sub, req.body.password);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
@@ -203,10 +198,10 @@ export const userController = {
    */
   async updateProfilePicture(req: Request, res: Response) {
     ///TODO: Allow file upload
-    const request = await parseRequest(updateUserSchema, req, res);
+    const request = await parseRequest(updateProfilePictureSchema, req, res);
     if (!request) return;
 
-    const result = await userRepository.updateProfilePicture(request.params.id, req.body.profilePicture);
+    const result = await userRepository.updateProfilePicture(req.user.sub, req.body.profilePicture);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
@@ -224,7 +219,7 @@ export const userController = {
     const request = await parseRequest(updateUserStatusSchema, req, res);
     if (!request) return;
 
-    const result = await userStatusRepository.upsert(request.body, request.params.id);
+    const result = await userStatusRepository.upsert(request.body, req.user.sub);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
@@ -239,10 +234,7 @@ export const userController = {
    * @param res Response object
    */
   async deleteUserStatus(req: Request, res: Response) {
-    const request = await parseRequest(deleteUserStatusSchema, req, res);
-    if (!request) return;
-
-    const result = await userStatusRepository.delete(request.params.id);
+    const result = await userStatusRepository.delete(req.user.sub);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
@@ -257,14 +249,6 @@ export const userController = {
    * @param res Response object
    */
   async getOwnedPlaces(req: Request, res: Response) {
-    const request = await parseRequest(getOwnedPlacesSchema, req, res);
-    if (!request) return;
-
-    // Check if user is trying to get his places
-    if (req.user.sub !== request.params.id) {
-      return res.status(403).send();
-    }
-
     const result = await placeRepository.getOwnedPlaces(req.user.sub);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
@@ -280,14 +264,6 @@ export const userController = {
    * @param res Response object
    */
   async getFavoritePlaces(req: Request, res: Response) {
-    const request = await parseRequest(getFavoritePlacesSchema, req, res);
-    if (!request) return;
-
-    // Check if user is trying to get his favorite places
-    if (req.user.sub !== request.params.id) {
-      return res.status(403).send();
-    }
-
     const result = await placeRepository.getFavorites(req.user.sub);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
@@ -305,11 +281,6 @@ export const userController = {
   async addFavoritePlace(req: Request, res: Response) {
     const request = await parseRequest(addFavoritePlaceSchema, req, res);
     if (!request) return;
-
-    // Check if user is trying to add place to his favorites
-    if (req.user.sub !== request.params.id) {
-      return res.status(403).send();
-    }
 
     const result = await placeRepository.addToFavorites(req.user.sub, req.body.placeId);
     if (result.isErr) {
@@ -329,11 +300,6 @@ export const userController = {
     const request = await parseRequest(removeFavoritePlaceSchema, req, res);
     if (!request) return;
 
-    // Check if user is trying to remove place from his favorites
-    if (req.user.sub !== request.params.id) {
-      return res.status(403).send();
-    }
-
     const result = await placeRepository.removeFromFavorites(req.user.sub, request.params.placeId);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
@@ -349,16 +315,137 @@ export const userController = {
    * @param res Response object
    */
   async getUserGroups(req: Request, res: Response) {
-    const request = await parseRequest(getUserGroupsSchema, req, res);
-    if (!request) return;
-
-    // Check if user is trying to get his groups
-    if (req.user.sub !== request.params.id) {
-      return res.status(403).send();
+    // Get user groups
+    const result = await groupRepository.getAllUserGroups(req.user.sub);
+    if (result.isErr) {
+      handleRepositoryErrors(result.error, res);
+      return;
     }
 
-    // Get user groups
-    const result = await groupRepository.getAllUserGroups(request.params.id);
+    return res.status(200).json(result.value).send();
+  },
+
+  /*
+   * Invite user to group
+   * @param req Request object
+   * @param res Response object
+   */
+  async inviteUserToGroup(req: Request, res: Response) {
+    const request = await parseRequest(inviteUserToGroupSchema, req, res);
+    if (!request) return;
+
+    //Check if user isn't already in group
+    const userGroups = await groupRepository.getAllUserGroups(request.params.id);
+    if (userGroups.isErr) {
+      handleRepositoryErrors(userGroups.error, res);
+      return;
+    }
+    if (userGroups.value.some((group) => group.id === request.body.groupId)) {
+      return res.status(400).send({
+        name: "ValidationError",
+        message: "User is already in this group",
+      });
+    }
+
+    // Check if user isn't already invited to group
+    const invites = await groupInviteRepository.getUserInvites(request.params.id);
+    if (invites.isErr) {
+      handleRepositoryErrors(invites.error, res);
+      return;
+    }
+    if (invites.value.some((invite) => invite.groupId === request.body.groupId)) {
+      return res.status(400).send({
+        name: "ValidationError",
+        message: "User is already invited to this group",
+      });
+    }
+
+    // Create invite
+    const result = await groupInviteRepository.create({
+      invitedUserId: request.params.id,
+      groupId: request.body.groupId,
+      invitedById: req.user.sub,
+    });
+
+    if (result.isErr) {
+      handleRepositoryErrors(result.error, res);
+      return;
+    }
+
+    return res.status(200).send();
+  },
+
+  /*
+   * Accept group invite
+   * @param req Request object
+   * @param res Response object
+   */
+  async acceptGroupInvite(req: Request, res: Response) {
+    const request = await parseRequest(acceptGroupInviteSchema, req, res);
+    if (!request) return;
+
+    // Check if it is invite for correct user
+    const invite = await groupInviteRepository.getById(request.params.invite_id);
+    if (invite.isErr) {
+      handleRepositoryErrors(invite.error, res);
+      return;
+    }
+    if (invite.value.invitedUserId !== req.user.sub) {
+      return res.status(400).send({
+        name: "ValidationError",
+        message: "This invite is not for you",
+      });
+    }
+
+    // Accept invite
+    const result = await groupInviteRepository.accept(request.params.invite_id);
+    if (result.isErr) {
+      handleRepositoryErrors(result.error, res);
+      return;
+    }
+
+    return res.status(200).send();
+  },
+
+  /*
+   * Decline group invite
+   * @param req Request object
+   * @param res Response object
+   */
+  async declineGroupInvite(req: Request, res: Response) {
+    const request = await parseRequest(acceptGroupInviteSchema, req, res);
+    if (!request) return;
+
+    // Check if it is invite for correct user
+    const invite = await groupInviteRepository.getById(request.params.invite_id);
+    if (invite.isErr) {
+      handleRepositoryErrors(invite.error, res);
+      return;
+    }
+    if (invite.value.invitedUserId !== req.user.sub) {
+      return res.status(400).send({
+        name: "ValidationError",
+        message: "This invite is not for you",
+      });
+    }
+
+    // Decline invite
+    const result = await groupInviteRepository.delete(request.params.invite_id);
+    if (result.isErr) {
+      handleRepositoryErrors(result.error, res);
+      return;
+    }
+
+    return res.status(200).send();
+  },
+
+  /*
+   * Get user invites
+   * @param req Request object
+   * @param res Response object
+   */
+  async getUserInvites(req: Request, res: Response) {
+    const result = await groupInviteRepository.getUserInvites(req.user.sub);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;

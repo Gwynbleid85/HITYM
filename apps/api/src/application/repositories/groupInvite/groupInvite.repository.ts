@@ -44,9 +44,9 @@ export const groupInviteRepository = {
 
   // Delete a group invite
   // @param id The ID of the invite to delete
-  async delete(id: string): Promise<Result<void>> {
+  async delete(invite_id: string): Promise<Result<void>> {
     try {
-      await prisma.groupInvite.delete({ where: { id } });
+      await prisma.groupInvite.delete({ where: { id: invite_id } });
       return Result.ok(undefined);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
@@ -55,14 +55,14 @@ export const groupInviteRepository = {
 
   // Accept a group invite
   // @param id The ID of the invite to accept
-  async accept(id: string): Promise<Result<void>> {
+  async accept(invite_id: string): Promise<Result<void>> {
     try {
-      const invite = await prisma.groupInvite.findUnique({ where: { id } });
+      const invite = await prisma.groupInvite.findUnique({ where: { id: invite_id } });
       if (!invite) {
         return Result.err(new NotFoundError());
       }
       await prisma.$transaction([
-        prisma.groupInvite.delete({ where: { id } }),
+        prisma.groupInvite.delete({ where: { id: invite_id } }),
         prisma.group.update({
           where: { id: invite.groupId },
           data: {
@@ -73,6 +73,33 @@ export const groupInviteRepository = {
         }),
       ]);
       return Result.ok(undefined);
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
+
+  // Get a group invite by ID
+  // @param id The ID of the invite
+  // @returns The invite
+  async getById(id: string): Promise<Result<GroupInvite>> {
+    try {
+      const invite = await prisma.groupInvite.findUnique({ where: { id } });
+      if (!invite) {
+        return Result.err(new NotFoundError());
+      }
+      return Result.ok(invite);
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
+
+  async getByUserAndGroup(userId: string, groupId: string): Promise<Result<GroupInvite>> {
+    try {
+      const invite = await prisma.groupInvite.findFirst({ where: { invitedUserId: userId, groupId } });
+      if (!invite) {
+        return Result.err(new NotFoundError());
+      }
+      return Result.ok(invite);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }

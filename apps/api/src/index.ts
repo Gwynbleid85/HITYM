@@ -12,6 +12,7 @@ import userRouter from "./api/rest/routers/user.router";
 import groupRouter from "./api/rest/routers/group.router";
 import placeRouter from "./api/rest/routers/place.router";
 import groupEventRouter from "./api/rest/routers/groupEvent.router";
+import usersRouter from "./api/rest/routers/users.router";
 
 config();
 
@@ -39,7 +40,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Map REST routes
-app.use("/users", userRouter);
+app.use("/user", userRouter);
+app.use("/users", usersRouter);
 app.use("/groups", groupRouter);
 app.use("/places", placeRouter);
 app.use("/group-events", groupEventRouter);

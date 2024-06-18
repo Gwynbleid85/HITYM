@@ -8,7 +8,7 @@ import type { Place, User } from "./types";
 
 /**
  * Error class
- * @typedef {Error} Error
+ * @typedef {object} Error
  * @property {string} name.required - Error name
  * @property {string} message.required - Error message
  */

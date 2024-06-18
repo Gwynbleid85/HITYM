@@ -126,3 +126,16 @@ export type Position = {
   latitude: number;
   longitude: number;
 };
+
+/**
+ * User login result
+ * @typedef {object} UserLoginResult
+ * @property {string} user_id.required - User ID
+ * @property {string} name.required - User name
+ * @property {string} token.required - User token
+ */
+export type UserLoginResult = {
+  user_id: string;
+  name: string;
+  token: string;
+};

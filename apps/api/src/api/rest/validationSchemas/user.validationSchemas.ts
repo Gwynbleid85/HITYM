@@ -27,12 +27,6 @@ export const userLoginDataSchema = z.object({
   }),
 });
 
-export const deleteUserSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-});
-
 /**
  * Update user data
  * @typedef {object} UpdateUserRequest
@@ -40,9 +34,6 @@ export const deleteUserSchema = z.object({
  * @property {string} bio - User bio
  */
 export const updateUserSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
   body: z.object({
     name: z.string().min(2),
     bio: z.string().nullable(),
@@ -55,9 +46,6 @@ export const updateUserSchema = z.object({
  * @property {string} password.required - User password
  */
 export const updatePasswordSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
   body: z.object({
     password: z.string().min(6),
   }),
@@ -69,9 +57,6 @@ export const updatePasswordSchema = z.object({
  * @property {string} profilePicture.required - User profile picture
  */
 export const updateProfilePictureSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
   body: z.object({
     profilePicture: z.string(),
   }),
@@ -84,30 +69,9 @@ export const updateProfilePictureSchema = z.object({
  * @property {string} color.required - Status color
  */
 export const updateUserStatusSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
   body: z.object({
     status: z.string(),
     color: z.string(),
-  }),
-});
-
-export const deleteUserStatusSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-});
-
-export const getOwnedPlacesSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-});
-
-export const getFavoritePlacesSchema = z.object({
-  params: z.object({
-    id: z.string(),
   }),
 });
 
@@ -117,9 +81,6 @@ export const getFavoritePlacesSchema = z.object({
  * @property {string} placeId.required - Place ID
  */
 export const addFavoritePlaceSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
   body: z.object({
     placeId: z.string(),
   }),
@@ -127,13 +88,34 @@ export const addFavoritePlaceSchema = z.object({
 
 export const removeFavoritePlaceSchema = z.object({
   params: z.object({
-    id: z.string(),
     placeId: z.string(),
   }),
 });
 
-export const getUserGroupsSchema = z.object({
+/**
+ * Invite user to group data
+ * @typedef {object} InviteUserToGroupRequest
+ * @property {string} groupId.required - Group ID
+ */
+export const inviteUserToGroupSchema = z.object({
   params: z.object({
     id: z.string(),
+  }),
+  body: z.object({
+    groupId: z.string(),
+  }),
+});
+
+export const acceptGroupInviteSchema = z.object({
+  params: z.object({
+    id: z.string(),
+    invite_id: z.string(),
+  }),
+});
+
+export const declineGroupInviteSchema = z.object({
+  params: z.object({
+    id: z.string(),
+    invite_id: z.string(),
   }),
 });
