@@ -15,7 +15,7 @@ const usersRouter = Router();
 usersRouter.get("/", auth, userController.getAllUsers);
 
 /**
- * POST /users/:id/groups/invite
+ * POST /users/{id}/groups/invite
  * @summary Invite user to group
  * @tags group-invite
  * @security BearerAuth
@@ -28,7 +28,7 @@ usersRouter.get("/", auth, userController.getAllUsers);
 usersRouter.post("/:id/groups/invites", auth, userController.inviteUserToGroup);
 
 /**
- * POST /users/:id/groups/invite/:invite_id/accept
+ * POST /users/{id}/groups/invite/{invite_id}/accept
  * @summary Accept group invite
  * @tags group-invite
  * @security BearerAuth
@@ -42,7 +42,7 @@ usersRouter.post("/:id/groups/invites", auth, userController.inviteUserToGroup);
 usersRouter.post("/:id/groups/invites/:invite_id/accept", auth, userController.acceptGroupInvite);
 
 /**
- * DELETE /users/:id/groups/invite/:invite_id
+ * DELETE /users/{id}/groups/invite/{invite_id}
  * @summary Decline group invite
  * @tags group-invite
  * @security BearerAuth

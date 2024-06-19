@@ -18,7 +18,7 @@ const groupEventRouter = Router();
 groupEventRouter.post("/", auth, groupEventController.createGroupEvent);
 
 /**
- * GET /group-events/:id
+ * GET /group-events/{id}
  * @summary Get group event by ID
  * @tags group-events
  * @security BearerAuth
@@ -30,7 +30,7 @@ groupEventRouter.post("/", auth, groupEventController.createGroupEvent);
 groupEventRouter.get("/:id", auth, groupEventController.getGroupEventById);
 
 /**
- * PUT /group-events/:id
+ * PUT /group-events/{id}
  * @summary Update group event
  * @tags group-events
  * @security BearerAuth
@@ -44,12 +44,12 @@ groupEventRouter.get("/:id", auth, groupEventController.getGroupEventById);
 groupEventRouter.put("/:id", auth, groupEventController.updateGroupEvent);
 
 /**
- * PUT /group-events/:id/image
+ * PUT /group-events/{id}/image
  * @summary Update group event image
  * @tags group-events
  * @security BearerAuth
  * @param {string} id.path.required - Event ID
- * @param {UpdateImageRequest} request.body.required - Image URL
+ * @param {UpdateImageWithIdRequest} request.body.required - New group event image - multipart/form-data
  * @return {GroupEvent} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 403 - Forbidden response - application/json
@@ -58,7 +58,7 @@ groupEventRouter.put("/:id", auth, groupEventController.updateGroupEvent);
 groupEventRouter.put("/:id/image", auth, uploadSingleFile("eventImages"), groupEventController.updateGroupEventImage);
 
 /**
- * DELETE /group-events/:id
+ * DELETE /group-events/{id}
  * @summary Delete group event
  * @tags group-events
  * @security BearerAuth

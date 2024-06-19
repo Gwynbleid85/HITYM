@@ -218,10 +218,16 @@ export const groupRepository = {
   // @returns True if the user is a member
   async isMember(groupId: string, userId: string): Promise<boolean> {
     try {
-      const group = await prisma.group.findUnique({ where: { id: groupId }, include: { users: true } });
+      const group = await prisma.group.findUnique({
+        where: { id: groupId },
+        include: { users: { select: { id: true } } },
+      });
       if (!group) {
+        console.log("Group not found");
+
         return false;
       }
+      console.log(`Group found [${group.users.some((user) => user.id === userId)}]`);
       return group.users.some((user) => user.id === userId);
     } catch (e) {
       return false;

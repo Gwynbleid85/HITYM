@@ -38,7 +38,7 @@ userRouter.post("/login", userController.loginUser);
 userRouter.get("/test/authorization", auth, userController.testAuthorization);
 
 /**
- * DELETE /user/:id
+ * DELETE /user
  * @summary Delete user
  * @tags user
  * @security BearerAuth
@@ -49,7 +49,7 @@ userRouter.get("/test/authorization", auth, userController.testAuthorization);
 userRouter.delete("/", auth, userController.deleteUser);
 
 /**
- * PUT /user/:id
+ * PUT /user
  * @summary Update user
  * @tags user
  * @security BearerAuth
@@ -145,7 +145,7 @@ userRouter.get("/places/favorites", auth, userController.getFavoritePlaces);
 userRouter.post("/places/favorites", auth, userController.addFavoritePlace);
 
 /**
- * DELETE /user/places/favorites/:placeId
+ * DELETE /user/places/favorites/{placeId}
  * @summary Remove favorite place
  * @tags user
  * @security BearerAuth

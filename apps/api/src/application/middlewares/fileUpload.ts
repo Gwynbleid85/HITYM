@@ -82,7 +82,7 @@ const storage = multer.diskStorage({
     }
 
     const newFileName = `${req.imageId}.${mimeToExtension(file.mimetype)}`;
-    req.finalImageName = newFileName;
+    req.finalImageName = `/${req.imageType}/${newFileName}`;
 
     cb(null, newFileName);
   },

@@ -41,20 +41,6 @@ export const updatePlaceSchema = z.object({
   }),
 });
 
-/**
- * Update place image
- * @typedef {object} UpdateImageRequest
- * @property {string} imageUrl - Image URL
- */
-export const updatePlaceImageSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    imageUrl: z.string(),
-  }),
-});
-
 export const deletePlaceSchema = z.object({
   params: z.object({
     id: z.string(),

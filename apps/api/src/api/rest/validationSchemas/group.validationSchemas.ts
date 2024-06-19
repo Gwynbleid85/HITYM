@@ -41,20 +41,6 @@ export const deleteGroupSchema = z.object({
   }),
 });
 
-/**
- * Update group image
- * @typedef {object} UpdateImageRequest
- * @property {string} imageUrl - Image URL
- */
-export const updateImageSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    imageUrl: z.string(),
-  }),
-});
-
 export const removeUserSchema = z.object({
   params: z.object({
     id: z.string(),

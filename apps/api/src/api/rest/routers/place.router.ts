@@ -29,7 +29,7 @@ placeRouter.post("/", auth, placeController.createPlace);
 placeRouter.get("/", auth, placeController.getAllPlaces);
 
 /**
- * PUT /places/:id
+ * PUT /places/{id}
  * @summary Update a place
  * @tags place
  * @security BearerAuth
@@ -43,12 +43,12 @@ placeRouter.get("/", auth, placeController.getAllPlaces);
 placeRouter.put("/:id", auth, placeController.updatePlace);
 
 /**
- * PUT /places/:id/image
+ * PUT /places/{id}/image
  * @summary Update place image
  * @tags place
  * @security BearerAuth
- * @param {UpdateImageRequest} request.body.required - Image data
  * @param {string} id.path.required - Place ID
+ * @param {UpdateImageWithIdRequest} request.body.required - New place image - multipart/form-data
  * @return {Place} 200 - Place updated
  * @return {Error} 400 - Bad request
  * @return {Error} 401 - Unauthorized
@@ -57,7 +57,7 @@ placeRouter.put("/:id", auth, placeController.updatePlace);
 placeRouter.put("/:id/image", auth, uploadSingleFile("placeImages"), placeController.updatePlaceImage);
 
 /**
- * DELETE /places/:id
+ * DELETE /places/{id}
  * @summary Delete a place
  * @tags place
  * @security BearerAuth

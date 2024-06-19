@@ -13,11 +13,12 @@ export const createGroupEventSchema = z.object({
   body: z.object({
     name: z.string().min(1).max(255),
     description: z.string().min(1).max(255).nullable(),
-    date: z.date(),
+    date: z.coerce.date(),
     groupId: z.string(),
     placeId: z.string(),
   }),
 });
+type XXX = z.infer<typeof createGroupEventSchema>;
 
 export const getGroupEventByIdSchema = z.object({
   params: z.object({
@@ -48,19 +49,5 @@ export const updateGroupEventSchema = z.object({
 export const deleteGroupEventSchema = z.object({
   params: z.object({
     id: z.string(),
-  }),
-});
-
-/**
- * Update group event image request
- * @typedef {object} UpdateImageRequest
- * @property {string} imageUrl - Image URL
- */
-export const updateImageSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    imageUrl: z.string(),
   }),
 });

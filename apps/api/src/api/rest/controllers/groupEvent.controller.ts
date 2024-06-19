@@ -5,7 +5,6 @@ import {
   deleteGroupEventSchema,
   getGroupEventByIdSchema,
   updateGroupEventSchema,
-  updateImageSchema,
 } from "../validationSchemas/groupEvent.ValidationSchemas";
 import { groupEventRepository } from "../../../application/repositories/groupEvent/groupEvent.repository";
 import { groupRepository } from "../../../application/repositories/group/group.repository";
@@ -22,7 +21,7 @@ export const groupEventController = {
 
     // Check if the executer is a member of the group
     const isMember = await groupRepository.isMember(request.body.groupId, req.user.sub);
-    if (isMember) {
+    if (!isMember) {
       return res.status(403).send();
     }
 
