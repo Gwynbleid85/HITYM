@@ -3,14 +3,21 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { ButtonLoading } from "../ui/button-loading";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
 
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { UserRegistrationRequest } from "@/types/Api";
 import { userRegistrationDataSchema } from "@/validationSchemas/user.validationSchemas";
+import { useUserRegistrate } from "@/hooks/useUsers";
+import { useNavigate } from "react-router-dom";
 
 export function SignUpForm() {
+  const navigate = useNavigate();
+  const { mutateAsync: createUser } = useUserRegistrate();
+  const { toast } = useToast();
+
   const form = useForm<UserRegistrationRequest>({
     defaultValues: {
       email: "",
@@ -20,9 +27,22 @@ export function SignUpForm() {
     resolver: zodResolver(userRegistrationDataSchema),
   });
 
-  function onSubmit(values: UserRegistrationRequest) {
-    console.log(values);
-  }
+  const onSubmit = async (values: UserRegistrationRequest) => {
+    try {
+      const result = await createUser(values);
+      console.log(result);
+      toast({
+        title: "Account successfully created.",
+      });
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Card className="w-full max-w-sm bg-white bg-opacity-95 rounded-xl m-5 shadow-xl">
@@ -40,7 +60,7 @@ export function SignUpForm() {
                 <FormItem>
                   <FormLabel className="font-medium">Name</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

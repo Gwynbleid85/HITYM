@@ -3,14 +3,21 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { ButtonLoading } from "../ui/button-loading";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
 
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { UserLoginRequest } from "@/types/Api";
 import { userLoginDataSchema } from "@/validationSchemas/user.validationSchemas";
+import { useUserLogin } from "@/hooks/useUsers";
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm() {
+  const navigate = useNavigate();
+  const { mutateAsync: loginUser } = useUserLogin();
+  const { toast } = useToast();
+
   const form = useForm<UserLoginRequest>({
     defaultValues: {
       email: "",
@@ -19,9 +26,22 @@ export function LoginForm() {
     resolver: zodResolver(userLoginDataSchema),
   });
 
-  function onSubmit(values: UserLoginRequest) {
-    console.log(values);
-  }
+  const onSubmit = async (values: UserLoginRequest) => {
+    try {
+      const result = await loginUser(values);
+      console.log(result);
+      toast({
+        title: "Logged in",
+      });
+      navigate("/home");
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Something went wrong.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Card className="w-full max-w-sm bg-white bg-opacity-95 rounded-xl m-5 shadow-xl">
