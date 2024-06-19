@@ -8,7 +8,6 @@ import {
   getHistoricalEventsSchema,
   removeUserSchema,
   updateGroupSchema,
-  updateImageSchema,
 } from "../validationSchemas/group.validationSchemas";
 
 export const groupController = {

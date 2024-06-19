@@ -59,7 +59,6 @@ export const handleRepositoryErrors = (e: Error, res: Response) => {
       cause: e.cause,
     });
   } else if (e instanceof InternalError) {
-    console.log("DB error: ", e);
     res.status(500).send({
       name: e.name || "InternalError",
       message: e.message || "Something went wrong on our side.",
@@ -72,8 +71,6 @@ export const handleRepositoryErrors = (e: Error, res: Response) => {
       cause: e.cause,
     });
   } else {
-    console.log("DB error: ", e);
-
     res.status(500).send({
       name: "UnknownError",
       message: "Something went wrong.",

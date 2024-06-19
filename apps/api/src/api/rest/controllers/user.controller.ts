@@ -56,7 +56,6 @@ export const userController = {
       handleRepositoryErrors(savedUser.error, res);
       return;
     }
-    console.log(savedUser.value as User);
     res.status(201).json(savedUser.value).send();
   },
 

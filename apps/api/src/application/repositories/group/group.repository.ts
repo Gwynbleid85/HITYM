@@ -223,11 +223,8 @@ export const groupRepository = {
         include: { users: { select: { id: true } } },
       });
       if (!group) {
-        console.log("Group not found");
-
         return false;
       }
-      console.log(`Group found [${group.users.some((user) => user.id === userId)}]`);
       return group.users.some((user) => user.id === userId);
     } catch (e) {
       return false;

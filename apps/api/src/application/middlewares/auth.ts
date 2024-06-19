@@ -23,15 +23,17 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     res.status(401).send({ error: "Authentication failed." });
     return;
   }
-
-  const user = jwt.verify(token, process.env.JWT_SECRET || "") as JWTUser;
-
-  if (!user) {
+  try {
+    const user = jwt.verify(token, process.env.JWT_SECRET || "") as JWTUser;
+    if (!user) {
+      res.status(401).send({ error: "Authorization failed." });
+      return;
+    }
+    req.user = user;
+    next();
+  } catch (e) {
     res.status(401).send({ error: "Authorization failed." });
   }
-
-  req.user = user;
-  next();
 };
 
 export default auth;
