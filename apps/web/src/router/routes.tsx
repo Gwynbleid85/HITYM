@@ -3,10 +3,15 @@ import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
 import MainLayout from "@/layouts/MainLayout";
 import Home from "@/pages/Home";
+import Groups from "@/pages/Groups";
 
 // TODO Not found page
 
 const mainLayoutRoutes: RouteObject[] = [
+  {
+    index: true,
+    element: <Navigate to="./login" relative="path" />,
+  }, //TODO check if logged in
   {
     path: "login",
     Component: Login,
@@ -18,6 +23,10 @@ const mainLayoutRoutes: RouteObject[] = [
   {
     path: "home",
     Component: Home,
+  },
+  {
+    path: "groups",
+    Component: Groups,
   },
 ];
 

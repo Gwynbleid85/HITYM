@@ -40,7 +40,7 @@ export function Sidebar() {
         <div className="h-full">
           <div className="mt-5 flex flex-col w-full gap-1">
             {navigationItems.links.map((link, idx) => (
-              <SheetClose asChild>
+              <SheetClose asChild key={idx}>
                 <Link to={link.href}>
                   <SidebarButton
                     variant={location.pathname === link.href ? "secondary" : "ghost"}
