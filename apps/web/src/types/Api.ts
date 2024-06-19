@@ -31,12 +31,6 @@ export interface UpdateImageRequest {
   imageUrl?: string;
 }
 
-/** Add user to group */
-export interface AddUserRequest {
-  /** User ID */
-  userId?: string;
-}
-
 /** Create new group event request */
 export interface CreateGroupEventRequest {
   /** Event name */
@@ -141,6 +135,12 @@ export interface UpdateUserStatusRequest {
 export interface AddFavoritePlaceRequest {
   /** Place ID */
   placeId: string;
+}
+
+/** Invite user to group data */
+export interface InviteUserToGroupRequest {
+  /** Group ID */
+  groupId: string;
 }
 
 /** Group with users and events */
@@ -282,8 +282,23 @@ export interface Position {
   longitude: number;
 }
 
+/** User login result */
+export interface UserLoginResult {
+  /** User ID */
+  user_id: string;
+  /** User name */
+  name: string;
+  /** User token */
+  token: string;
+}
+
 /** Error class */
-export type Error = error;
+export interface Error {
+  /** Error name */
+  name: string;
+  /** Error message */
+  message: string;
+}
 
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
@@ -392,7 +407,7 @@ export class HttpClient<SecurityDataType = unknown> {
             ? property
             : typeof property === "object" && property !== null
               ? JSON.stringify(property)
-              : `${property}`,
+              : `${property}`
         );
         return formData;
       }, new FormData()),
@@ -622,26 +637,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group
-     * @name IdUsersCreate
-     * @summary Add user to group
-     * @request POST:/groups/:id/users
-     * @secure
-     */
-    idUsersCreate: (id: string, data: AddUserRequest, params: RequestParams = {}) =>
-      this.request<Group, Error>({
-        path: `/groups/${id}/users`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags group
      * @name IdUsersUserIdDelete
      * @summary Remove user from group
      * @request DELETE:/groups/:id/users/:userId
@@ -666,7 +661,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     idEventsHistoricalList: (id: string, params: RequestParams = {}) =>
-      this.request<any[], Error>({
+      this.request<GroupEvent[], Error>({
         path: `/groups/${id}/events/historical`,
         method: "GET",
         secure: true,
@@ -868,18 +863,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
-  users = {
+  user = {
     /**
      * No description
      *
      * @tags user
      * @name RegistrationCreate
      * @summary Create new user
-     * @request POST:/users/registration
+     * @request POST:/user/registration
      */
     registrationCreate: (data: UserRegistrationRequest, params: RequestParams = {}) =>
       this.request<User, Error>({
-        path: `/users/registration`,
+        path: `/user/registration`,
         method: "POST",
         body: data,
         type: ContentType.Json,
@@ -893,11 +888,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @tags user
      * @name LoginCreate
      * @summary Login user
-     * @request POST:/users/login
+     * @request POST:/user/login
      */
     loginCreate: (data: UserLoginRequest, params: RequestParams = {}) =>
-      this.request<User, Error>({
-        path: `/users/login`,
+      this.request<UserLoginResult, Error>({
+        path: `/user/login`,
         method: "POST",
         body: data,
         type: ContentType.Json,
@@ -911,12 +906,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @tags test
      * @name TestAuthorizationList
      * @summary Test authorization
-     * @request GET:/users/test/authorization
+     * @request GET:/user/test/authorization
      * @secure
      */
     testAuthorizationList: (params: RequestParams = {}) =>
       this.request<string, Error>({
-        path: `/users/test/authorization`,
+        path: `/user/test/authorization`,
         method: "GET",
         secure: true,
         format: "json",
@@ -927,14 +922,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags user
-     * @name DeleteUsers
+     * @name DeleteUser
      * @summary Delete user
-     * @request DELETE:/users/:id
+     * @request DELETE:/user/:id
      * @secure
      */
-    deleteUsers: (id: string, params: RequestParams = {}) =>
+    deleteUser: (id: string, params: RequestParams = {}) =>
       this.request<string, Error>({
-        path: `/users/${id}`,
+        path: `/user/${id}`,
         method: "DELETE",
         secure: true,
         format: "json",
@@ -945,14 +940,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags user
-     * @name PutUsers
+     * @name PutUser
      * @summary Update user
-     * @request PUT:/users/:id
+     * @request PUT:/user/:id
      * @secure
      */
-    putUsers: (id: string, data: UpdateUserRequest, params: RequestParams = {}) =>
+    putUser: (id: string, data: UpdateUserRequest, params: RequestParams = {}) =>
       this.request<User, Error>({
-        path: `/users/${id}`,
+        path: `/user/${id}`,
         method: "PUT",
         body: data,
         secure: true,
@@ -961,6 +956,195 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
 
+    /**
+     * No description
+     *
+     * @tags user
+     * @name PasswordUpdate
+     * @summary Update user password
+     * @request PUT:/user/password
+     * @secure
+     */
+    passwordUpdate: (data: UpdatePasswordRequest, params: RequestParams = {}) =>
+      this.request<User, Error>({
+        path: `/user/password`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name ProfilePictureUpdate
+     * @summary Update user profile picture
+     * @request PUT:/user/profilePicture
+     * @secure
+     */
+    profilePictureUpdate: (data: UpdateProfilePictureRequest, params: RequestParams = {}) =>
+      this.request<User, Error>({
+        path: `/user/profilePicture`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name UserStatusCreate
+     * @summary Update user status
+     * @request POST:/user/user-status
+     * @secure
+     */
+    userStatusCreate: (data: UpdateUserStatusRequest, params: RequestParams = {}) =>
+      this.request<User, Error>({
+        path: `/user/user-status`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name UserStatusDelete
+     * @summary Delete user status
+     * @request DELETE:/user/user-status
+     * @secure
+     */
+    userStatusDelete: (params: RequestParams = {}) =>
+      this.request<string, Error>({
+        path: `/user/user-status`,
+        method: "DELETE",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name PlacesList
+     * @summary Get all places created by user
+     * @request GET:/user/places
+     * @secure
+     */
+    placesList: (params: RequestParams = {}) =>
+      this.request<Place[], Error>({
+        path: `/user/places`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name PlacesFavoritesList
+     * @summary Get all favorite places of user
+     * @request GET:/user/places/favorites
+     * @secure
+     */
+    placesFavoritesList: (params: RequestParams = {}) =>
+      this.request<Place[], Error>({
+        path: `/user/places/favorites`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name PlacesFavoritesCreate
+     * @summary Add favorite place
+     * @request POST:/user/places/favorites
+     * @secure
+     */
+    placesFavoritesCreate: (data: AddFavoritePlaceRequest, params: RequestParams = {}) =>
+      this.request<User, Error>({
+        path: `/user/places/favorites`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name PlacesFavoritesPlaceIdDelete
+     * @summary Remove favorite place
+     * @request DELETE:/user/places/favorites/:placeId
+     * @secure
+     */
+    placesFavoritesPlaceIdDelete: (placeId: string, params: RequestParams = {}) =>
+      this.request<User, Error>({
+        path: `/user/places/favorites/${placeId}`,
+        method: "DELETE",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags user
+     * @name GroupsList
+     * @summary Get all groups user is member of
+     * @request GET:/user/groups
+     * @secure
+     */
+    groupsList: (params: RequestParams = {}) =>
+      this.request<Group[], Error>({
+        path: `/user/groups`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags group-invite
+     * @name GroupsInvitesList
+     * @summary Get user invites
+     * @request GET:/user/groups/invites
+     * @secure
+     */
+    groupsInvitesList: (params: RequestParams = {}) =>
+      this.request<any[], Error>({
+        path: `/user/groups/invites`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+  };
+  users = {
     /**
      * No description
      *
@@ -982,55 +1166,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags user
-     * @name IdPasswordUpdate
-     * @summary Update user password
-     * @request PUT:/users/:id/password
+     * @tags group-invite
+     * @name IdGroupsInviteCreate
+     * @summary Invite user to group
+     * @request POST:/users/:id/groups/invite
      * @secure
      */
-    idPasswordUpdate: (id: string, data: UpdatePasswordRequest, params: RequestParams = {}) =>
-      this.request<User, Error>({
-        path: `/users/${id}/password`,
-        method: "PUT",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags user
-     * @name IdProfilePictureUpdate
-     * @summary Update user profile picture
-     * @request PUT:/users/:id/profilePicture
-     * @secure
-     */
-    idProfilePictureUpdate: (id: string, data: UpdateProfilePictureRequest, params: RequestParams = {}) =>
-      this.request<User, Error>({
-        path: `/users/${id}/profilePicture`,
-        method: "PUT",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags user
-     * @name IdUserStatusCreate
-     * @summary Update user status
-     * @request POST:/users/:id/user-status
-     * @secure
-     */
-    idUserStatusCreate: (id: string, data: UpdateUserStatusRequest, params: RequestParams = {}) =>
-      this.request<User, Error>({
-        path: `/users/${id}/user-status`,
+    idGroupsInviteCreate: (id: string, data: InviteUserToGroupRequest, params: RequestParams = {}) =>
+      this.request<any, Error>({
+        path: `/users/${id}/groups/invite`,
         method: "POST",
         body: data,
         secure: true,
@@ -1042,69 +1186,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags user
-     * @name IdUserStatusDelete
-     * @summary Delete user status
-     * @request DELETE:/users/:id/user-status
+     * @tags group-invite
+     * @name IdGroupsInviteInviteIdAcceptCreate
+     * @summary Accept group invite
+     * @request POST:/users/:id/groups/invite/:invite_id/accept
      * @secure
      */
-    idUserStatusDelete: (id: string, params: RequestParams = {}) =>
-      this.request<string, Error>({
-        path: `/users/${id}/user-status`,
-        method: "DELETE",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags user
-     * @name IdPlacesList
-     * @summary Get all places created by user
-     * @request GET:/users/:id/places
-     * @secure
-     */
-    idPlacesList: (id: string, params: RequestParams = {}) =>
-      this.request<Place[], Error>({
-        path: `/users/${id}/places`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags user
-     * @name IdPlacesFavoritesList
-     * @summary Get all favorite places of user
-     * @request GET:/users/:id/places/favorites
-     * @secure
-     */
-    idPlacesFavoritesList: (id: string, params: RequestParams = {}) =>
-      this.request<Place[], Error>({
-        path: `/users/${id}/places/favorites`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags user
-     * @name IdPlacesFavoritesCreate
-     * @summary Add favorite place
-     * @request POST:/users/:id/places/favorites
-     * @secure
-     */
-    idPlacesFavoritesCreate: (id: string, data: AddFavoritePlaceRequest, params: RequestParams = {}) =>
-      this.request<User, Error>({
-        path: `/users/${id}/places/favorites`,
+    idGroupsInviteInviteIdAcceptCreate: (id: string, inviteId: string, data: any, params: RequestParams = {}) =>
+      this.request<any, Error>({
+        path: `/users/${id}/groups/invite/${inviteId}/accept`,
         method: "POST",
         body: data,
         secure: true,
@@ -1116,35 +1206,19 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags user
-     * @name IdPlacesFavoritesPlaceIdDelete
-     * @summary Remove favorite place
-     * @request DELETE:/users/:id/places/favorites/:placeId
+     * @tags group-invite
+     * @name IdGroupsInviteInviteIdDelete
+     * @summary Decline group invite
+     * @request DELETE:/users/:id/groups/invite/:invite_id
      * @secure
      */
-    idPlacesFavoritesPlaceIdDelete: (id: string, placeId: string, params: RequestParams = {}) =>
-      this.request<User, Error>({
-        path: `/users/${id}/places/favorites/${placeId}`,
+    idGroupsInviteInviteIdDelete: (id: string, inviteId: string, data: any, params: RequestParams = {}) =>
+      this.request<any, Error>({
+        path: `/users/${id}/groups/invite/${inviteId}`,
         method: "DELETE",
+        body: data,
         secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags user
-     * @name IdGroupsList
-     * @summary Get all groups user is member of
-     * @request GET:/users/:id/groups
-     * @secure
-     */
-    idGroupsList: (id: string, params: RequestParams = {}) =>
-      this.request<Group[], Error>({
-        path: `/users/${id}/groups`,
-        method: "GET",
-        secure: true,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
