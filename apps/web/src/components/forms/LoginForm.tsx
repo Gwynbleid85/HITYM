@@ -44,7 +44,7 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-sm bg-white bg-opacity-95 rounded-xl m-5 shadow-xl">
+    <Card className="w-full max-w-sm bg-background/95 rounded-xl m-5 shadow-xl">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardHeader className="items-center justify-center">

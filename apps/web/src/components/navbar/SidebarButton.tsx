@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 interface SidebarButtonProps {
   icon?: LucideIcon;
   label: string;
-  variant: "ghost" | "secondary";
+  variant: "ghost" | "default";
 }
 
 function SidebarButton({ icon: Icon, label, variant }: SidebarButtonProps) {

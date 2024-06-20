@@ -29,11 +29,11 @@ export function Sidebar() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button size="icon" variant="outline" className="shadow-sm h-14 w-14 bg-opacity-60">
+        <Button size="icon" variant="outline" className="shadow-sm h-12 w-12 bg-opacity-60">
           <Menu size={30} />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="px-3 py-4">
+      <SheetContent side="left" className="px-3 py-4 rounded-r-lg bg-background/95">
         <SheetHeader className="flex flex-row justify-between items-center space-y-0">
           <span className="text-lg font-semibold text-foreground mx-3">HITYM</span>
         </SheetHeader>
@@ -43,7 +43,7 @@ export function Sidebar() {
               <SheetClose asChild key={idx}>
                 <Link to={link.href}>
                   <SidebarButton
-                    variant={location.pathname === link.href ? "secondary" : "ghost"}
+                    variant={location.pathname === link.href ? "default" : "ghost"}
                     icon={link.icon}
                     label={link.label}
                   />
