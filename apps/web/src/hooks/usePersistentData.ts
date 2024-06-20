@@ -45,10 +45,14 @@ const usePersistentData = () => {
     setAppData({ ...APP_DATA_DEFAULT });
   }, [setAppData]);
 
+  // Function which returns if the user is logged in or not
+  const isLoggedIn = () => authData.token !== "";
+
   return {
     authData,
     updateAuthData,
     deleteAuthData,
+    isLoggedIn,
     appData,
     updateAppData,
     resetAppData,
