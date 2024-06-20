@@ -9,6 +9,24 @@
  * ---------------------------------------------------------------
  */
 
+/** Update/upload image */
+export interface UpdateImageRequest {
+  /**
+   * New image to upload
+   * @format binary
+   */
+  image: File;
+}
+
+/** Update image with ID */
+export interface UpdateImageWithIdRequest {
+  /**
+   * New image to upload
+   * @format binary
+   */
+  image: File;
+}
+
 /** Create a new group */
 export interface CreateGroupRequest {
   /** Group name */
@@ -23,12 +41,6 @@ export interface UpdateGroupRequest {
   name?: string;
   /** Group description */
   description?: string;
-}
-
-/** Update place image */
-export interface UpdateImageRequest {
-  /** Image URL */
-  imageUrl?: string;
 }
 
 /** Create new group event request */
@@ -115,12 +127,6 @@ export interface UpdateUserRequest {
 export interface UpdatePasswordRequest {
   /** User password */
   password: string;
-}
-
-/** Update user profile picture data */
-export interface UpdateProfilePictureRequest {
-  /** User profile picture */
-  profilePicture: string;
 }
 
 /** Update user status data */
@@ -407,7 +413,7 @@ export class HttpClient<SecurityDataType = unknown> {
             ? property
             : typeof property === "object" && property !== null
               ? JSON.stringify(property)
-              : `${property}`
+              : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -543,12 +549,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group
-     * @name GetGroups
+     * @name GroupsDetail
      * @summary Get group by ID
-     * @request GET:/groups/:id
+     * @request GET:/groups/{id}
      * @secure
      */
-    getGroups: (id: string, params: RequestParams = {}) =>
+    groupsDetail: (id: string, params: RequestParams = {}) =>
       this.request<Group, Error>({
         path: `/groups/${id}`,
         method: "GET",
@@ -561,12 +567,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group
-     * @name PutGroups
+     * @name GroupsUpdate
      * @summary Update a group
-     * @request PUT:/groups/:id
+     * @request PUT:/groups/{id}
      * @secure
      */
-    putGroups: (id: string, data: UpdateGroupRequest, params: RequestParams = {}) =>
+    groupsUpdate: (id: string, data: UpdateGroupRequest, params: RequestParams = {}) =>
       this.request<Group, Error>({
         path: `/groups/${id}`,
         method: "PUT",
@@ -581,12 +587,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group
-     * @name DeleteGroups
+     * @name GroupsDelete
      * @summary Delete a group
-     * @request DELETE:/groups/:id
+     * @request DELETE:/groups/{id}
      * @secure
      */
-    deleteGroups: (id: string, params: RequestParams = {}) =>
+    groupsDelete: (id: string, params: RequestParams = {}) =>
       this.request<string, Error>({
         path: `/groups/${id}`,
         method: "DELETE",
@@ -599,12 +605,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group
-     * @name IdExtendedList
+     * @name ExtendedDetail
      * @summary Get group by ID with users and events
-     * @request GET:/groups/:id/extended
+     * @request GET:/groups/{id}/extended
      * @secure
      */
-    idExtendedList: (id: string, params: RequestParams = {}) =>
+    extendedDetail: (id: string, params: RequestParams = {}) =>
       this.request<GroupExtended, Error>({
         path: `/groups/${id}/extended`,
         method: "GET",
@@ -617,18 +623,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group
-     * @name IdImageUpdate
+     * @name ImageUpdate
      * @summary Update group image
-     * @request PUT:/groups/:id/image
+     * @request PUT:/groups/{id}/image
      * @secure
      */
-    idImageUpdate: (id: string, data: UpdateImageRequest, params: RequestParams = {}) =>
+    imageUpdate: (id: string, data: UpdateImageWithIdRequest, params: RequestParams = {}) =>
       this.request<Group, Error>({
         path: `/groups/${id}/image`,
         method: "PUT",
         body: data,
         secure: true,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),
@@ -637,12 +643,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group
-     * @name IdUsersUserIdDelete
+     * @name UsersDelete
      * @summary Remove user from group
-     * @request DELETE:/groups/:id/users/:userId
+     * @request DELETE:/groups/{id}/users/{userId}
      * @secure
      */
-    idUsersUserIdDelete: (id: string, userId: string, params: RequestParams = {}) =>
+    usersDelete: (id: string, userId: string, params: RequestParams = {}) =>
       this.request<Group, Error>({
         path: `/groups/${id}/users/${userId}`,
         method: "DELETE",
@@ -655,12 +661,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group
-     * @name IdEventsHistoricalList
+     * @name EventsHistoricalDetail
      * @summary Get group events history
-     * @request GET:/groups/:id/events/historical
+     * @request GET:/groups/{id}/events/historical
      * @secure
      */
-    idEventsHistoricalList: (id: string, params: RequestParams = {}) =>
+    eventsHistoricalDetail: (id: string, params: RequestParams = {}) =>
       this.request<GroupEvent[], Error>({
         path: `/groups/${id}/events/historical`,
         method: "GET",
@@ -694,12 +700,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group-events
-     * @name GetGroupEvents
+     * @name GroupEventsDetail
      * @summary Get group event by ID
-     * @request GET:/group-events/:id
+     * @request GET:/group-events/{id}
      * @secure
      */
-    getGroupEvents: (id: string, params: RequestParams = {}) =>
+    groupEventsDetail: (id: string, params: RequestParams = {}) =>
       this.request<GroupEvent, Error>({
         path: `/group-events/${id}`,
         method: "GET",
@@ -712,12 +718,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group-events
-     * @name PutGroupEvents
+     * @name GroupEventsUpdate
      * @summary Update group event
-     * @request PUT:/group-events/:id
+     * @request PUT:/group-events/{id}
      * @secure
      */
-    putGroupEvents: (id: string, data: UpdateGroupEventRequest, params: RequestParams = {}) =>
+    groupEventsUpdate: (id: string, data: UpdateGroupEventRequest, params: RequestParams = {}) =>
       this.request<GroupEvent, Error>({
         path: `/group-events/${id}`,
         method: "PUT",
@@ -732,12 +738,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group-events
-     * @name DeleteGroupEvents
+     * @name GroupEventsDelete
      * @summary Delete group event
-     * @request DELETE:/group-events/:id
+     * @request DELETE:/group-events/{id}
      * @secure
      */
-    deleteGroupEvents: (id: string, params: RequestParams = {}) =>
+    groupEventsDelete: (id: string, params: RequestParams = {}) =>
       this.request<string, Error>({
         path: `/group-events/${id}`,
         method: "DELETE",
@@ -750,18 +756,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group-events
-     * @name IdImageUpdate
+     * @name ImageUpdate
      * @summary Update group event image
-     * @request PUT:/group-events/:id/image
+     * @request PUT:/group-events/{id}/image
      * @secure
      */
-    idImageUpdate: (id: string, data: UpdateImageRequest, params: RequestParams = {}) =>
+    imageUpdate: (id: string, data: UpdateImageWithIdRequest, params: RequestParams = {}) =>
       this.request<GroupEvent, Error>({
         path: `/group-events/${id}/image`,
         method: "PUT",
         body: data,
         secure: true,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),
@@ -809,12 +815,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags place
-     * @name PutPlaces
+     * @name PlacesUpdate
      * @summary Update a place
-     * @request PUT:/places/:id
+     * @request PUT:/places/{id}
      * @secure
      */
-    putPlaces: (id: string, data: UpdatePlaceRequest, params: RequestParams = {}) =>
+    placesUpdate: (id: string, data: UpdatePlaceRequest, params: RequestParams = {}) =>
       this.request<Place, Error>({
         path: `/places/${id}`,
         method: "PUT",
@@ -829,12 +835,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags place
-     * @name DeletePlaces
+     * @name PlacesDelete
      * @summary Delete a place
-     * @request DELETE:/places/:id
+     * @request DELETE:/places/{id}
      * @secure
      */
-    deletePlaces: (id: string, params: RequestParams = {}) =>
+    placesDelete: (id: string, params: RequestParams = {}) =>
       this.request<any, Error>({
         path: `/places/${id}`,
         method: "DELETE",
@@ -847,18 +853,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags place
-     * @name IdImageUpdate
+     * @name ImageUpdate
      * @summary Update place image
-     * @request PUT:/places/:id/image
+     * @request PUT:/places/{id}/image
      * @secure
      */
-    idImageUpdate: (id: string, data: UpdateImageRequest, params: RequestParams = {}) =>
+    imageUpdate: (id: string, data: UpdateImageWithIdRequest, params: RequestParams = {}) =>
       this.request<Place, Error>({
         path: `/places/${id}/image`,
         method: "PUT",
         body: data,
         secure: true,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),
@@ -922,14 +928,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags user
-     * @name DeleteUser
+     * @name UserDelete
      * @summary Delete user
-     * @request DELETE:/user/:id
+     * @request DELETE:/user
      * @secure
      */
-    deleteUser: (id: string, params: RequestParams = {}) =>
+    userDelete: (params: RequestParams = {}) =>
       this.request<string, Error>({
-        path: `/user/${id}`,
+        path: `/user`,
         method: "DELETE",
         secure: true,
         format: "json",
@@ -940,14 +946,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags user
-     * @name PutUser
+     * @name UserUpdate
      * @summary Update user
-     * @request PUT:/user/:id
+     * @request PUT:/user
      * @secure
      */
-    putUser: (id: string, data: UpdateUserRequest, params: RequestParams = {}) =>
+    userUpdate: (data: UpdateUserRequest, params: RequestParams = {}) =>
       this.request<User, Error>({
-        path: `/user/${id}`,
+        path: `/user`,
         method: "PUT",
         body: data,
         secure: true,
@@ -985,13 +991,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/user/profilePicture
      * @secure
      */
-    profilePictureUpdate: (data: UpdateProfilePictureRequest, params: RequestParams = {}) =>
+    profilePictureUpdate: (data: UpdateImageRequest, params: RequestParams = {}) =>
       this.request<User, Error>({
         path: `/user/profilePicture`,
         method: "PUT",
         body: data,
         secure: true,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),
@@ -1094,12 +1100,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags user
-     * @name PlacesFavoritesPlaceIdDelete
+     * @name PlacesFavoritesDelete
      * @summary Remove favorite place
-     * @request DELETE:/user/places/favorites/:placeId
+     * @request DELETE:/user/places/favorites/{placeId}
      * @secure
      */
-    placesFavoritesPlaceIdDelete: (placeId: string, params: RequestParams = {}) =>
+    placesFavoritesDelete: (placeId: string, params: RequestParams = {}) =>
       this.request<User, Error>({
         path: `/user/places/favorites/${placeId}`,
         method: "DELETE",
@@ -1167,12 +1173,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group-invite
-     * @name IdGroupsInviteCreate
+     * @name GroupsInviteCreate
      * @summary Invite user to group
-     * @request POST:/users/:id/groups/invite
+     * @request POST:/users/{id}/groups/invite
      * @secure
      */
-    idGroupsInviteCreate: (id: string, data: InviteUserToGroupRequest, params: RequestParams = {}) =>
+    groupsInviteCreate: (id: string, data: InviteUserToGroupRequest, params: RequestParams = {}) =>
       this.request<any, Error>({
         path: `/users/${id}/groups/invite`,
         method: "POST",
@@ -1187,12 +1193,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group-invite
-     * @name IdGroupsInviteInviteIdAcceptCreate
+     * @name GroupsInviteAcceptCreate
      * @summary Accept group invite
-     * @request POST:/users/:id/groups/invite/:invite_id/accept
+     * @request POST:/users/{id}/groups/invite/{invite_id}/accept
      * @secure
      */
-    idGroupsInviteInviteIdAcceptCreate: (id: string, inviteId: string, data: any, params: RequestParams = {}) =>
+    groupsInviteAcceptCreate: (id: string, inviteId: string, data: any, params: RequestParams = {}) =>
       this.request<any, Error>({
         path: `/users/${id}/groups/invite/${inviteId}/accept`,
         method: "POST",
@@ -1207,12 +1213,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags group-invite
-     * @name IdGroupsInviteInviteIdDelete
+     * @name GroupsInviteDelete
      * @summary Decline group invite
-     * @request DELETE:/users/:id/groups/invite/:invite_id
+     * @request DELETE:/users/{id}/groups/invite/{invite_id}
      * @secure
      */
-    idGroupsInviteInviteIdDelete: (id: string, inviteId: string, data: any, params: RequestParams = {}) =>
+    groupsInviteDelete: (id: string, inviteId: string, data: any, params: RequestParams = {}) =>
       this.request<any, Error>({
         path: `/users/${id}/groups/invite/${inviteId}`,
         method: "DELETE",
