@@ -1,44 +1,21 @@
 import { z } from "zod";
 
-/**
- * Create a new group
- * @typedef {object} CreateGroupRequest
- * @property {string} name.required - Group name
- * @property {string} description - Group description
- */
+// Create group schema
 export const createGroupSchema = z.object({
-  body: z.object({
-    name: z.string().min(2),
-    description: z.string().nullable(),
-  }),
+  name: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters." })
+    .max(50, { message: "Name must be at most 50 characters." }),
+  description: z.string().max(500, { message: "Description must be at most 500 characters." }).optional(),
 });
 
-export const getGroupByIdSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-});
-
-/**
- * Update a group
- * @typedef {object} UpdateGroupRequest
- * @property {string} name - Group name
- * @property {string} description - Group description
- */
+// Update group schema
 export const updateGroupSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    name: z.string().min(2),
-    description: z.string().nullable(),
-  }),
-});
-
-export const deleteGroupSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
+  name: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters." })
+    .max(50, { message: "Name must be at most 50 characters." }),
+  description: z.string().max(500, { message: "Description must be at most 500 characters." }).optional(),
 });
 
 /**
