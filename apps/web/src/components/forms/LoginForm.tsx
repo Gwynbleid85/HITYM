@@ -12,11 +12,13 @@ import type { UserLoginRequest } from "@/types/Api";
 import { userLoginDataSchema } from "@/validationSchemas/user.validationSchemas";
 import { useUserLogin } from "@/hooks/useUsers";
 import { useNavigate } from "react-router-dom";
+import usePersistentData from "@/hooks/usePersistentData";
 
 export function LoginForm() {
   const navigate = useNavigate();
   const { mutateAsync: loginUser } = useUserLogin();
   const { toast } = useToast();
+  const { updateAuthData, updateAppData } = usePersistentData();
 
   const form = useForm<UserLoginRequest>({
     defaultValues: {
@@ -29,15 +31,21 @@ export function LoginForm() {
   const onSubmit = async (values: UserLoginRequest) => {
     try {
       const result = await loginUser(values);
-      console.log(result);
       toast({
-        title: "Logged in",
+        title: `Hi ${result.data.name}. Let's find your friends!`,
       });
+      // Store the token and username in local storage
+      updateAuthData({
+        token: result.data.token,
+        username: result.data.name,
+      });
+      // Redirect to home page
+
       navigate("/home");
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      console.error(e);
       toast({
-        title: "Something went wrong.",
+        title: e.error.message, //TODO
         variant: "destructive",
       });
     }
