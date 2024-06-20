@@ -62,7 +62,7 @@ placeRouter.put("/:id/image", auth, uploadSingleFile("placeImages"), placeContro
  * @tags place
  * @security BearerAuth
  * @param {string} id.path.required - Place ID
- * @return {void} 204 - Place deleted
+ * @return 204 - Place deleted
  * @return {Error} 400 - Bad request
  * @return {Error} 401 - Unauthorized
  * @return {Error} 403 - Forbidden

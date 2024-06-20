@@ -77,7 +77,7 @@ groupRouter.put("/:id/image", auth, uploadSingleFile("groupImages"), groupContro
  * @tags group
  * @security BearerAuth
  * @param {string} id.path.required - Group ID
- * @return {string} 204 - Group deleted
+ * @return 204 - Group deleted
  * @return {Error} 401 - Unauthorized
  * @return {Error} 403 - Forbidden
  */

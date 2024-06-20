@@ -1,4 +1,5 @@
-import type { Group, GroupEvent, User } from "../../../types";
+import type { Group, GroupEvent } from "../../../types";
+import type { UserWithStatus } from "../user/types";
 
 export type NewGroup = Omit<Group, "id" | "imageUrl">;
 
@@ -12,10 +13,10 @@ export type GroupUpdate = Omit<NewGroup, "createdById">;
  * @property {string} description.required - Group description
  * @property {string} imageUrl.required - Group image URL
  * @property {string} createdById.required - User ID of the creator
- * @property {User[]} users - Group users
+ * @property {UserWithStatus[]} users - Group users with status
  * @property {GroupEvent[]} groupEvents - Group events
  */
 export type GroupExtended = Group & {
-  users: User[];
+  users: UserWithStatus[];
   groupEvents: GroupEvent[];
 };

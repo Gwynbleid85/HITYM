@@ -108,3 +108,9 @@ export const declineGroupInviteSchema = z.object({
     invite_id: z.string(),
   }),
 });
+
+export const userStatusRequestSchema = z.object({
+  params: z.object({
+    id: z.string(),
+  }),
+});

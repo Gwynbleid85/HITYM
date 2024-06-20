@@ -63,7 +63,7 @@ groupEventRouter.put("/:id/image", auth, uploadSingleFile("eventImages"), groupE
  * @tags group-events
  * @security BearerAuth
  * @param {string} id.path.required - Event ID
- * @return {string} 204 - success response
+ * @return 204 - success response
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 403 - Forbidden response - application/json
  * @return {Error} 404 - Not found response - application/json

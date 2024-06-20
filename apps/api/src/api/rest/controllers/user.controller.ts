@@ -10,6 +10,7 @@ import {
   updateUserStatusSchema,
   userLoginDataSchema,
   userRegistrationDataSchema,
+  userStatusRequestSchema,
 } from "../validationSchemas/user.validationSchemas";
 import { compareSync, hashSync } from "bcrypt-ts";
 import { userRepository } from "../../../application/repositories/user/user.repository";
@@ -77,6 +78,11 @@ export const userController = {
       });
     }
     const user = userRes.value;
+    console.log("===================");
+
+    console.log("Req: " + request.body.password);
+    console.log("Password: " + hashSync(request.body.password, env.PASS_HASH_SALT));
+    console.log("Hash: " + user.password);
 
     // Check if password is correct
     if (!compareSync(request.body.password, user.password)) {
@@ -180,7 +186,10 @@ export const userController = {
     const request = await parseRequest(updatePasswordSchema, req, res);
     if (!request) return;
 
-    const result = await userRepository.updatePassword(req.user.sub, req.body.password);
+    // Hash new password
+    const newHashedPassword = hashSync(req.body.password, env.PASS_HASH_SALT);
+
+    const result = await userRepository.updatePassword(req.user.sub, newHashedPassword);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
@@ -214,7 +223,7 @@ export const userController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(201).json(result.value).send();
   },
 
   /*
@@ -435,6 +444,24 @@ export const userController = {
    */
   async getUserInvites(req: Request, res: Response) {
     const result = await groupInviteRepository.getUserInvites(req.user.sub);
+    if (result.isErr) {
+      handleRepositoryErrors(result.error, res);
+      return;
+    }
+
+    return res.status(200).json(result.value).send();
+  },
+
+  /*
+   * Get user status
+   * @param req Request object
+   * @param res Response object
+   */
+  async getUserStatus(req: Request, res: Response) {
+    const request = await parseRequest(userStatusRequestSchema, req, res);
+    if (!request) return;
+
+    const result = await userStatusRepository.findByUserId(request.params.id);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
