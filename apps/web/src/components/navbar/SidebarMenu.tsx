@@ -23,7 +23,7 @@ const navigationItems: NavigationItems = {
   ],
 };
 
-export function Sidebar() {
+export function SidebarMenu() {
   const location = useLocation();
 
   return (
