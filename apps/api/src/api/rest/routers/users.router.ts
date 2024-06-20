@@ -7,12 +7,24 @@ const usersRouter = Router();
 /**
  * GET /users
  * @summary Get all users
- * @tags user
+ * @tags users
  * @security BearerAuth
  * @return {Array.<SimpleUser>} 200 - success response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
 usersRouter.get("/", auth, userController.getAllUsers);
+
+/**
+ * GET /users/{id}/user-status
+ * @summary Get user-status by user
+ * @tags users
+ * @security BearerAuth
+ * @param {string} id.path.required - User ID
+ * @return {User} 200 - success response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ * @return {Error} 404 - Not Found response - application/json
+ */
+usersRouter.get("/:id/user-status", auth, userController.getUserStatus);
 
 /**
  * POST /users/{id}/groups/invite

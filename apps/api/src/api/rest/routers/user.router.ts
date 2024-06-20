@@ -21,7 +21,6 @@ userRouter.post("/registration", userController.registerUser);
  * @summary Login user
  * @tags user
  * @param {UserLoginRequest} request.body.required - User login data
- * TODO: FIx the response type
  * @return {UserLoginResult} 200 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  */
@@ -42,7 +41,7 @@ userRouter.get("/test/authorization", auth, userController.testAuthorization);
  * @summary Delete user
  * @tags user
  * @security BearerAuth
- * @return {string} 204 - success response
+ * @return  204 - success response
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */
@@ -90,7 +89,7 @@ userRouter.put("/profilePicture", auth, uploadSingleFile("profilePictures"), use
  * @tags user
  * @security BearerAuth
  * @param {UpdateUserStatusRequest} request.body.required - User status data
- * @return {User} 200 - success response - application/json
+ * @return {UserStatus} 201 - success response - application/json
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  */

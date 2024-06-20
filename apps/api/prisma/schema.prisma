@@ -30,7 +30,7 @@ model User {
   lastLongitude Float?
 
   inGroups       Group[]       @relation("UsersInGroup")
-  status         UserStatus[]  @relation("UserStatus")
+  status         UserStatus?   @relation("UserStatus")
   places         Place[]       @relation("FavoritePlaces")
   placeCreatedBy Place[]       @relation("PlaceCreatedBy")
   groupCreatedBy Group[]       @relation("GroupCreatedBy")
@@ -43,7 +43,7 @@ model User {
 
 model UserStatus {
   id     String @id @default(uuid())
-  user   User   @relation("UserStatus", fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation("UserStatus", fields: [userId], references: [id])
   userId String @unique
   status String
   color  String
@@ -113,7 +113,7 @@ model GroupInvite {
   invitedUser   User   @relation("InvitedUser", fields: [invitedUserId], references: [id])
 
   invitedById String
-  invitedBy User   @relation("InvitedBy", fields: [invitedById], references: [id])
+  invitedBy   User   @relation("InvitedBy", fields: [invitedById], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

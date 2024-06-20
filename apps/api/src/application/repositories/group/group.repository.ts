@@ -49,7 +49,13 @@ export const groupRepository = {
       const group = await prisma.group.findUnique({
         where: { id },
         include: {
-          users: true,
+          users: {
+            include: {
+              status: {
+                select: { status: true, color: true },
+              },
+            },
+          },
           events: {
             where: { date: { gte: new Date() } },
             orderBy: { date: "asc" },
@@ -62,7 +68,12 @@ export const groupRepository = {
       const { users, events, ...simpleGroup } = group;
       return Result.ok({
         ...simpleGroup,
-        users: users.map(toUser),
+        users: users.map((user) => {
+          return {
+            ...toUser(user),
+            status: user.status,
+          };
+        }),
         groupEvents: events,
       });
     } catch (e) {
