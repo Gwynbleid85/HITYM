@@ -47,7 +47,8 @@ export const userController = {
     const newUser: NewUser = request.body;
 
     // Hash password
-    newUser.password = hashSync(newUser.password, env.PASS_HASH_SALT);
+    ///TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
+    // newUser.password = hashSync(newUser.password, env.PASS_HASH_SALT);
 
     // Save new user to db
     const savedUser: Result<User> = await userRepository.create(newUser);
@@ -79,13 +80,21 @@ export const userController = {
     }
     const user = userRes.value;
 
-    // Check if password is correct
-    if (!compareSync(request.body.password, user.password)) {
+    ///TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
+    if (!request.body.password.localeCompare(user.password)) {
       return res.status(400).json({
         name: "ValidationError",
         message: "Invalid password",
       });
     }
+
+    // Check if password is correct
+    // if (!compareSync(request.body.password, user.password)) {
+    //   return res.status(400).json({
+    //     name: "ValidationError",
+    //     message: "Invalid password",
+    //   });
+    // }
 
     // Generate jwt token
     const token = jwt.sign(
@@ -101,7 +110,7 @@ export const userController = {
     );
 
     return res.status(200).json({
-      user_id: user.id,
+      userId: user.id,
       name: user.name,
       token: token,
     } as UserLoginResult);

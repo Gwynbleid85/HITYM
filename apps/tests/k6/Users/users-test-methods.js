@@ -74,12 +74,12 @@ export class UsersTests extends ApiBase {
     const response = http.post(`${userApiUrl}/login`, payload, this.getOptions());
     check(response, {
       "Login is status 200": (r) => r.status === 200,
-      "Response contains id": (r) => r.json().hasOwnProperty("user_id"),
+      "Response contains id": (r) => r.json().hasOwnProperty("userId"),
       "Response contains name": (r) => r.json().hasOwnProperty("name"),
       "Response contains token": (r) => r.json().hasOwnProperty("token"),
     });
 
-    newUserId = response.json().user_id;
+    newUserId = response.json().userId;
     console.log("Test User1 access token: " + response.json().token);
     this.SetAccessToken(response.json().token);
   }
@@ -93,12 +93,12 @@ export class UsersTests extends ApiBase {
     const response = http.post(`${userApiUrl}/login`, payload, this.getOptions());
     check(response, {
       "Login is status 200": (r) => r.status === 200,
-      "Response contains id": (r) => r.json().hasOwnProperty("user_id"),
+      "Response contains id": (r) => r.json().hasOwnProperty("userId"),
       "Response contains name": (r) => r.json().hasOwnProperty("name"),
       "Response contains token": (r) => r.json().hasOwnProperty("token"),
     });
 
-    newUserId_2 = response.json().user_id;
+    newUserId_2 = response.json().userId;
     newUserAccessToken_2 = response.json().token;
   }
 

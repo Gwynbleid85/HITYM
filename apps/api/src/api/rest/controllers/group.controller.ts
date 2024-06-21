@@ -9,6 +9,7 @@ import {
   removeUserSchema,
   updateGroupSchema,
 } from "../validationSchemas/group.validationSchemas";
+import { userWsConfigRepository } from "../../../application/repositories/userWebsocketConfig/userWebsocketConfig.repository";
 
 export const groupController = {
   /*
@@ -154,6 +155,8 @@ export const groupController = {
       handleRepositoryErrors(result.error, res);
       return;
     }
+
+    await userWsConfigRepository.UnsharePositionsWithGroup(request.params.userId, request.params.id);
 
     return res.status(200).json(result.value);
   },

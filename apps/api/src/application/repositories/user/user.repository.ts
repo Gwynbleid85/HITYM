@@ -10,7 +10,18 @@ export const userRepository = {
   // @returns The created user
   async create(user: NewUser): Promise<Result<User>> {
     try {
-      const createdUser = await prisma.user.create({ data: user });
+      const createdUser = await prisma.user.create({
+        data: {
+          ...user,
+          userWebsocketConfig: {
+            create: {
+              positionSharedWith: {},
+              positionFollowedOf: {},
+              active: false,
+            },
+          },
+        },
+      });
       return Result.ok(toUser(createdUser));
     } catch (e) {
       return Result.err(handleDbExceptions(e));
