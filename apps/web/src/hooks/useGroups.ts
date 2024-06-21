@@ -3,7 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CreateGroupRequest, UpdateGroupRequest } from "@/types/Api";
 import { Api } from "@/types/Api";
 
-const api = new Api({ baseUrl: "http://localhost:3000" });
+const baseURL = import.meta.env.VITE_API_URL;
+
+const api = new Api({ baseUrl: baseURL });
 
 const QUERY_KEYS = {};
 
@@ -45,5 +47,6 @@ export const useGroupUpdate = (id: string) => {
     },
   });
 
+  // TODO update the picture
   return mutation;
 };
