@@ -291,7 +291,7 @@ export interface Position {
 /** User login result */
 export interface UserLoginResult {
   /** User ID */
-  user_id: string;
+  userId: string;
   /** User name */
   name: string;
   /** User token */
@@ -413,7 +413,7 @@ export class HttpClient<SecurityDataType = unknown> {
             ? property
             : typeof property === "object" && property !== null
               ? JSON.stringify(property)
-              : `${property}`,
+              : `${property}`
         );
         return formData;
       }, new FormData()),

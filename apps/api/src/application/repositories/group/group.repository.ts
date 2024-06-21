@@ -280,4 +280,19 @@ export const groupRepository = {
       return Result.err(handleDbExceptions(e));
     }
   },
+
+  // Get all users user has access to
+  // @param userId The ID of the user
+  // @returns All usersIds user has access to
+  async getAllUsersUserHasAccessTo(userId: string): Promise<Result<string[]>> {
+    try {
+      const users = await prisma.group.findMany({
+        where: { users: { some: { id: userId } } },
+        select: { users: { select: { id: true } } },
+      });
+      return Result.ok(users.flatMap((group) => group.users.map((user) => user.id)));
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
 };

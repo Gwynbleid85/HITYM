@@ -130,12 +130,12 @@ export type Position = {
 /**
  * User login result
  * @typedef {object} UserLoginResult
- * @property {string} user_id.required - User ID
+ * @property {string} userId.required - User ID
  * @property {string} name.required - User name
  * @property {string} token.required - User token
  */
 export type UserLoginResult = {
-  user_id: string;
+  userId: string;
   name: string;
   token: string;
 };

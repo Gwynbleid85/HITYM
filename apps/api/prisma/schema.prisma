@@ -29,16 +29,32 @@ model User {
   lastLatitude  Float?
   lastLongitude Float?
 
-  inGroups       Group[]       @relation("UsersInGroup")
-  status         UserStatus?   @relation("UserStatus")
-  places         Place[]       @relation("FavoritePlaces")
-  placeCreatedBy Place[]       @relation("PlaceCreatedBy")
-  groupCreatedBy Group[]       @relation("GroupCreatedBy")
-  eventCreatedBy GroupEvent[]  @relation("EventCreatedBy")
-  invitedToGroup GroupInvite[] @relation("InvitedUser")
-  invitedBy      GroupInvite[] @relation("InvitedBy")
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  // Relations
+  userWebsocketConfig UserWebsocketConfig?  @relation("UserWebsocketConfig")
+  followdBy           UserWebsocketConfig[] @relation("FollowedBy")
+  inGroups            Group[]               @relation("UsersInGroup")
+  status              UserStatus?           @relation("UserStatus")
+  places              Place[]               @relation("FavoritePlaces")
+  placeCreatedBy      Place[]               @relation("PlaceCreatedBy")
+  groupCreatedBy      Group[]               @relation("GroupCreatedBy")
+  eventCreatedBy      GroupEvent[]          @relation("EventCreatedBy")
+  invitedToGroup      GroupInvite[]         @relation("InvitedUser")
+  invitedBy           GroupInvite[]         @relation("InvitedBy")
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+}
+
+model UserWebsocketConfig {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation("UserWebsocketConfig", fields: [userId], references: [id])
+
+  positionSharedWith  Group[] @relation("PositionSharedWith")
+  positionFollowedOf User[]  @relation("FollowedBy")
+  active              Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model UserStatus {
@@ -80,6 +96,8 @@ model Group {
 
   createdBy   User   @relation("GroupCreatedBy", fields: [createdById], references: [id])
   createdById String
+
+  positionSharedBy UserWebsocketConfig[] @relation("PositionSharedWith")
 
   inivites GroupInvite[] @relation("InviteToGroup")
 

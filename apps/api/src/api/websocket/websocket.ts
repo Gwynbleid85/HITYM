@@ -1,67 +1,62 @@
 import { WebSocket, type RawData } from "ws";
-import type { AuthRequiredMessage, SubscribeUserInfoMessage, WsMessage } from "../../core/types/WsEvents";
+import type { AuthRequiredMessage, LoggedInMessage, WsMessage } from "../../core/WsEvents";
 import jwt from "jsonwebtoken";
 import type { JWTUser } from "../../application/middlewares/auth";
+import type { UserDisconnected, UserLoggedIn } from "../../core/Events";
+import { userDisconnectedHandler } from "../../application/eventHandlers/userDisconnectedHandler";
+import { userLoggedInHandler } from "../../application/eventHandlers/userLoggedInHandler";
+import { userChangedPositionHandler } from "../../application/eventHandlers/userChangedPositionHandler";
+import { userWsConfigRepository } from "../../application/repositories/userWebsocketConfig/userWebsocketConfig.repository";
 
-const connectionPool: { [userId: string]: WebSocket } = {};
-const broadcastGroups: { [originUserId: string]: string[] } = {}; // [originUser: [receiverUsers]]
-const userSubscribedTo: { [userId: string]: string[] } = {}; // [receiverUser: [originUsers]]
+type WebsocketState = {
+  connectionPool: { [userId: string]: WebSocket };
+  broadcastGroups: { [userId: string]: Set<string> }; // [userId: [subscribedUsers]]
+  requestBroadcastGroups: { [originUserId: string]: Set<string> }; // [originUser: [receiverUsers]] // Users who want to receive updates from the user
+  allowedBroadcastGroups: { [originUserId: string]: Set<string> }; // [receiverUser: [originUsers]] // Users who ale allowed to receive updates from the user
+};
+export const websocketState: WebsocketState = {
+  connectionPool: {},
+  broadcastGroups: {},
+  requestBroadcastGroups: {},
+  allowedBroadcastGroups: {},
+};
 
 const handleMessage = (message: RawData, user: string) => {
   const parsedMessage = JSON.parse(message.toString());
-  console.log(`Received message from ${user}:`, parsedMessage);
 
-  broadcast({ sender: user, ...parsedMessage }, [user]);
+  if (parsedMessage.type === "userChangedPosition") {
+    userChangedPositionHandler(parsedMessage);
+  }
+  //TODO: Handle messages
 };
 
-const handleClose = (code: number, user: string) => {
-  // Notify subscribed users that this user has disconnected
-  broadcastToGroup(
-    {
-      sender: user,
-      event: "userDisconnected",
-      code: code,
-    },
-    broadcastGroups[user] || []
-  );
-
-  // Remove user from broadcast groups
-  for (const broadcastGroupId in userSubscribedTo[user]) {
-    const group = broadcastGroups[broadcastGroupId];
-    if (group) {
-      broadcastGroups[broadcastGroupId] = group.filter((userId) => userId !== user);
-    }
-  }
-
+const handleClose = (user: string) => {
   // Remove user from userSubscribedTo
-  delete userSubscribedTo[user];
+  delete websocketState.allowedBroadcastGroups[user];
 
   // Remove user from connectionPool
-  delete connectionPool[user];
+  delete websocketState.connectionPool[user];
+
+  const userDisconnected: UserDisconnected = {
+    type: "userDisconnected",
+    data: {
+      userId: user,
+    },
+  };
+  userDisconnectedHandler(userDisconnected);
 };
 
-const handleSubscribeUserInfoMessage = (message: SubscribeUserInfoMessage, user: string) => {
-  const { usersToSubscribe } = message;
-
-  usersToSubscribe.forEach((userId) => {
-    if (!broadcastGroups[userId]) {
-      broadcastGroups[userId] = [];
-    }
-    broadcastGroups[userId].push(user);
-
-    if (!userSubscribedTo[user]) {
-      userSubscribedTo[user] = [];
-    }
-    userSubscribedTo[user].push(userId);
-
-    // Notify subscribed user that this user has connected
-    // Send subscribing user the position of the subscribed user
-  });
+export const onWsConnection = (connection: WebSocket) => {
+  const welcomeMessage: AuthRequiredMessage = {
+    type: "authRequired",
+    sender: "server",
+  };
+  connection.send(JSON.stringify(welcomeMessage));
+  // Wait for auth message
+  connection.once("message", (message) => handleAuth(connection, message));
 };
 
-const handleAuth = (connection: WebSocket, message: RawData) => {
-  console.log(message.toString());
-
+const handleAuth = async (connection: WebSocket, message: RawData) => {
   const parsedMessage = JSON.parse(message.toString());
   const { event, token } = parsedMessage;
   if (event !== "auth") {
@@ -69,58 +64,61 @@ const handleAuth = (connection: WebSocket, message: RawData) => {
     return;
   }
 
-  // Verify token
   if (!token) {
     connection.close(1008, "Token missing");
     return;
   }
 
+  // Verify token
   const user = jwt.verify(token, process.env.JWT_SECRET || "") as JWTUser;
-
   if (!user) {
     connection.close(1008, "Invalid token");
     return;
   }
 
+  // Add user to connection pool
   const id = user.sub;
-  connectionPool[id] = connection;
+  websocketState.connectionPool[id] = connection;
 
-  connection.send(JSON.stringify({ sender: id, event: "loggedIn", data: { id, name: user.name } }));
-  broadcast(
-    {
-      sender: id,
-      event: "userConnected",
-    },
-    [id]
+  // Send loggedIn in message
+  connection.send(
+    JSON.stringify({
+      sender: "server",
+      type: "userLoggedIn",
+      data: { userId: id },
+    } as LoggedInMessage)
   );
-  console.log(`User ${id} connected`);
+
+  // Publish 'userLoggedIn' event
+  const loggedInEvent: UserLoggedIn = {
+    type: "userLoggedIn",
+    data: {
+      userId: id,
+    },
+  };
+  userLoggedInHandler(loggedInEvent);
+
+  // messageBus.publish(loggedInEvent);
+  /// TODO: Recover users websocket config from db
+  /// TODO: Add endpoints to manage user websocket config
+
+  // Recover users websocket config from db
+
+  const wsConfig = await userWsConfigRepository.FindByUserId(id);
+  if (wsConfig.isOk) {
+    const { positionSharedWith, positionFollowedOf } = wsConfig.value;
+    websocketState.allowedBroadcastGroups[id] = new Set(positionSharedWith);
+    websocketState.requestBroadcastGroups[id] = new Set(positionFollowedOf);
+  }
+
   connection.removeListener("message", handleAuth);
   connection.on("message", (message) => handleMessage(message, id));
-  connection.on("close", (code) => handleClose(code, id));
+  connection.on("close", () => handleClose(id));
 };
 
-const broadcast = (message: WsMessage, exclude?: string[]) => {
-  Object.keys(connectionPool).forEach((uuid) => {
-    // Skip excluded connections
-    if (exclude?.includes(uuid)) return;
-
-    const connection = connectionPool[uuid];
+export const broadcastToGroup = (message: WsMessage, users: string[]) => {
+  users.forEach((uuid) => {
+    const connection = websocketState.connectionPool[uuid];
     connection?.send(JSON.stringify(message));
   });
-};
-
-const broadcastToGroup = (message: WsMessage, group: string[]) => {
-  group.forEach((uuid) => {
-    const connection = connectionPool[uuid];
-    connection?.send(JSON.stringify(message));
-  });
-};
-
-export const onWsConnection = (connection: WebSocket) => {
-  const message: AuthRequiredMessage = {
-    event: "authRequired",
-    sender: "server",
-  };
-  connection.send(JSON.stringify(message));
-  connection.once("message", (message) => handleAuth(connection, message));
 };

@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { userController } from "../controllers/user.controller";
+import { wsConfigController } from "../controllers/wsConfig.controller";
 import auth from "../../../application/middlewares/auth";
 import uploadSingleFile from "../../../application/middlewares/fileUpload";
 
@@ -201,5 +202,57 @@ userRouter.post("/groups/invites/:id/accept", auth, userController.acceptGroupIn
  * @return {Error} 404 - Not Found response - application/json
  */
 userRouter.delete("/groups/invites/:id", auth, userController.declineGroupInvite);
+
+/**
+ * POST /user/position-sharing/subscriptions
+ * @summary Subscribe to user data
+ * @tags position-sharing
+ * @security BearerAuth
+ * @param {SubscribeUserRequest} request.body.required - Users to subscribe to
+ * @return  204 - success response
+ * @return {Error} 400 - Bad request response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ * @return {Error} 404 - Not Found response - application/json
+ */
+userRouter.post("/position-sharing/subscriptions", auth, wsConfigController.subscribeToUserPosition);
+
+/**
+ * DELETE /user/position-sharing/subscriptions
+ * @summary Unsubscribe from user data
+ * @tags position-sharing
+ * @security BearerAuth
+ * @param {UnsubscribeUserRequest} request.body.required - Users to unsubscribe from
+ * @return  204 - success response
+ * @return {Error} 400 - Bad request response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ * @return {Error} 404 - Not Found response - application/json
+ */
+userRouter.delete("/position-sharing/subscriptions", auth, wsConfigController.unsubscribeToUserPosition);
+
+/**
+ * POST /user/position-sharing/share-with/groups
+ * @summary Share position with group
+ * @tags position-sharing
+ * @security BearerAuth
+ * @param {SharePositionWithGroupRequest} request.body.required - Group to share position with
+ * @return  204 - success response
+ * @return {Error} 400 - Bad request response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ * @return {Error} 404 - Not Found response - application/json
+ */
+userRouter.post("/position-sharing/share-with/groups", auth, wsConfigController.sharePositionWithGroup);
+
+/**
+ * DELETE /user/position-sharing/share-with/groups
+ * @summary Unshare position with group
+ * @tags position-sharing
+ * @security BearerAuth
+ * @param {UnsharePositionWithGroupRequest} request.body.required - Group to unshare position with
+ * @return  204 - success response
+ * @return {Error} 400 - Bad request response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ * @return {Error} 404 - Not Found response - application/json
+ */
+userRouter.delete("/position-sharing/share-with/groups", auth, wsConfigController.unsharePositionWithGroup);
 
 export default userRouter;
