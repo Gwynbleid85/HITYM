@@ -20,51 +20,23 @@ usersRouter.get("/", auth, userController.getAllUsers);
  * @tags users
  * @security BearerAuth
  * @param {string} id.path.required - User ID
- * @return {User} 200 - success response - application/json
+ * @return {UserStatus} 200 - success response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 404 - Not Found response - application/json
  */
 usersRouter.get("/:id/user-status", auth, userController.getUserStatus);
 
 /**
- * POST /users/{id}/groups/invite
+ * POST /users/{id}/groups/invites
  * @summary Invite user to group
  * @tags group-invite
  * @security BearerAuth
  * @param {InviteUserToGroupRequest} request.body.required - Invite user to group data
  * @param {string} request.params.id.required - User ID
- * @return {void} 200 - success response - application/json
+ * @return  201 - success response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 404 - Not Found response - application/json
  */
 usersRouter.post("/:id/groups/invites", auth, userController.inviteUserToGroup);
-
-/**
- * POST /users/{id}/groups/invite/{invite_id}/accept
- * @summary Accept group invite
- * @tags group-invite
- * @security BearerAuth
- * @param {AcceptGroupInviteRequest} request.body.required - Accept group invite data
- * @param {string} request.params.id.required - User ID
- * @param {string} request.params.invite_id.required - Invite ID
- * @return {void} 200 - success response - application/json
- * @return {Error} 401 - Unauthorized response - application/json
- * @return {Error} 404 - Not Found response - application/json
- */
-usersRouter.post("/:id/groups/invites/:invite_id/accept", auth, userController.acceptGroupInvite);
-
-/**
- * DELETE /users/{id}/groups/invite/{invite_id}
- * @summary Decline group invite
- * @tags group-invite
- * @security BearerAuth
- * @param {DeclineGroupInviteRequest} request.body.required - Decline group invite data
- * @param {string} request.params.id.required - User ID
- * @param {string} request.params.invite_id.required - Invite ID
- * @return {void} 200 - success response - application/json
- * @return {Error} 401 - Unauthorized response - application/json
- * @return {Error} 404 - Not Found response - application/json
- */
-usersRouter.delete("/:id/groups/invites/:invite_id", auth, userController.declineGroupInvite);
 
 export default usersRouter;

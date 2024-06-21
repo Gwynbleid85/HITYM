@@ -106,13 +106,10 @@ const uploadSingleFile = (imageType: ImageType) => {
       request = await parseRequest(updateImageWithIdSchema, req, res);
       if (!request) return;
       if (!checkImageId(request.params.id, imageType)) {
-        return res
-          .status(404)
-          .json({
-            name: "NotFoundError",
-            message: "Entity not found",
-          })
-          .send();
+        return res.status(404).json({
+          name: "NotFoundError",
+          message: "Entity not found",
+        });
       }
       req.imageId = request.params.id;
     }

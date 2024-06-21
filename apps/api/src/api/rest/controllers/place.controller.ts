@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import { placeRepository } from "../../../application/repositories/place/place.repostory";
 import { handleRepositoryErrors, parseRequest } from "../../../utils";
 import { createPlaceSchema, deletePlaceSchema, updatePlaceSchema } from "../validationSchemas/place.validationSchema";
-import { updateImageSchema } from "../validationSchemas/group.validationSchemas";
 
 export const placeController = {
   /*
@@ -23,7 +22,7 @@ export const placeController = {
       return;
     }
 
-    return res.status(201).json(result.value).send();
+    return res.status(201).json(result.value);
   },
 
   // Get all places
@@ -35,7 +34,7 @@ export const placeController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -60,7 +59,7 @@ export const placeController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -70,7 +69,7 @@ export const placeController = {
    */
   async updatePlaceImage(req: Request, res: Response) {
     const updatedPlace = await placeRepository.updateImage(req.imageId, req.finalImageName);
-    return res.status(200).json(updatedPlace).send();
+    return res.status(200).json(updatedPlace);
   },
 
   /*

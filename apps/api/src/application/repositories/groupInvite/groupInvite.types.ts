@@ -1,5 +1,4 @@
-import type { Group } from "@prisma/client";
-import type { GroupInvite } from "../../../types";
+import type { Group, GroupInvite } from "../../../types";
 
 export type NewGroupInvite = {
   groupId: string;
@@ -9,7 +8,7 @@ export type NewGroupInvite = {
 
 /**
  * Group invite
- * @typedef {object} GroupInvite
+ * @typedef {object} GroupInviteExtended
  * @property {string} id.required - Invite ID
  * @property {string} groupId.required - Group ID
  * @property {string} invitedUserId.required - Invited user ID

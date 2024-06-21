@@ -6,9 +6,13 @@ import faker from "https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.
 let userApiUrl;
 
 export const newUserEmail = faker.internet.email();
+export const newUserEmail_2 = faker.internet.email();
 export const newUserPassword = "password";
 
-let newUserId;
+export let newUserId;
+export let newUserAccessToken;
+export let newUserId_2;
+export let newUserAccessToken_2;
 
 export class UsersTests extends ApiBase {
   constructor() {
@@ -21,6 +25,22 @@ export class UsersTests extends ApiBase {
       email: newUserEmail,
       password: newUserPassword,
       name: "John Doe",
+    });
+
+    let response = http.post(`${userApiUrl}/registration`, payload, this.getOptions());
+    check(response, {
+      "Create is status 200": (r) => r.status === 201,
+      "Response contains id": (r) => r.json().hasOwnProperty("id"),
+      "Response contains email": (r) => r.json().hasOwnProperty("email"),
+      "Response contains name": (r) => r.json().hasOwnProperty("name"),
+    });
+  }
+
+  RegisterSecondUser() {
+    const payload = JSON.stringify({
+      email: newUserEmail_2,
+      password: newUserPassword,
+      name: "Asdf Lkjh",
     });
 
     let response = http.post(`${userApiUrl}/registration`, payload, this.getOptions());
@@ -60,7 +80,26 @@ export class UsersTests extends ApiBase {
     });
 
     newUserId = response.json().user_id;
+    console.log("Test User1 access token: " + response.json().token);
     this.SetAccessToken(response.json().token);
+  }
+
+  LoginSecondUser() {
+    const payload = JSON.stringify({
+      email: newUserEmail_2,
+      password: newUserPassword,
+    });
+
+    const response = http.post(`${userApiUrl}/login`, payload, this.getOptions());
+    check(response, {
+      "Login is status 200": (r) => r.status === 200,
+      "Response contains id": (r) => r.json().hasOwnProperty("user_id"),
+      "Response contains name": (r) => r.json().hasOwnProperty("name"),
+      "Response contains token": (r) => r.json().hasOwnProperty("token"),
+    });
+
+    newUserId_2 = response.json().user_id;
+    newUserAccessToken_2 = response.json().token;
   }
 
   LoginWithWrongPassword() {

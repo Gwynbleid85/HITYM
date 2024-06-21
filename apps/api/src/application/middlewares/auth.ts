@@ -31,8 +31,10 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
     req.user = user;
     next();
+    return;
   } catch (e) {
     res.status(401).send({ error: "Authorization failed." });
+    return;
   }
 };
 

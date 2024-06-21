@@ -35,7 +35,7 @@ export const groupEventController = {
       return;
     }
 
-    return res.status(201).json(result.value).send();
+    return res.status(201).json(result.value);
   },
 
   /*
@@ -60,7 +60,7 @@ export const groupEventController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -85,7 +85,7 @@ export const groupEventController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -96,7 +96,7 @@ export const groupEventController = {
   ///TODO: Add authorization to image endpoints
   async updateGroupEventImage(req: Request, res: Response) {
     const updatedEvent = await groupEventRepository.updateImage(req.imageId, req.finalImageName);
-    return res.status(200).json(updatedEvent).send();
+    return res.status(200).json(updatedEvent);
   },
 
   // Delete an event

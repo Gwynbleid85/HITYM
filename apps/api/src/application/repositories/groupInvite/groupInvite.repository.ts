@@ -23,7 +23,24 @@ export const groupInviteRepository = {
   // @returns All user invites
   async getUserInvites(userId: string): Promise<Result<GroupInviteExtended[]>> {
     try {
-      const invites = await prisma.groupInvite.findMany({ where: { invitedUserId: userId }, include: { group: true } });
+      const invites = await prisma.groupInvite.findMany({
+        where: { invitedUserId: userId },
+        select: {
+          id: true,
+          invitedById: true,
+          invitedUserId: true,
+          groupId: true,
+          group: {
+            select: {
+              id: true,
+              name: true,
+              imageUrl: true,
+              description: true,
+              createdById: true,
+            },
+          },
+        },
+      });
       return Result.ok(invites);
     } catch (e) {
       return Result.err(handleDbExceptions(e));

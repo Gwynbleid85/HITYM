@@ -18,12 +18,21 @@ export default function () {
     group("User registration test", function () {
       tests.RegisterNewUser();
     });
+
+    group("Second user registration test", function () {
+      tests.RegisterSecondUser();
+    });
+
     group("User duplicate registration test", function () {
       tests.RegisterUserWithExistingEmail();
     });
 
     group("User login test", function () {
       tests.LoginUser();
+    });
+
+    group("Login second user", function () {
+      tests.LoginSecondUser();
     });
 
     group("User login with wrong password", function () {
