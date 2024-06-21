@@ -98,14 +98,12 @@ export const inviteUserToGroupSchema = z.object({
 export const acceptGroupInviteSchema = z.object({
   params: z.object({
     id: z.string(),
-    invite_id: z.string(),
   }),
 });
 
 export const declineGroupInviteSchema = z.object({
   params: z.object({
     id: z.string(),
-    invite_id: z.string(),
   }),
 });
 

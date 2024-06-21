@@ -29,7 +29,7 @@ export const groupController = {
       return;
     }
 
-    return res.status(201).json(result.value).send();
+    return res.status(201).json(result.value);
   },
 
   /*
@@ -47,7 +47,7 @@ export const groupController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -70,7 +70,7 @@ export const groupController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -95,7 +95,7 @@ export const groupController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -105,7 +105,7 @@ export const groupController = {
    */
   async updateImage(req: Request, res: Response) {
     const updatedGroup = await groupRepository.updateImage(req.imageId, req.finalImageName);
-    return res.status(200).json(updatedGroup).send();
+    return res.status(200).json(updatedGroup);
   },
 
   /*
@@ -155,7 +155,7 @@ export const groupController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -180,6 +180,6 @@ export const groupController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 };

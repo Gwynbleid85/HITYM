@@ -57,7 +57,7 @@ export const userController = {
       handleRepositoryErrors(savedUser.error, res);
       return;
     }
-    res.status(201).json(savedUser.value).send();
+    res.status(201).json(savedUser.value);
   },
 
   /*
@@ -78,11 +78,6 @@ export const userController = {
       });
     }
     const user = userRes.value;
-    console.log("===================");
-
-    console.log("Req: " + request.body.password);
-    console.log("Password: " + hashSync(request.body.password, env.PASS_HASH_SALT));
-    console.log("Hash: " + user.password);
 
     // Check if password is correct
     if (!compareSync(request.body.password, user.password)) {
@@ -118,7 +113,7 @@ export const userController = {
    * @param res Response object
    */
   async testAuthorization(req: Request, res: Response) {
-    res.status(200).json(req.user).send();
+    res.status(200).json(req.user);
   },
 
   /*
@@ -133,7 +128,7 @@ export const userController = {
       handleRepositoryErrors(result.error, res);
       return;
     }
-    return res.status(204).send();
+    return res.status(204);
   },
 
   /*
@@ -156,7 +151,7 @@ export const userController = {
         profilePicture: user.profilePicture,
       };
     });
-    return res.status(200).json(simpleUsers).send();
+    return res.status(200).json(simpleUsers);
   },
 
   /*
@@ -174,7 +169,7 @@ export const userController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -195,7 +190,7 @@ export const userController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -223,7 +218,7 @@ export const userController = {
       return;
     }
 
-    return res.status(201).json(result.value).send();
+    return res.status(201).json(result.value);
   },
 
   /*
@@ -253,7 +248,7 @@ export const userController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -268,7 +263,7 @@ export const userController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -320,7 +315,7 @@ export const userController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -370,7 +365,7 @@ export const userController = {
       return;
     }
 
-    return res.status(200).send();
+    return res.status(201).send();
   },
 
   /*
@@ -383,7 +378,7 @@ export const userController = {
     if (!request) return;
 
     // Check if it is invite for correct user
-    const invite = await groupInviteRepository.getById(request.params.invite_id);
+    const invite = await groupInviteRepository.getById(request.params.id);
     if (invite.isErr) {
       handleRepositoryErrors(invite.error, res);
       return;
@@ -396,13 +391,13 @@ export const userController = {
     }
 
     // Accept invite
-    const result = await groupInviteRepository.accept(request.params.invite_id);
+    const result = await groupInviteRepository.accept(request.params.id);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
     }
 
-    return res.status(200).send();
+    return res.status(201).send();
   },
 
   /*
@@ -415,7 +410,7 @@ export const userController = {
     if (!request) return;
 
     // Check if it is invite for correct user
-    const invite = await groupInviteRepository.getById(request.params.invite_id);
+    const invite = await groupInviteRepository.getById(request.params.id);
     if (invite.isErr) {
       handleRepositoryErrors(invite.error, res);
       return;
@@ -428,13 +423,13 @@ export const userController = {
     }
 
     // Decline invite
-    const result = await groupInviteRepository.delete(request.params.invite_id);
+    const result = await groupInviteRepository.delete(request.params.id);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
     }
 
-    return res.status(200).send();
+    return res.status(204).send();
   },
 
   /*
@@ -449,7 +444,7 @@ export const userController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 
   /*
@@ -467,6 +462,6 @@ export const userController = {
       return;
     }
 
-    return res.status(200).json(result.value).send();
+    return res.status(200).json(result.value);
   },
 };

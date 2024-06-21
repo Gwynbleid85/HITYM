@@ -3,8 +3,8 @@ import { Prisma } from "@prisma/client";
 import type { ZodSchema, ZodTypeDef } from "zod";
 import { fromZodError } from "zod-validation-error";
 import type { Request, Response } from "express";
-import type { User as PrismaUser, Place as PrismaPlace } from "@prisma/client";
-import type { Place, User } from "./types";
+import type { User as PrismaUser, Place as PrismaPlace, Group as PrismaGroup } from "@prisma/client";
+import type { Group, Place, User } from "./types";
 
 /**
  * Error class
@@ -120,4 +120,11 @@ export const toPrismaPlace = (place: Place): PrismaPlace => {
     latitude: position?.latitude,
     longitude: position?.longitude,
   } as PrismaPlace;
+};
+
+export const toGroup = (group: PrismaGroup): Group => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { createdAt, updatedAt, ...groupWithoutTimestamps } = group;
+
+  return groupWithoutTimestamps as Group;
 };

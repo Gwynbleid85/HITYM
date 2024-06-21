@@ -178,4 +178,28 @@ userRouter.get("/groups", auth, userController.getUserGroups);
  */
 userRouter.get("/groups/invites", auth, userController.getUserInvites);
 
+/**
+ * POST /user/groups/invites/{id}/accept
+ * @summary Accept group invite
+ * @tags group-invite
+ * @security BearerAuth
+ * @param {string} request.params.id.required - Invite ID
+ * @return  201 - success response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ * @return {Error} 404 - Not Found response - application/json
+ */
+userRouter.post("/groups/invites/:id/accept", auth, userController.acceptGroupInvite);
+
+/**
+ * DELETE /user/groups/invites/{id}
+ * @summary Decline group invite
+ * @tags group-invite
+ * @security BearerAuth
+ * @param {string} request.params.id.required - Invite ID
+ * @return  204 - success response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ * @return {Error} 404 - Not Found response - application/json
+ */
+userRouter.delete("/groups/invites/:id", auth, userController.declineGroupInvite);
+
 export default userRouter;

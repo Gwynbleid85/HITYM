@@ -19,6 +19,7 @@ export const groupRepository = {
             },
           },
         },
+        select: { id: true, name: true, imageUrl: true, description: true, createdById: true },
       });
       return Result.ok(createdGroup);
     } catch (e) {
@@ -31,7 +32,10 @@ export const groupRepository = {
   // @returns The group if found
   async findById(id: string): Promise<Result<Group>> {
     try {
-      const group = await prisma.group.findUnique({ where: { id } });
+      const group = await prisma.group.findUnique({
+        where: { id },
+        select: { id: true, name: true, imageUrl: true, description: true, createdById: true },
+      });
       if (!group) {
         return Result.err(new NotFoundError());
       }
@@ -86,7 +90,10 @@ export const groupRepository = {
   // @returns All groups
   async getAll(userId: string): Promise<Result<Group[]>> {
     try {
-      const groups = await prisma.group.findMany({ where: { users: { some: { id: userId } } } });
+      const groups = await prisma.group.findMany({
+        where: { users: { some: { id: userId } } },
+        select: { id: true, name: true, imageUrl: true, description: true, createdById: true },
+      });
       return Result.ok(groups);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
@@ -150,6 +157,7 @@ export const groupRepository = {
       const updatedGroup = await prisma.group.update({
         where: { id },
         data: group,
+        select: { id: true, name: true, imageUrl: true, description: true, createdById: true },
       });
       return Result.ok(updatedGroup);
     } catch (e) {
@@ -203,7 +211,9 @@ export const groupRepository = {
   // @returns All groups
   async getAllGroups(): Promise<Result<Group[]>> {
     try {
-      const groups = await prisma.group.findMany();
+      const groups = await prisma.group.findMany({
+        select: { id: true, name: true, imageUrl: true, description: true, createdById: true },
+      });
       return Result.ok(groups);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
@@ -249,6 +259,7 @@ export const groupRepository = {
     try {
       const groups = await prisma.group.findMany({
         where: { users: { some: { id: userId } } },
+        select: { id: true, name: true, imageUrl: true, description: true, createdById: true },
       });
       return Result.ok(groups);
     } catch (e) {
