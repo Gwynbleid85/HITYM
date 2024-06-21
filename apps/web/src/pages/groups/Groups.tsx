@@ -17,27 +17,27 @@ function Groups() {
 
   return (
     <>
-      <Card className="w-full max-w-sm min-w-64 bg-background/95 rounded-xl shadow-xl">
+      <Card className="w-full max-w-sm min-w-72 bg-background/95 rounded-xl shadow-xl">
         <CardHeader className="items-center justify-center">
           <CardTitle className="text-3xl">My groups</CardTitle>
         </CardHeader>
 
         <CardContent className="flex justify-center">
-          <ScrollArea className=" w-fit max-h-80 rounded-md border-2 ">
+          <ScrollArea className=" w-fit rounded-md max-h-72 border-2 ">
             {groups?.data?.map((group) => (
               <Button
                 key={group.id}
                 variant="ghost"
-                className="flex justify-start space-x-4 w-full h-fit "
+                className="flex justify-start space-x-4 w-full h-fit px-10 "
                 onClick={() => handleClick(group.id)}
               >
                 <Avatar className="w-12 h-12">
                   <AvatarImage src={group.imageUrl} />
                   <AvatarFallback>{group.name.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <div>
-                  <h4 className="text-sm font-medium">{group.name}</h4>
-                  <p className="text-xs text-muted-foreground">{group.description}</p>
+                <div className="flex flex-col items-start">
+                  <h4 className="font-semibold">{group.name}</h4>
+                  <p className="text-sm text-muted-foreground">{group.description}</p>
                 </div>
               </Button>
             ))}
