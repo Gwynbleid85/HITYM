@@ -2,7 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UserLoginRequest, UserRegistrationRequest } from "@/types/Api";
 import { Api } from "@/types/Api";
 
-const api = new Api({ baseUrl: "http://localhost:3000" });
+const baseURL = import.meta.env.VITE_API_URL;
+
+const api = new Api({ baseUrl: baseURL });
 
 const QUERY_KEYS = {};
 
