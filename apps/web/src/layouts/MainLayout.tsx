@@ -11,7 +11,7 @@ export function MainLayout() {
     <>
       {isLoggedIn() ? <Navbar /> : null}
       <Map />
-      <div id="hovno" className="absolute inset-0 w-fit h-fit flex items-center justify-center">
+      <div className="absolute inset-0 m-auto w-fit h-fit">
         <Outlet />
       </div>
     </>

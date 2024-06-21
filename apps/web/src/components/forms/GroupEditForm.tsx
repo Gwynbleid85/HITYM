@@ -7,18 +7,17 @@ import { ButtonLoading } from "../ui/button-loading";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 
-import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { userLoginDataSchema } from "@/validationSchemas/user.validationSchemas";
-import { useUserLogin } from "@/hooks/useUsers";
+import { updateGroupSchema } from "@/validationSchemas/group.validationSchemas";
+import { useGroupUpdate } from "@/hooks/useGroups";
 import { useNavigate } from "react-router-dom";
 import usePersistentData from "@/hooks/usePersistentData";
 
 function GroupEditForm() {
   const navigate = useNavigate();
-  const { mutateAsync: loginUser } = useUserLogin();
+  const { mutateAsync: updateGroup  } = useGroupUpdate();
   const { toast } = useToast();
 
   const form = useForm<CreateGroupRequest>({
@@ -34,7 +33,7 @@ function GroupEditForm() {
   };
 
   return (
-    <Card className="w-full max-w-sm bg-background/95 rounded-xl m-5 shadow-xl">
+    <Card className="w-full max-w-sm bg-background/95 rounded-xl shadow-xl">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardHeader className="items-center justify-center">
@@ -72,7 +71,7 @@ function GroupEditForm() {
           <CardFooter className="flex-col">
             {!form.formState.isSubmitting ? (
               <Button type="submit" className="w-5/6">
-                Create group
+                Edit group
               </Button>
             ) : (
               <ButtonLoading />
