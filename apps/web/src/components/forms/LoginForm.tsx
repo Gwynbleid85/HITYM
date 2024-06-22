@@ -13,12 +13,14 @@ import { userLoginDataSchema } from "@/validationSchemas/user.validationSchemas"
 import { useUserLogin } from "@/hooks/useUsers";
 import { useNavigate } from "react-router-dom";
 import usePersistentData from "@/hooks/usePersistentData";
+import { useUserContext } from "@/context/UserContext";
 
 export function LoginForm() {
   const navigate = useNavigate();
   const { mutateAsync: loginUser } = useUserLogin();
   const { toast } = useToast();
-  const { updateAuthData} = usePersistentData();
+  const { updateAuthData } = usePersistentData();
+  const { updateUser } = useUserContext();
 
   const form = useForm<UserLoginRequest>({
     defaultValues: {
@@ -32,18 +34,18 @@ export function LoginForm() {
     try {
       const result = await loginUser(values);
       toast({
-        title: `Hi ${result.data.name}. Let's find your friends!`,
+        title: `Hi ${result.data.user.name}. Let's find your friends!`,
       });
       // Store the token and username in local storage
       updateAuthData({
         token: result.data.token,
-        username: result.data.name,
       });
-      // Redirect to home page
+      // Save the user data in context
+      updateUser({ user: result.data.user, state: "loggedIn" });
 
+      // Redirect to home page
       navigate("/home");
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
       toast({
         title: e.error.message, //TODO
         variant: "destructive",

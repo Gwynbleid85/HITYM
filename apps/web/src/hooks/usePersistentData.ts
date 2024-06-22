@@ -1,4 +1,4 @@
-import { useLocalStorage, writeStorage, deleteFromStorage } from "@rehooks/local-storage";
+import { useLocalStorage } from "@rehooks/local-storage";
 import { useCallback } from "react";
 import type { AuthData, AppData } from "@/types/persistentData";
 
@@ -7,7 +7,6 @@ const APP_DATA_STORAGE_KEY = "appData";
 
 const AUTH_DATA_DEFAULT: AuthData = {
   token: "",
-  username: "",
 };
 
 const APP_DATA_DEFAULT: AppData = {
@@ -45,14 +44,10 @@ const usePersistentData = () => {
     setAppData({ ...APP_DATA_DEFAULT });
   }, [setAppData]);
 
-  // Function which returns if the user is logged in or not
-  const isLoggedIn = () => authData.token !== "";
-
   return {
     authData,
     updateAuthData,
     deleteAuthData,
-    isLoggedIn,
     appData,
     updateAppData,
     resetAppData,

@@ -1,12 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UserLoginRequest, UserRegistrationRequest } from "@/types/Api";
 import { Api } from "@/types/Api";
+import usePersistentData from "./usePersistentData";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
 const api = new Api({ baseUrl: baseURL });
 
-const QUERY_KEYS = {};
+const QUERY_KEYS = {
+  user: "user",
+};
 
 const MUTATION_KEYS = {
   userRegistrate: "userRegistrate",

@@ -13,18 +13,24 @@ import { LogOut, User } from "lucide-react";
 import usePersistentData from "@/hooks/usePersistentData";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../ui/use-toast";
+import { useUserContext } from "@/context/UserContext";
 
 function ProfileMenu() {
   const { deleteAuthData, authData } = usePersistentData();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { userContext, updateUser } = useUserContext();
 
   const handleLogout = () => {
     // Delete the token from local storage
     toast({
-      title: `Bye ${authData.username}. Hope you don't get lost!`,
+      title: `Bye ${userContext.user?.name}. Hope you don't get lost!`,
     });
+    // Delete the token from local storage
     deleteAuthData();
+    // Delete the user data from context
+    updateUser({ user: null, state: "loggedOut" }); //TODO
+
     // Redirect to login page
     navigate("/login");
   };
@@ -38,7 +44,7 @@ function ProfileMenu() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2">
-        <DropdownMenuLabel>{authData.username}</DropdownMenuLabel>
+        <DropdownMenuLabel>{userContext.user?.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <User className="mr-2 h-4 w-4" />
