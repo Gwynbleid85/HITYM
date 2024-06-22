@@ -1,8 +1,6 @@
 import { useLocalStorage } from "@rehooks/local-storage";
 import { useCallback } from "react";
 import type { AuthData, AppData } from "@/types/persistentData";
-import { useUserContext } from "@/context/UserContext";
-import { useUser } from "@/hooks/useUsers";
 
 const AUTH_DATA_STORAGE_KEY = "AuthData";
 const APP_DATA_STORAGE_KEY = "appData";
@@ -22,8 +20,6 @@ const APP_DATA_DEFAULT: AppData = {
  * @returns An object containing the authData, appData and functions to modify them.
  */
 const usePersistentData = () => {
-  const { user, updateUser } = useUserContext();
-
   const [authData, setAuthData] = useLocalStorage<AuthData>(AUTH_DATA_STORAGE_KEY, {
     ...AUTH_DATA_DEFAULT,
   });
@@ -48,29 +44,10 @@ const usePersistentData = () => {
     setAppData({ ...APP_DATA_DEFAULT });
   }, [setAppData]);
 
-  // Function which returns if the user is logged in or not
-  const isLoggedIn = () => {
-    // Check if user is saved in context
-    if (user) {
-      return true;
-    }
-    // If user is not saved in context, check manually if user is loggen in and authorized
-    if (authData.token !== "") {
-      const newUser = useUser().data;
-      // If user is authorized, save the user in context
-      if (newUser?.ok) {
-        updateUser(newUser.data);
-        return true;
-      }
-    }
-    return false;
-  };
-
   return {
     authData,
     updateAuthData,
     deleteAuthData,
-    isLoggedIn,
     appData,
     updateAppData,
     resetAppData,

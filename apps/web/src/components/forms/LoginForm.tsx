@@ -20,7 +20,7 @@ export function LoginForm() {
   const { mutateAsync: loginUser } = useUserLogin();
   const { toast } = useToast();
   const { updateAuthData } = usePersistentData();
-  const { user, updateUser } = useUserContext();
+  const { updateUser } = useUserContext();
 
   const form = useForm<UserLoginRequest>({
     defaultValues: {
@@ -41,7 +41,7 @@ export function LoginForm() {
         token: result.data.token,
       });
       // Save the user data in context
-      updateUser(result.data.user);
+      updateUser({ user: result.data.user, state: "loggedIn" });
 
       // Redirect to home page
       navigate("/home");
