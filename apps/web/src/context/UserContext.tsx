@@ -1,14 +1,28 @@
 import React, { createContext, useContext, useState } from "react";
 import type { User } from "@/types/Api";
+import usePersistentData from "@/hooks/usePersistentData";
+
+const baseURL = import.meta.env.VITE_API_URL;
+
+type UserState = "loggedOut" | "loggedIn" | "fetching";
+
+type UserValue = {
+  user: User | null;
+  state: UserState;
+};
 
 interface UserContextValue {
-  user: User | null;
-  updateUser: (userData: User | null) => void;
+  userContext: UserValue;
+  updateUser: (userData: UserValue) => void;
+  fetchUser: () => void;
+  isLoggedIn: () => boolean;
 }
 
 const UserContext = createContext<UserContextValue>({
-  user: null,
+  userContext: { user: null, state: "fetching" },
   updateUser: () => {},
+  fetchUser: () => {},
+  isLoggedIn: () => false,
 });
 
 export const useUserContext = () => useContext(UserContext); // Custom hook for accessing context
@@ -17,14 +31,39 @@ export const useUserContext = () => useContext(UserContext); // Custom hook for 
  * Provides the User context for the application.
  */
 export const UserProvider = ({ children }: any) => {
-  const [user, setUser] = useState<User | null>(null); // initial state is null
+  const [userContext, setUserContext] = useState<UserValue>({ user: null, state: "fetching" }); // initial state is null
+  const { authData } = usePersistentData(); // Get the auth data from local storage
 
-  /**
-   * Updates the user data in the User context.
-   */
-  const updateUser = (newUserData: User | null) => {
-    setUser(newUserData);
+  const isLoggedIn = () => {
+    return userContext.state === "loggedIn";
   };
 
-  return <UserContext.Provider value={{ user, updateUser }}>{children}</UserContext.Provider>;
+  const updateUser = (newUserData: UserValue) => {
+    setUserContext(newUserData);
+  };
+
+  const fetchUser = async () => {
+    // Fetch only if user is not already saved in context
+    if (userContext.state !== "fetching") return;
+
+    if (authData) {
+      // Cant user tanstack-query here, because it break!
+      const newUser = await fetch(`${baseURL}/user`, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      });
+      const parsedUser = await newUser.json();
+      // If user is authorized, save the user in context
+      if (newUser.ok) {
+        setUserContext({ user: parsedUser as User, state: "loggedIn" });
+        return;
+      }
+    }
+    setUserContext({ user: null, state: "loggedOut" });
+  };
+
+  return (
+    <UserContext.Provider value={{ userContext, updateUser, fetchUser, isLoggedIn }}>{children}</UserContext.Provider>
+  );
 };

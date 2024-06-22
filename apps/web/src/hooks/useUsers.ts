@@ -46,20 +46,3 @@ export const useUserLogin = () => {
 
   return mutation;
 };
-
-// Hook to get user based on token using react-query
-export const useUser = () => {
-  const { authData } = usePersistentData();
-
-  const { data, isLoading } = useQuery({
-    queryKey: [QUERY_KEYS.user],
-    queryFn: () =>
-      api.user.userList({
-        headers: {
-          Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
-        },
-      }),
-  });
-
-  return { data, isLoading };
-};

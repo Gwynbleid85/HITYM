@@ -7,27 +7,27 @@ import GroupOverview from "@/pages/groups/GroupOverview";
 import MainLayout from "@/layouts/MainLayout";
 import Home from "@/pages/Home";
 import Groups from "@/pages/groups/Groups";
-import usePersistentData from "@/hooks/usePersistentData";
 import GroupEvents from "@/pages/groups/GroupEvents";
 import GroupUsers from "@/pages/groups/GroupUsers";
+import { useUserContext } from "@/context/UserContext";
 
 // Layout for Public Routes (Login and Signup), checks if user is logged in
 // If user is logged in, redirect to home page
 const PublicLayout = () => {
-  const { isLoggedIn } = usePersistentData();
+  const { isLoggedIn } = useUserContext();
   return isLoggedIn() ? <Navigate to="/home" replace /> : <Outlet />;
 };
 
 // Protected Layout for all Main Routes, checks if user is logged in
 // If user is not logged in, redirect to login page
 const ProtectedLayout = () => {
-  const { isLoggedIn } = usePersistentData();
+  const { isLoggedIn } = useUserContext();
   return !isLoggedIn() ? <Navigate to="/login" replace /> : <Outlet />;
 };
 
 // Redirect Component
 const Redirect = () => {
-  const { isLoggedIn } = usePersistentData();
+  const { isLoggedIn } = useUserContext();
   return isLoggedIn() ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />;
 };
 

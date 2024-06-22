@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 import Map from "@/components/Map";
 import Navbar from "@/components/navbar/Navbar";
-import usePersistentData from "@/hooks/usePersistentData";
+import { useUserContext } from "@/context/UserContext";
 
 export function MainLayout() {
-  const { isLoggedIn } = usePersistentData();
+  const { isLoggedIn } = useUserContext();
 
   return (
     //TODO center, compute
