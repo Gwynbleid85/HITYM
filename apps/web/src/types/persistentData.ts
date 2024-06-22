@@ -2,7 +2,6 @@
 
 export interface AuthData {
   token: string;
-  username: string;
 }
 
 export interface AppData {
