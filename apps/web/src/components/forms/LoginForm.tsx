@@ -18,7 +18,7 @@ export function LoginForm() {
   const navigate = useNavigate();
   const { mutateAsync: loginUser } = useUserLogin();
   const { toast } = useToast();
-  const { updateAuthData, updateAppData } = usePersistentData();
+  const { updateAuthData} = usePersistentData();
 
   const form = useForm<UserLoginRequest>({
     defaultValues: {

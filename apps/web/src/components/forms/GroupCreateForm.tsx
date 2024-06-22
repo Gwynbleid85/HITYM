@@ -1,7 +1,7 @@
 import React from "react";
 import type { CreateGroupRequest } from "@/types/Api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ButtonLoading } from "../ui/button-loading";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 import { createGroupSchema } from "@/validationSchemas/group.validationSchemas";
 import { useGroupCreate } from "@/hooks/useGroups";
 import { useNavigate } from "react-router-dom";
-import usePersistentData from "@/hooks/usePersistentData";
 
 function GroupCreateForm() {
   const navigate = useNavigate();
