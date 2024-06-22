@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import type { CreateGroupRequest } from "@/types/Api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent,CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ButtonLoading } from "../ui/button-loading";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { updateGroupSchema } from "@/validationSchemas/group.validationSchemas";
 import { useGroup, useGroupUpdate } from "@/hooks/useGroups";
 import { useNavigate, useParams } from "react-router-dom";
+import CustomCardFooter from "../CustomCardFooter";
 
 function GroupEditForm() {
   const navigate = useNavigate();
@@ -100,15 +101,12 @@ function GroupEditForm() {
               )}
             />
           </CardContent>
-          <CardFooter className="flex-col">
-            {!form.formState.isSubmitting ? (
-              <Button type="submit" className="w-5/6">
-                Update group
-              </Button>
-            ) : (
-              <ButtonLoading />
-            )}
-          </CardFooter>
+          <CustomCardFooter
+            buttonText="Update group"
+            isSubmitting={form.formState.isSubmitting}
+            buttonType="submit"
+            backPath={`/groups/${id}`}
+          />
         </form>
       </Form>
     </Card>

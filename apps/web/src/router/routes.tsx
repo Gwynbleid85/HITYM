@@ -8,7 +8,8 @@ import MainLayout from "@/layouts/MainLayout";
 import Home from "@/pages/Home";
 import Groups from "@/pages/groups/Groups";
 import usePersistentData from "@/hooks/usePersistentData";
-
+import GroupEvents from "@/pages/groups/GroupEvents";
+import GroupUsers from "@/pages/groups/GroupUsers";
 
 // Layout for Public Routes (Login and Signup), checks if user is logged in
 // If user is logged in, redirect to home page
@@ -34,6 +35,8 @@ const Redirect = () => {
 const GroupRoutes: RouteObject[] = [
   { index: true, element: <Groups /> },
   { path: "create", element: <GroupCreateForm /> },
+  { path: ":id/events", element: <GroupEvents /> },
+  { path: ":id/users", element: <GroupUsers /> },
   { path: ":id/edit", element: <GroupEditForm /> },
   { path: ":id", element: <GroupOverview /> },
 ];
