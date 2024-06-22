@@ -62,6 +62,7 @@ async function main() {
         await tx.group.create({
           data: {
             ...group,
+            createdById: users[groupIndex] ? users[groupIndex].id : "",
             users: {
               connect: users
                 .filter((_user, userIndex) => userIndex % (groupIndex + 1) === 0)
@@ -80,12 +81,9 @@ async function main() {
         await tx.groupEvent.create({
           data: {
             ...event,
-            group: {
-              connect: { id: groups[eventIndex] ? groups[eventIndex].id : "" },
-            },
-            place: {
-              connect: { id: places[eventIndex] ? places[eventIndex].id : "" },
-            },
+            createdById: users[eventIndex] ? users[eventIndex].id : "",
+            groupId: groups[eventIndex] ? groups[eventIndex].id : "",
+            placeId: places[eventIndex] ? places[eventIndex].id : "",
           },
         });
       })
