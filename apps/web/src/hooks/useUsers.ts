@@ -1,12 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UserLoginRequest, UserRegistrationRequest } from "@/types/Api";
 import { Api } from "@/types/Api";
+import usePersistentData from "./usePersistentData";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
 const api = new Api({ baseUrl: baseURL });
 
-const QUERY_KEYS = {};
+const QUERY_KEYS = {
+  user: "user",
+};
 
 const MUTATION_KEYS = {
   userRegistrate: "userRegistrate",
@@ -42,4 +45,21 @@ export const useUserLogin = () => {
   });
 
   return mutation;
+};
+
+// Hook to get user based on token using react-query
+export const useUser = () => {
+  const { authData } = usePersistentData();
+
+  const { data, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.user],
+    queryFn: () =>
+      api.user.userList({
+        headers: {
+          Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
+        },
+      }),
+  });
+
+  return { data, isLoading };
 };

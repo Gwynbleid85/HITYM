@@ -149,6 +149,30 @@ export interface InviteUserToGroupRequest {
   groupId: string;
 }
 
+/** Subscribe to user data */
+export interface SubscribeUserRequest {
+  /** Users to subscribe to */
+  userIds: string[];
+}
+
+/** Unsubscribe from user data */
+export interface UnsubscribeUserRequest {
+  /** Users to unsubscribe from */
+  userIds: string[];
+}
+
+/** Share position with group */
+export interface SharePositionWithGroupRequest {
+  /** Group to share position with */
+  groupId: string;
+}
+
+/** Unshare position with group */
+export interface UnsharePositionWithGroupRequest {
+  /** Group to unshare position with */
+  groupId: string[];
+}
+
 /** Group with users and events */
 export interface GroupExtended {
   /** Group ID */
@@ -161,14 +185,14 @@ export interface GroupExtended {
   imageUrl: string;
   /** User ID of the creator */
   createdById: string;
-  /** Group users */
-  users?: User[];
+  /** Group users with status */
+  users?: UserWithStatus[];
   /** Group events */
   groupEvents?: GroupEvent[];
 }
 
 /** Group invite */
-export interface GroupInvite {
+export interface GroupInviteExtended {
   /** Invite ID */
   id: string;
   /** Group ID */
@@ -177,6 +201,8 @@ export interface GroupInvite {
   invitedUserId: string;
   /** Invited by user ID */
   invitedById: string;
+  /** Group */
+  group?: Group;
 }
 
 /** User without sensitive data */
@@ -187,6 +213,32 @@ export interface SimpleUser {
   name: string;
   /** User profile picture */
   profilePicture?: string;
+}
+
+/** User with status data */
+export interface UserWithStatus {
+  /** User ID */
+  id: string;
+  /** User name */
+  name: string;
+  /** User profile picture */
+  profilePicture?: string;
+  /** User bio */
+  bio?: string;
+  /** User last active date */
+  lastActive?: string;
+  /** User last position */
+  lastPosition?: Position;
+  /** User status */
+  status: UserStatusSimple;
+}
+
+/** User status data */
+export interface UserStatusSimple {
+  /** User status */
+  status: string;
+  /** Status color */
+  color: string;
 }
 
 /** User */
@@ -266,6 +318,18 @@ export interface GroupEvent {
   placeId: string;
 }
 
+/** Group invite */
+export interface GroupInvite {
+  /** Invite ID */
+  id: string;
+  /** Group ID */
+  groupId: string;
+  /** Invited user ID */
+  invitedUserId: string;
+  /** Invited by user ID */
+  invitedById: string;
+}
+
 /** Pagination query */
 export interface PaginationQuery {
   /** Page number */
@@ -290,12 +354,10 @@ export interface Position {
 
 /** User login result */
 export interface UserLoginResult {
-  /** User ID */
-  userId: string;
-  /** User name */
-  name: string;
   /** User token */
   token: string;
+  /** User */
+  user: User;
 }
 
 /** Error class */
@@ -413,7 +475,7 @@ export class HttpClient<SecurityDataType = unknown> {
             ? property
             : typeof property === "object" && property !== null
               ? JSON.stringify(property)
-              : `${property}`
+              : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -593,11 +655,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     groupsDelete: (id: string, params: RequestParams = {}) =>
-      this.request<string, Error>({
+      this.request<void, Error>({
         path: `/groups/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -744,11 +805,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     groupEventsDelete: (id: string, params: RequestParams = {}) =>
-      this.request<string, Error>({
+      this.request<void, Error>({
         path: `/group-events/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -841,11 +901,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     placesDelete: (id: string, params: RequestParams = {}) =>
-      this.request<any, Error>({
+      this.request<void, Error>({
         path: `/places/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -909,15 +968,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags test
-     * @name TestAuthorizationList
-     * @summary Test authorization
-     * @request GET:/user/test/authorization
+     * @tags user
+     * @name UserList
+     * @summary Get user data
+     * @request GET:/user
      * @secure
      */
-    testAuthorizationList: (params: RequestParams = {}) =>
-      this.request<string, Error>({
-        path: `/user/test/authorization`,
+    userList: (params: RequestParams = {}) =>
+      this.request<User, Error>({
+        path: `/user`,
         method: "GET",
         secure: true,
         format: "json",
@@ -934,11 +993,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     userDelete: (params: RequestParams = {}) =>
-      this.request<string, Error>({
+      this.request<void, Error>({
         path: `/user`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -958,6 +1016,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags test
+     * @name TestAuthorizationList
+     * @summary Test authorization
+     * @request GET:/user/test/authorization
+     * @secure
+     */
+    testAuthorizationList: (params: RequestParams = {}) =>
+      this.request<string, Error>({
+        path: `/user/test/authorization`,
+        method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1012,7 +1088,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     userStatusCreate: (data: UpdateUserStatusRequest, params: RequestParams = {}) =>
-      this.request<User, Error>({
+      this.request<UserStatus, Error>({
         path: `/user/user-status`,
         method: "POST",
         body: data,
@@ -1142,11 +1218,121 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     groupsInvitesList: (params: RequestParams = {}) =>
-      this.request<any[], Error>({
+      this.request<GroupInviteExtended[], Error>({
         path: `/user/groups/invites`,
         method: "GET",
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags group-invite
+     * @name GroupsInvitesAcceptCreate
+     * @summary Accept group invite
+     * @request POST:/user/groups/invites/{id}/accept
+     * @secure
+     */
+    groupsInvitesAcceptCreate: (id: string, params: RequestParams = {}) =>
+      this.request<void, Error>({
+        path: `/user/groups/invites/${id}/accept`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags group-invite
+     * @name GroupsInvitesDelete
+     * @summary Decline group invite
+     * @request DELETE:/user/groups/invites/{id}
+     * @secure
+     */
+    groupsInvitesDelete: (id: string, params: RequestParams = {}) =>
+      this.request<void, Error>({
+        path: `/user/groups/invites/${id}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags position-sharing
+     * @name PositionSharingSubscriptionsCreate
+     * @summary Subscribe to user data
+     * @request POST:/user/position-sharing/subscriptions
+     * @secure
+     */
+    positionSharingSubscriptionsCreate: (data: SubscribeUserRequest, params: RequestParams = {}) =>
+      this.request<void, Error>({
+        path: `/user/position-sharing/subscriptions`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags position-sharing
+     * @name PositionSharingSubscriptionsDelete
+     * @summary Unsubscribe from user data
+     * @request DELETE:/user/position-sharing/subscriptions
+     * @secure
+     */
+    positionSharingSubscriptionsDelete: (data: UnsubscribeUserRequest, params: RequestParams = {}) =>
+      this.request<void, Error>({
+        path: `/user/position-sharing/subscriptions`,
+        method: "DELETE",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags position-sharing
+     * @name PositionSharingShareWithGroupsCreate
+     * @summary Share position with group
+     * @request POST:/user/position-sharing/share-with/groups
+     * @secure
+     */
+    positionSharingShareWithGroupsCreate: (data: SharePositionWithGroupRequest, params: RequestParams = {}) =>
+      this.request<void, Error>({
+        path: `/user/position-sharing/share-with/groups`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags position-sharing
+     * @name PositionSharingShareWithGroupsDelete
+     * @summary Unshare position with group
+     * @request DELETE:/user/position-sharing/share-with/groups
+     * @secure
+     */
+    positionSharingShareWithGroupsDelete: (data: UnsharePositionWithGroupRequest, params: RequestParams = {}) =>
+      this.request<void, Error>({
+        path: `/user/position-sharing/share-with/groups`,
+        method: "DELETE",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
   };
@@ -1154,7 +1340,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags user
+     * @tags users
      * @name UsersList
      * @summary Get all users
      * @request GET:/users
@@ -1172,60 +1358,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @tags users
+     * @name UserStatusDetail
+     * @summary Get user-status by user
+     * @request GET:/users/{id}/user-status
+     * @secure
+     */
+    userStatusDetail: (id: string, params: RequestParams = {}) =>
+      this.request<UserStatus, Error>({
+        path: `/users/${id}/user-status`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags group-invite
-     * @name GroupsInviteCreate
+     * @name GroupsInvitesCreate
      * @summary Invite user to group
-     * @request POST:/users/{id}/groups/invite
+     * @request POST:/users/{id}/groups/invites
      * @secure
      */
-    groupsInviteCreate: (id: string, data: InviteUserToGroupRequest, params: RequestParams = {}) =>
-      this.request<any, Error>({
-        path: `/users/${id}/groups/invite`,
+    groupsInvitesCreate: (id: string, data: InviteUserToGroupRequest, params: RequestParams = {}) =>
+      this.request<void, Error>({
+        path: `/users/${id}/groups/invites`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags group-invite
-     * @name GroupsInviteAcceptCreate
-     * @summary Accept group invite
-     * @request POST:/users/{id}/groups/invite/{invite_id}/accept
-     * @secure
-     */
-    groupsInviteAcceptCreate: (id: string, inviteId: string, data: any, params: RequestParams = {}) =>
-      this.request<any, Error>({
-        path: `/users/${id}/groups/invite/${inviteId}/accept`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags group-invite
-     * @name GroupsInviteDelete
-     * @summary Decline group invite
-     * @request DELETE:/users/{id}/groups/invite/{invite_id}
-     * @secure
-     */
-    groupsInviteDelete: (id: string, inviteId: string, data: any, params: RequestParams = {}) =>
-      this.request<any, Error>({
-        path: `/users/${id}/groups/invite/${inviteId}`,
-        method: "DELETE",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
         ...params,
       }),
   };
