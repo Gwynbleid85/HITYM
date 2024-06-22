@@ -10,6 +10,7 @@ const api = new Api({ baseUrl: baseURL });
 const QUERY_KEYS = {
   groups: "groups",
   group: "group",
+  groupExtended: "groupExtended",
 };
 
 const MUTATION_KEYS = {
@@ -38,7 +39,7 @@ export const useGroups = () => {
 export const useGroup = (id: string) => {
   const { authData } = usePersistentData();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.group, id],
     queryFn: () =>
       api.groups.groupsDetail(id, {
@@ -48,7 +49,7 @@ export const useGroup = (id: string) => {
       }),
   });
 
-  return { data, isLoading };
+  return { data, isLoading, isError };
 };
 
 // Hook to get extended info for a group using react-query
@@ -56,7 +57,7 @@ export const useGroupExtended = (id: string) => {
   const { authData } = usePersistentData();
 
   const { data, isLoading } = useQuery({
-    queryKey: [QUERY_KEYS.group, id],
+    queryKey: [QUERY_KEYS.groupExtended, id],
     queryFn: () =>
       api.groups.extendedDetail(id, {
         headers: {
@@ -83,7 +84,10 @@ export const useGroupCreate = () => {
       }),
 
     onSuccess: () => {
-      //TODO invalidate group list
+      //Invalidate group list
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.groups],
+      });
     },
   });
 
@@ -93,13 +97,22 @@ export const useGroupCreate = () => {
 // Hook to update a group using react-query
 export const useGroupUpdate = (id: string) => {
   const queryClient = useQueryClient();
+  const { authData } = usePersistentData();
 
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.groupUpdate],
-    mutationFn: (payload: UpdateGroupRequest) => api.groups.groupsUpdate(id, payload),
+    mutationFn: (payload: UpdateGroupRequest) =>
+      api.groups.groupsUpdate(id, payload, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
+        },
+      }),
 
     onSuccess: () => {
-      //TODO invalidate group list
+      //Invalidate group list
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.groupExtended], //TODO or group?
+      });
     },
   });
 
