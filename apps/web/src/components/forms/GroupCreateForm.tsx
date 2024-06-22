@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { createGroupSchema } from "@/validationSchemas/group.validationSchemas";
 import { useGroupCreate } from "@/hooks/useGroups";
 import { useNavigate } from "react-router-dom";
+import CustomCardFooter from "../CustomCardFooter";
 
 function GroupCreateForm() {
   const navigate = useNavigate();
@@ -80,15 +81,8 @@ function GroupCreateForm() {
               )}
             />
           </CardContent>
-          <CardFooter className="flex-col">
-            {!form.formState.isSubmitting ? (
-              <Button type="submit" className="w-5/6">
-                Create group
-              </Button>
-            ) : (
-              <ButtonLoading />
-            )}
-          </CardFooter>
+
+          <CustomCardFooter buttonText="Create group" isSubmitting={form.formState.isSubmitting} buttonType="submit" backPath="/groups"/>
         </form>
       </Form>
     </Card>
