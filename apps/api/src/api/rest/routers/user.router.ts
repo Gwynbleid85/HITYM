@@ -28,6 +28,17 @@ userRouter.post("/registration", userController.registerUser);
 userRouter.post("/login", userController.loginUser);
 
 /**
+ * GET /user
+ * @summary Get user data
+ * @tags user
+ * @security BearerAuth
+ * @return {User} 200 - success response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ * @return {Error} 404 - Not Found response - application/json
+ */
+userRouter.get("/", auth, userController.getUser);
+
+/**
  * GET /user/test/authorization
  * @summary Test authorization
  * @tags test

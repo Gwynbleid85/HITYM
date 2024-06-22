@@ -81,7 +81,7 @@ export const userController = {
     const user = userRes.value;
 
     ///TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
-    if (!request.body.password.localeCompare(user.password)) {
+    if (request.body.password.localeCompare(user.password)) {
       return res.status(400).json({
         name: "ValidationError",
         message: "Invalid password",
@@ -109,11 +109,31 @@ export const userController = {
       }
     );
 
+    const userData = await userRepository.findById(user.id);
+    if (userData.isErr) {
+      handleRepositoryErrors(userData.error, res);
+      return;
+    }
+
     return res.status(200).json({
-      userId: user.id,
-      name: user.name,
+      user: userData.value,
       token: token,
     } as UserLoginResult);
+  },
+
+  /*
+   * Get user
+   * @param req Request object
+   * @param res Response object
+   */
+  async getUser(req: Request, res: Response) {
+    const result = await userRepository.findById(req.user.sub);
+    if (result.isErr) {
+      handleRepositoryErrors(result.error, res);
+      return;
+    }
+
+    return res.status(200).json(result.value);
   },
 
   /*
