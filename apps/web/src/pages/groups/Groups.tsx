@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import React from "react";
 import { useGroups } from "@/hooks/useGroups";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/Avatar";
 import { Button } from "@/components/ui/button"; // Import Button component
 import { useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -34,10 +34,7 @@ function Groups() {
                   className=" flex justify-start space-x-4 w-full h-fit px-2"
                   onClick={() => handleClick(group.id)}
                 >
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={group.imageUrl} />
-                    <AvatarFallback>{group.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
+                  <Avatar name={group.name} url={group.imageUrl} size="12"/>
                   <div className="flex flex-col items-start">
                     <h4 className="font-semibold ">{group.name}</h4>
                     <p className="text-sm text-muted-foreground w-full">{group.description}</p>

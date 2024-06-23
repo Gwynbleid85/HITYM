@@ -38,7 +38,7 @@ function ProfileMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar name={userContext.user?.name || ""} url={userContext.user?.profilePicture} />
+        <Avatar name={userContext.user?.name || ""} url={userContext.user?.profilePicture} size="20" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2">
         <DropdownMenuLabel>{userContext.user?.name}</DropdownMenuLabel>

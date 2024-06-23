@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useUsers } from "@/hooks/useUsers";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar } from "@/components/Avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -77,10 +77,7 @@ function UserInvite() {
                     className=" flex justify-start space-x-4 w-full h-fit px-2"
                   >
                     {/* TODO avatar color */}
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage src={user.profilePicture} />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
+                    <Avatar name={user.name} url={user.profilePicture} size="12" />
                     <div className="flex flex-col items-start">
                       <h4 className="font-semibold ">{user.name}</h4>
                     </div>
