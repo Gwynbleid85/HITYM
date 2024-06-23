@@ -1,11 +1,14 @@
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
 import { useUserContext } from "./context/UserContext";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Map from "@/components/Map";
+import usePosition from "./hooks/usePosition";
 
 function App() {
   const { userContext, fetchUser } = useUserContext();
+  const { updatePosition } = usePosition();
+  const updatePositionRunning = useRef(false);
 
   useEffect(() => {
     fetchUser();
