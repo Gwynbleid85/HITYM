@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import React from "react";
 import { useGroupExtended } from "@/hooks/useGroups";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar } from "@/components/Avatar";
 import { Button } from "@/components/ui/button"; // Import Button component
 import { useNavigate, useParams } from "react-router-dom";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -33,10 +33,7 @@ function Groups() {
                 <div className="grid grid-cols-[1fr_auto] w-full items-center" key={user.id}>
                   {/* Button 1: Left Side (Full Width) */}
                   <Button variant="ghost" className=" truncate flex items-center justify-start space-x-4 px-3 h-fit">
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage src={user.profilePicture} />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
+                    <Avatar name={user.name} url={user.profilePicture} size="12"/>
                     <div className="truncate">
                       <h4 className="font-semibold">{user.name}</h4>
                     </div>
@@ -51,7 +48,11 @@ function Groups() {
           )}
         </CardContent>
         {/* TODO redirect to invite*/}
-        <CustomCardFooter buttonText="Invite user" buttonOnClick={() => navigate("/home")} backPath={`/groups/${id}`} />
+        <CustomCardFooter
+          buttonText="Invite user"
+          buttonOnClick={() => navigate(`/groups/${id}/users/invite`)}
+          backPath={`/groups/${id}`}
+        />
       </Card>
     </>
   );

@@ -188,7 +188,7 @@ export interface GroupExtended {
   /** Group users with status */
   users?: UserWithStatus[];
   /** Group events */
-  groupEvents?: GroupEvent[];
+  events?: GroupEvent[];
 }
 
 /** Group invite */
