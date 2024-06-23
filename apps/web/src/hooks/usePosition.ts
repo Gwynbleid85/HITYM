@@ -4,9 +4,9 @@ import useWebSocket from "react-use-websocket";
 import usePersistentData from "./usePersistentData";
 import { useUserContext } from "@/context/UserContext";
 
-import type { Position, UserStatusSimple } from "@/types/Api";
 import type {
   AuthMessage,
+  AuthRequiredMessage,
   UserChangedPositionMessage,
   UserConnectedMessage,
   UserDisconnectedMessage,
@@ -20,8 +20,11 @@ const WS_URL = import.meta.env.VITE_WS_URL as string;
 export type UserInfo = {
   name: string;
   profilePicture: string | null;
-  position: Position | null;
-  status: UserStatusSimple | null;
+  position: {
+    latitude: number;
+    longitude: number;
+  } | null;
+  status: { status: string; color: string } | null;
   active: boolean;
 };
 
@@ -36,20 +39,6 @@ const usePosition = () => {
     {
       share: true,
       shouldReconnect: () => true,
-      onOpen: () => {
-        console.log("WebSocket connection opened, trying to authenticate");
-
-        sendJsonMessage({
-          sender: "unauthorized user",
-          type: "auth",
-          data: {
-            token: authData?.token,
-          },
-        } as AuthMessage);
-      },
-      onClose: (event) => {
-        console.log("WebSocket connection closed", event.code, event.reason);
-      },
     },
     userContext.state === "loggedIn"
   );
@@ -59,12 +48,15 @@ const usePosition = () => {
     if (!isWsMessage(lastJsonMessage)) return;
 
     const message = lastJsonMessage as WsMessage;
-    console.log("New message received", message);
+    console.log(`New message received [${message.type}]`, message);
     handleWsMessage(message);
   }, [lastJsonMessage]);
 
   const handleWsMessage = (message: WsMessage) => {
     switch (message.type) {
+      case "authRequired":
+        handleAuth(message);
+        break;
       case "userChangedPosition":
         handlePositionChanged(message);
         break;
@@ -85,6 +77,16 @@ const usePosition = () => {
         console.warn(`Unknown message type: ${message.type}`);
         break;
     }
+  };
+
+  const handleAuth = (_message: AuthRequiredMessage) => {
+    sendJsonMessage({
+      sender: "unauthorized user",
+      type: "auth",
+      data: {
+        token: authData?.token,
+      },
+    } as AuthMessage);
   };
 
   /**
@@ -201,22 +203,35 @@ const usePosition = () => {
 
   /**
    * Update user position
-   * Propagate user position to other users
-   * @param lat New latitude
-   * @param lon New longitude
+   * Get user position and send it to the server
    */
-  const updatePosition = (lat: number, lon: number) => {
-    console.log(`Lat: ${lat}`);
-    console.log(`Lon: ${lon}`);
+  const updatePosition = () => {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 2000,
+      maximumAge: 0,
+    };
 
-    sendJsonMessage({
-      type: "userChangedPosition",
-      sender: userContext.user?.id,
-      data: {
-        latitude: lat,
-        longitude: lon,
-      },
-    } as UserChangedPositionMessage);
+    function success(pos: GeolocationPosition) {
+      const crd = pos.coords;
+
+      console.log("Position updated");
+
+      sendJsonMessage({
+        type: "userChangedPosition",
+        sender: userContext.user?.id,
+        data: {
+          latitude: crd.latitude,
+          longitude: crd.longitude,
+        },
+      } as UserChangedPositionMessage);
+    }
+
+    function error(err: any) {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+
+    navigator.geolocation.getCurrentPosition(success, error, options);
   };
 
   return {

@@ -1,15 +1,21 @@
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
 import { useUserContext } from "./context/UserContext";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Map from "@/components/Map";
+import usePosition from "./hooks/usePosition";
 
 function App() {
   const { userContext, fetchUser } = useUserContext();
+  const { updatePosition } = usePosition();
+  const updatePositionRunning = useRef(false);
 
-  // If JWT token exist verify it
   useEffect(() => {
     fetchUser();
+    // Update user position every 10 seconds
+    if (updatePositionRunning.current) return;
+    setInterval(updatePosition, 10000);
+    updatePositionRunning.current = true;
   }, []);
 
   // App requires user to be logged in to use the app
