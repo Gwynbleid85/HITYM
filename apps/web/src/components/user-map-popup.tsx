@@ -14,7 +14,7 @@ export const UserMapPopup = ({ user }: UserMapPopupProps) => {
         <CardDescription>Card Description</CardDescription>
       </CardHeader>
       <CardContent>
-        <Avatar name={user.name} imageUrl={user.profilePicture} size={20} />
+        <Avatar name={user.name} url={user.profilePicture} size={20} />
       </CardContent>
       <CardFooter>
         <p>Card Footer</p>

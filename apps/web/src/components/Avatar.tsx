@@ -32,19 +32,20 @@ function stringAvatar(name: string) {
 }
 
 type AvatarProps = {
-  imageUrl?: string | null;
+  url?: string | null;
   name: string;
-  size?: number;
+  size?: string;
 } & JSX.IntrinsicElements["div"];
 
 export const Avatar: FC<AvatarProps> = (props) => {
   const { className, size, name, ...otherProps } = props;
 
-  let imageUrl = props.imageUrl;
+  let imageUrl = props.url;
   if (imageUrl) {
     if (imageUrl.startsWith("/")) imageUrl = process.env.NEXT_PUBLIC_API_URL + imageUrl;
+
     return (
-      <AvatarSimple {...otherProps} className={clsx(`w-${size || 14} h-${size || 14} shadow-sm`, className)}>
+      <AvatarSimple {...otherProps} className={clsx(`w-${size || "14"} h-${size || "14"} shadow-sm`, className)}>
         <AvatarImage src={imageUrl} />
       </AvatarSimple>
     );
@@ -53,7 +54,10 @@ export const Avatar: FC<AvatarProps> = (props) => {
   const fallbackData = stringAvatar(name);
 
   return (
-    <AvatarSimple {...otherProps} className={clsx(`w-${size || 14} h-${size || 14} shadow-sm select-none`, className)}>
+    <AvatarSimple
+      {...otherProps}
+      className={clsx(`w-${size || "14"} h-${size || "14"} shadow-sm select-none`, className)}
+    >
       <AvatarFallback style={{ backgroundColor: fallbackData.color }} className=" font-bold text-lg">
         {fallbackData.name}
       </AvatarFallback>

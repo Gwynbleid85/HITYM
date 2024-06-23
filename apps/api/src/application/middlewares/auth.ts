@@ -20,20 +20,20 @@ declare global {
 const auth = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
-    res.status(401).send({ error: "Authentication failed." });
+    res.status(401).json({ error: "Authentication failed." });
     return;
   }
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET || "") as JWTUser;
     if (!user) {
-      res.status(401).send({ error: "Authorization failed." });
+      res.status(401).json({ error: "Authorization failed." });
       return;
     }
     req.user = user;
     next();
     return;
   } catch (e) {
-    res.status(401).send({ error: "Authorization failed." });
+    res.status(401).json({ error: "Authorization failed." });
     return;
   }
 };

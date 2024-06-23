@@ -53,25 +53,25 @@ export const parseRequest = async <Output, Def extends ZodTypeDef = ZodTypeDef, 
 
 export const handleRepositoryErrors = (e: Error, res: Response) => {
   if (e instanceof NotFoundError) {
-    res.status(404).send({
+    res.status(404).json({
       name: e.name || "NotFoundError",
       message: e.message || "Entity not found",
       cause: e.cause,
     });
   } else if (e instanceof InternalError) {
-    res.status(500).send({
+    res.status(500).json({
       name: e.name || "InternalError",
       message: e.message || "Something went wrong on our side.",
       cause: e.cause,
     });
   } else if (e instanceof ConflictError) {
-    res.status(400).send({
+    res.status(400).json({
       name: e.name || "ConflictError",
       message: e.message || "Conflict",
       cause: e.cause,
     });
   } else {
-    res.status(500).send({
+    res.status(500).json({
       name: "UnknownError",
       message: "Something went wrong.",
     });

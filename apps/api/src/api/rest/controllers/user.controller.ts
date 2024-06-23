@@ -39,7 +39,7 @@ export const userController = {
     // Check if user with email already exists
     const user = await userRepository.findByEmail(request.body.email);
     if (user.isOk) {
-      return res.status(400).send({
+      return res.status(400).json({
         name: "ConflictError",
         message: "User with this email already exists",
       });
@@ -389,7 +389,7 @@ export const userController = {
       return;
     }
     if (userGroups.value.some((group) => group.id === request.body.groupId)) {
-      return res.status(400).send({
+      return res.status(400).json({
         name: "ValidationError",
         message: "User is already in this group",
       });
@@ -402,7 +402,7 @@ export const userController = {
       return;
     }
     if (invites.value.some((invite) => invite.groupId === request.body.groupId)) {
-      return res.status(400).send({
+      return res.status(400).json({
         name: "ValidationError",
         message: "User is already invited to this group",
       });
@@ -439,7 +439,7 @@ export const userController = {
       return;
     }
     if (invite.value.invitedUserId !== req.user.sub) {
-      return res.status(400).send({
+      return res.status(400).json({
         name: "ValidationError",
         message: "This invite is not for you",
       });
@@ -471,7 +471,7 @@ export const userController = {
       return;
     }
     if (invite.value.invitedUserId !== req.user.sub) {
-      return res.status(400).send({
+      return res.status(400).json({
         name: "ValidationError",
         message: "This invite is not for you",
       });
