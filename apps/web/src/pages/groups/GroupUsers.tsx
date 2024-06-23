@@ -51,7 +51,11 @@ function Groups() {
           )}
         </CardContent>
         {/* TODO redirect to invite*/}
-        <CustomCardFooter buttonText="Invite user" buttonOnClick={() => navigate("./invite")} backPath={`/groups/${id}`} />
+        <CustomCardFooter
+          buttonText="Invite user"
+          buttonOnClick={() => navigate("./invite")}
+          backPath={`/groups/${id}`}
+        />
       </Card>
     </>
   );
