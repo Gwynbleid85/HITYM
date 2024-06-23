@@ -9,6 +9,7 @@ import Home from "@/pages/Home";
 import Groups from "@/pages/groups/Groups";
 import GroupEvents from "@/pages/groups/GroupEvents";
 import GroupUsers from "@/pages/groups/GroupUsers";
+import UserInvite from "@/pages/UserInvite";
 import { useUserContext } from "@/context/UserContext";
 
 // Layout for Public Routes (Login and Signup), checks if user is logged in
@@ -36,6 +37,7 @@ const GroupRoutes: RouteObject[] = [
   { index: true, element: <Groups /> },
   { path: "create", element: <GroupCreateForm /> },
   { path: ":id/events", element: <GroupEvents /> },
+  { path: ":id/users/invite", element: <UserInvite /> },
   { path: ":id/users", element: <GroupUsers /> },
   { path: ":id/edit", element: <GroupEditForm /> },
   { path: ":id", element: <GroupOverview /> },

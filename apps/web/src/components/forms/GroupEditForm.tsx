@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import type { CreateGroupRequest } from "@/types/Api";
+import type { UpdateGroupRequest } from "@/types/Api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ function GroupEditForm() {
   const { data: group, isLoading, isError } = useGroup(id as string); // Get the group data
   const { toast } = useToast();
 
-  const form = useForm<CreateGroupRequest>({
+  const form = useForm<UpdateGroupRequest>({
     defaultValues: {
       name: "",
       description: "",
@@ -48,7 +48,7 @@ function GroupEditForm() {
     }
   }, [group, form, isLoading]);
 
-  const onSubmit = async (values: CreateGroupRequest) => {
+  const onSubmit = async (values: UpdateGroupRequest) => {
     try {
       await updateGroup(values);
       toast({
@@ -101,6 +101,7 @@ function GroupEditForm() {
               )}
             />
           </CardContent>
+          {/* // TODO edit button only when authorized */}
           <CustomCardFooter
             buttonText="Update group"
             isSubmitting={form.formState.isSubmitting}

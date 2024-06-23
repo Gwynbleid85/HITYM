@@ -31,7 +31,7 @@ function Groups() {
                 <Button
                   key={group.id}
                   variant="ghost"
-                  className=" flex justify-start space-x-4 max-w-full h-fit px-2"
+                  className=" flex justify-start space-x-4 w-full h-fit px-2"
                   onClick={() => handleClick(group.id)}
                 >
                   <Avatar className="w-12 h-12">

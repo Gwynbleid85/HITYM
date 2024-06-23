@@ -9,6 +9,7 @@ const api = new Api({ baseUrl: baseURL });
 
 const QUERY_KEYS = {
   user: "user",
+  users: "users",
 };
 
 const MUTATION_KEYS = {
@@ -45,4 +46,21 @@ export const useUserLogin = () => {
   });
 
   return mutation;
+};
+
+// Hook for fetching all users
+export const useUsers = () => {
+  const { authData } = usePersistentData();
+
+  const { data, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.users],
+    queryFn: () =>
+      api.users.usersList({
+        headers: {
+          Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
+        },
+      }),
+  });
+
+  return { data, isLoading };
 };
