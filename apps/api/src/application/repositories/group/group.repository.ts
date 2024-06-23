@@ -2,7 +2,7 @@ import { Result } from "@badrap/result";
 import type { NewGroup, GroupUpdate, GroupExtended } from "./types";
 import type { GroupEvent, Group, User } from "../../../types";
 import prisma from "../../../client";
-import handleDbExceptions, { NotFoundError, toUser } from "../../../utils";
+import handleDbExceptions, { NotFoundError } from "../../../utils";
 
 export const groupRepository = {
   // Create a new group
@@ -54,7 +54,12 @@ export const groupRepository = {
         where: { id },
         include: {
           users: {
-            include: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              bio: true,
+              profilePicture: true,
               status: {
                 select: { status: true, color: true },
               },
@@ -69,17 +74,7 @@ export const groupRepository = {
       if (!group) {
         return Result.err(new NotFoundError());
       }
-      const { users, events, ...simpleGroup } = group;
-      return Result.ok({
-        ...simpleGroup,
-        users: users.map((user) => {
-          return {
-            ...toUser(user),
-            status: user.status,
-          };
-        }),
-        groupEvents: events,
-      });
+      return Result.ok(group);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -197,11 +192,24 @@ export const groupRepository = {
   // @returns All users
   async getGroupUsers(groupId: string): Promise<Result<User[]>> {
     try {
-      const users = await prisma.group.findUnique({ where: { id: groupId } }).users();
+      const users = await prisma.group.findUnique({
+        where: { id: groupId },
+        select: {
+          users: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              bio: true,
+              profilePicture: true,
+            },
+          },
+        },
+      });
       if (!users) {
         return Result.err(new NotFoundError());
       }
-      return Result.ok(users.map(toUser));
+      return Result.ok(users.users);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }

@@ -14,9 +14,9 @@ export type GroupUpdate = Omit<NewGroup, "createdById">;
  * @property {string} imageUrl.required - Group image URL
  * @property {string} createdById.required - User ID of the creator
  * @property {UserWithStatus[]} users - Group users with status
- * @property {GroupEvent[]} groupEvents - Group events
+ * @property {GroupEvent[]} events - Group events
  */
 export type GroupExtended = Group & {
   users: UserWithStatus[];
-  groupEvents: GroupEvent[];
+  events: GroupEvent[];
 };

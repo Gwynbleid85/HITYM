@@ -1,5 +1,8 @@
 import type { UserChangedPosition } from "../../core/Events";
-import { websocketState, broadcastToGroup } from "../../api/websocket/websocket";
+import { websocketState } from "../../api/websocket/websocket";
+import { userWsConfigRepository } from "../repositories/userWebsocketConfig/userWebsocketConfig.repository";
+import type { UserChangedPositionMessage } from "../../../../../packages/shared-types/WsMessages";
+import { broadcastToGroup } from "../../api/websocket/wsUtils";
 
 export const userChangedPositionHandler = (event: UserChangedPosition) => {
   console.log(event);
@@ -7,7 +10,7 @@ export const userChangedPositionHandler = (event: UserChangedPosition) => {
   // Send all subscribed users a message that the user changed his position
   const receivers = websocketState.broadcastGroups[event.data.userId];
   const { type, data } = event;
-  const newWsMessage = {
+  const newWsMessage: UserChangedPositionMessage = {
     type,
     sender: event.data.userId,
     data,
@@ -16,4 +19,9 @@ export const userChangedPositionHandler = (event: UserChangedPosition) => {
   if (receivers) {
     broadcastToGroup(newWsMessage, [...receivers]);
   }
+
+  userWsConfigRepository.UpdateUserPosition(event.data.userId, {
+    latitude: event.data.latitude,
+    longitude: event.data.longitude,
+  });
 };

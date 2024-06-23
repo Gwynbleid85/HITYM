@@ -1,7 +1,7 @@
 import type { Event } from "@event-driven-io/emmett";
 
-export type UserLoggedIn = Event<
-  "userLoggedIn",
+export type UserConnected = Event<
+  "userConnected",
   {
     userId: string;
   }
@@ -18,8 +18,8 @@ export type UserChangedPosition = Event<
   "userChangedPosition",
   {
     userId: string;
-    x: number;
-    y: number;
+    latitude: number;
+    longitude: number;
   }
 >;
 
@@ -54,5 +54,16 @@ export type UserUnsharedPositionWithGroup = Event<
     userId: string;
     groupId: string;
     groupMembers: string[];
+  }
+>;
+
+export type UserStatusUpdated = Event<
+  "userStatusUpdated",
+  {
+    userId: string;
+    status: {
+      status: string;
+      color: string;
+    } | null;
   }
 >;

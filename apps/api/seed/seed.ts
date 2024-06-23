@@ -29,6 +29,16 @@ async function main() {
       data: users,
     });
 
+    // Create user websocket configs
+    for (const user of users) {
+      await tx.userWebsocketConfig.create({
+        data: {
+          userId: user.id,
+          active: false,
+        },
+      });
+    }
+
     // Create user statuses
     for (const [index, status] of userStatuses.entries()) {
       await tx.userStatus.create({
