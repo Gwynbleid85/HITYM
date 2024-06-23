@@ -23,12 +23,6 @@ model User {
   // link to the user's profile picture
   profilePicture String?
 
-  lastActive DateTime?
-
-  // Last position
-  lastLatitude  Float?
-  lastLongitude Float?
-
   // Relations
   userWebsocketConfig UserWebsocketConfig?  @relation("UserWebsocketConfig")
   followdBy           UserWebsocketConfig[] @relation("FollowedBy")
@@ -49,9 +43,13 @@ model UserWebsocketConfig {
   userId String @unique
   user   User   @relation("UserWebsocketConfig", fields: [userId], references: [id])
 
-  positionSharedWith  Group[] @relation("PositionSharedWith")
+  positionSharedWith Group[] @relation("PositionSharedWith")
   positionFollowedOf User[]  @relation("FollowedBy")
-  active              Boolean
+
+  // Last position
+  lastLatitude  Float?
+  lastLongitude Float?
+  active        Boolean
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

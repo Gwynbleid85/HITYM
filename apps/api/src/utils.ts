@@ -78,28 +78,6 @@ export const handleRepositoryErrors = (e: Error, res: Response) => {
   }
 };
 
-export const toUser = (user: PrismaUser): User => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password, lastLatitude, lastLongitude, createdAt, updatedAt, ...userWithoutSensitiveData } = user;
-
-  return {
-    ...userWithoutSensitiveData,
-    lastPosition: {
-      latitude: user.lastLatitude,
-      longitude: user.lastLongitude,
-    },
-  } as User;
-};
-
-export const toPrismaUser = (user: User): PrismaUser => {
-  const { lastPosition, ...userWithoutLastPosition } = user;
-  return {
-    ...userWithoutLastPosition,
-    lastLatitude: lastPosition?.latitude,
-    lastLongitude: lastPosition?.longitude,
-  } as PrismaUser;
-};
-
 export const toPlace = (place: PrismaPlace): Place => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { createdAt, updatedAt, latitude, longitude, ...placeWithoutTimestamps } = place;
@@ -122,9 +100,20 @@ export const toPrismaPlace = (place: Place): PrismaPlace => {
   } as PrismaPlace;
 };
 
-export const toGroup = (group: PrismaGroup): Group => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { createdAt, updatedAt, ...groupWithoutTimestamps } = group;
+/**
+ * Returns a new Set containing only the elements that are present in both input sets.
+ * @param {Set<T>} setA - The first set.
+ * @param {Set<T>} setB - The second set.
+ * @returns {Set<T>} A new set containing the intersection of setA and setB.
+ */
+export const setIntersection = <T>(setA: Set<T>, setB: Set<T>): Set<T> => {
+  const intersection = new Set<T>();
 
-  return groupWithoutTimestamps as Group;
+  for (const item of setA) {
+    if (setB.has(item)) {
+      intersection.add(item);
+    }
+  }
+
+  return intersection;
 };

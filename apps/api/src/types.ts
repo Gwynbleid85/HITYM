@@ -14,8 +14,6 @@ export type User = {
   name: string;
   bio: string | null;
   profilePicture: string | null;
-  lastActive: Date | null;
-  lastPosition: Position | null;
 };
 
 /**

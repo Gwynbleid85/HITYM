@@ -23,6 +23,8 @@ import { userStatusRepository } from "../../../application/repositories/userStat
 import { placeRepository } from "../../../application/repositories/place/place.repostory";
 import { groupRepository } from "../../../application/repositories/group/group.repository";
 import { groupInviteRepository } from "../../../application/repositories/groupInvite/groupInvite.repository";
+import { userStatusUpdatedHandler } from "../../../application/eventHandlers/userStatusUpdatedHandler";
+import type { UserStatusUpdated } from "../../../core/Events";
 
 export const userController = {
   /*
@@ -80,6 +82,9 @@ export const userController = {
     }
     const user = userRes.value;
 
+    console.log("User password", user.password);
+    console.log("Request password", request.body.password);
+
     ///TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
     if (request.body.password.localeCompare(user.password)) {
       return res.status(400).json({
@@ -105,7 +110,7 @@ export const userController = {
       },
       env.JWT_SECRET || "",
       {
-        expiresIn: "1d",
+        expiresIn: "1w",
       }
     );
 
@@ -211,7 +216,9 @@ export const userController = {
     if (!request) return;
 
     // Hash new password
-    const newHashedPassword = hashSync(req.body.password, env.PASS_HASH_SALT);
+    //TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
+    const newHashedPassword = request.body.password;
+    // const newHashedPassword = hashSync(request.body.password, env.PASS_HASH_SALT);
 
     const result = await userRepository.updatePassword(req.user.sub, newHashedPassword);
     if (result.isErr) {
@@ -247,6 +254,17 @@ export const userController = {
       return;
     }
 
+    userStatusUpdatedHandler({
+      type: "userStatusUpdated",
+      data: {
+        userId: req.user.sub,
+        status: {
+          status: result.value.status,
+          color: result.value.color,
+        },
+      },
+    } as UserStatusUpdated);
+
     return res.status(201).json(result.value);
   },
 
@@ -261,6 +279,14 @@ export const userController = {
       handleRepositoryErrors(result.error, res);
       return;
     }
+
+    userStatusUpdatedHandler({
+      type: "userStatusUpdated",
+      data: {
+        userId: req.user.sub,
+        status: null,
+      },
+    } as UserStatusUpdated);
 
     return res.status(204).send();
   },

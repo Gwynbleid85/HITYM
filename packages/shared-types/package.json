@@ -1,0 +1,11 @@
+{
+  "name": "@repo/shared-types",
+  "version": "0.0.0",
+  "private": false,
+  "exports": {
+    "./WsMessages": "./WsMessages.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

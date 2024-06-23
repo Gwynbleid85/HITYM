@@ -1,4 +1,4 @@
-import { websocketState } from "../../api/websocket/websocket";
+import { addToAllowedGroups } from "../../api/websocket/wsUtils";
 import type { UserSharedPositionWithGroup } from "../../core/Events";
 import { groupRepository } from "../repositories/group/group.repository";
 
@@ -14,17 +14,7 @@ export const userSharedPositionWithGroupHandler = async (event: UserSharedPositi
     console.error(`Group with id ${groupId} not found`);
     return;
   }
-  const groupUsersIds = groupUsers.value.map((user) => user.id);
+  const allowedUsers = groupUsers.value.map((user) => user.id);
 
-  // Update ws broadcast groups
-  websocketState.allowedBroadcastGroups[userId] = new Set([
-    ...(websocketState.allowedBroadcastGroups[userId] || []),
-    ...groupUsersIds,
-  ]);
-
-  // Merge requested and allowed broadcast groups
-  websocketState.broadcastGroups[userId] = new Set([
-    ...(websocketState.requestBroadcastGroups[userId] || []),
-    ...(websocketState.allowedBroadcastGroups[userId] || []),
-  ]);
+  addToAllowedGroups(userId, allowedUsers);
 };

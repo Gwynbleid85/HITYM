@@ -1,4 +1,4 @@
-import { websocketState } from "../../api/websocket/websocket";
+import { removeFromAllowedGroups } from "../../api/websocket/wsUtils";
 import type { UserUnsharedPositionWithGroup } from "../../core/Events";
 import { groupRepository } from "../repositories/group/group.repository";
 
@@ -14,16 +14,7 @@ export const userUnsharedPositionWithGroupHandler = async (event: UserUnsharedPo
     console.error(`Group with id ${groupId} not found`);
     return;
   }
-  const groupUsersIds = groupUsers.value.map((user) => user.id);
+  const usersToUnsharePosWith = groupUsers.value.map((user) => user.id);
 
-  // Update ws broadcast groups
-  for (const user of groupUsersIds) {
-    websocketState.allowedBroadcastGroups[userId]?.delete(user);
-  }
-
-  // Merge requested and allowed broadcast groups
-  websocketState.broadcastGroups[userId] = new Set([
-    ...(websocketState.requestBroadcastGroups[userId] || []),
-    ...(websocketState.allowedBroadcastGroups[userId] || []),
-  ]);
+  removeFromAllowedGroups(userId, usersToUnsharePosWith);
 };

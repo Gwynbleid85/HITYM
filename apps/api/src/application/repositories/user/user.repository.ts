@@ -1,8 +1,8 @@
 import { Result } from "@badrap/result";
 import type { NewUser, UpdateUser, UserWithPassword } from "./types";
-import type { PaginationQuery, Position, User } from "../../../types";
+import type { PaginationQuery, User } from "../../../types";
 import prisma from "../../../client";
-import handleDbExceptions, { NotFoundError, toUser } from "../../../utils";
+import handleDbExceptions, { NotFoundError } from "../../../utils";
 
 export const userRepository = {
   // Create a new user
@@ -21,8 +21,15 @@ export const userRepository = {
             },
           },
         },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          bio: true,
+          profilePicture: true,
+        },
       });
-      return Result.ok(toUser(createdUser));
+      return Result.ok(createdUser);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -33,12 +40,22 @@ export const userRepository = {
   // @returns The user with password hash
   async getUserPasswordHash(email: string): Promise<Result<UserWithPassword>> {
     try {
-      const user = await prisma.user.findUnique({ where: { email } });
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          bio: true,
+          profilePicture: true,
+          password: true,
+        },
+      });
       if (!user) {
         return Result.err(new NotFoundError());
       }
 
-      return Result.ok({ ...toUser(user), password: user.password });
+      return Result.ok(user);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -49,11 +66,20 @@ export const userRepository = {
   // @returns The user if found
   async findByEmail(email: string): Promise<Result<User>> {
     try {
-      const user = await prisma.user.findUnique({ where: { email } });
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          bio: true,
+          profilePicture: true,
+        },
+      });
       if (!user) {
         return Result.err(new NotFoundError());
       }
-      return Result.ok(toUser(user));
+      return Result.ok(user);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -64,35 +90,20 @@ export const userRepository = {
   // @returns The user if found
   async findById(id: string): Promise<Result<User>> {
     try {
-      const user = await prisma.user.findUnique({ where: { id } });
-      if (!user) {
-        return Result.err(new NotFoundError());
-      }
-      return Result.ok(toUser(user));
-    } catch (e) {
-      return Result.err(handleDbExceptions(e));
-    }
-  },
-
-  // Get users last position by their ID
-  // @param id The ID of the user to find
-  // @returns The user last position if found
-  async getLastPosition(id: string): Promise<Result<Position>> {
-    try {
       const user = await prisma.user.findUnique({
         where: { id },
         select: {
-          lastLatitude: true,
-          lastLongitude: true,
+          id: true,
+          email: true,
+          name: true,
+          bio: true,
+          profilePicture: true,
         },
       });
       if (!user) {
         return Result.err(new NotFoundError());
       }
-      if (!user.lastLatitude || !user.lastLongitude) {
-        return Result.err(new NotFoundError());
-      }
-      return Result.ok({ latitude: user.lastLatitude, longitude: user.lastLongitude });
+      return Result.ok(user);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -115,14 +126,29 @@ export const userRepository = {
   async getAllUsers(pagination?: PaginationQuery): Promise<Result<User[]>> {
     try {
       if (!pagination) {
-        const users = await prisma.user.findMany();
-        return Result.ok(users.map(toUser));
+        const users = await prisma.user.findMany({
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            bio: true,
+            profilePicture: true,
+          },
+        });
+        return Result.ok(users);
       } else {
         const users = await prisma.user.findMany({
           skip: pagination.page * pagination.pageSize,
           take: pagination.pageSize,
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            bio: true,
+            profilePicture: true,
+          },
         });
-        return Result.ok(users.map(toUser));
+        return Result.ok(users);
       }
     } catch (e) {
       return Result.err(handleDbExceptions(e));
@@ -138,8 +164,15 @@ export const userRepository = {
       const updatedUser = await prisma.user.update({
         where: { id },
         data: user,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          bio: true,
+          profilePicture: true,
+        },
       });
-      return Result.ok(toUser(updatedUser));
+      return Result.ok(updatedUser);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -154,8 +187,15 @@ export const userRepository = {
       const updatedUser = await prisma.user.update({
         where: { id },
         data: { password },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          bio: true,
+          profilePicture: true,
+        },
       });
-      return Result.ok(toUser(updatedUser));
+      return Result.ok(updatedUser);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -170,40 +210,15 @@ export const userRepository = {
       const updatedUser = await prisma.user.update({
         where: { id },
         data: { profilePicture },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          bio: true,
+          profilePicture: true,
+        },
       });
-      return Result.ok(toUser(updatedUser));
-    } catch (e) {
-      return Result.err(handleDbExceptions(e));
-    }
-  },
-
-  // Update last position of a user by their ID
-  // @param id The ID of the user to update
-  // @param lastPosition The new last position
-  // @returns The updated user
-  async updateLastPosition(id: string, lastPosition: { latitude: number; longitude: number }): Promise<Result<User>> {
-    try {
-      const updatedUser = await prisma.user.update({
-        where: { id },
-        data: { lastLatitude: lastPosition.latitude, lastLongitude: lastPosition.longitude },
-      });
-      return Result.ok(toUser(updatedUser));
-    } catch (e) {
-      return Result.err(handleDbExceptions(e));
-    }
-  },
-
-  // Update last activity of a user by their ID
-  // @param id The ID of the user to update
-  // @param lastActivity The new last activity
-  // @returns The updated user
-  async updateLastActivity(id: string, lastActivity: Date): Promise<Result<User>> {
-    try {
-      const updatedUser = await prisma.user.update({
-        where: { id },
-        data: { lastActive: lastActivity },
-      });
-      return Result.ok(toUser(updatedUser));
+      return Result.ok(updatedUser);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }

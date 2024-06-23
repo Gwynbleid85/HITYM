@@ -1,14 +1,14 @@
-import type { UserDisconnected } from "../../core/Events";
+import type { UserConnected } from "../../core/Events";
 import { websocketState } from "../../api/websocket/websocket";
 import { userWsConfigRepository } from "../repositories/userWebsocketConfig/userWebsocketConfig.repository";
 import { broadcastToGroup } from "../../api/websocket/wsUtils";
 
-export const userDisconnectedHandler = (event: UserDisconnected) => {
+export const userConnectedHandler = async (event: UserConnected) => {
   console.log(event);
 
-  userWsConfigRepository.UpdateConnectionStatus(event.data.userId, false);
+  await userWsConfigRepository.UpdateConnectionStatus(event.data.userId, true);
 
-  // Send all subscribed users a message that the user has disconnected
+  // Send all subscribed users a message that the user has logged in
   const receivers = websocketState.broadcastGroups[event.data.userId];
   const { type, data } = event;
   const newWsMessage = {
@@ -16,6 +16,7 @@ export const userDisconnectedHandler = (event: UserDisconnected) => {
     sender: "server",
     data,
   };
+  console.log(receivers);
 
   if (receivers) {
     broadcastToGroup(newWsMessage, [...receivers]);

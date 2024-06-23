@@ -1,7 +1,8 @@
 import { Result } from "@badrap/result";
 import prisma from "../../../client";
 import handleDbExceptions, { NotFoundError } from "../../../utils";
-import type { UserWebsocketConfig } from "./types";
+import type { FollowedUsers, UserWebsocketConfig } from "./types";
+import type { Position } from "../../../types";
 
 export const userWsConfigRepository = {
   async FindByUserId(userIdToFind: string): Promise<Result<UserWebsocketConfig>> {
@@ -63,7 +64,6 @@ export const userWsConfigRepository = {
       if (!res.positionSharedWith[0]) {
         return Result.err(new NotFoundError());
       }
-
       return Result.ok(res.positionSharedWith[0].users.map((user) => user.id));
     } catch (e) {
       return Result.err(handleDbExceptions(e));
@@ -140,6 +140,81 @@ export const userWsConfigRepository = {
         where: { userId },
         data: {
           active,
+        },
+      });
+      return Result.ok(undefined);
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
+
+  async getUserWelcomeData(userId: string): Promise<Result<FollowedUsers[]>> {
+    try {
+      const followedUsers = await prisma.userWebsocketConfig.findUnique({
+        where: { userId },
+        select: {
+          positionFollowedOf: {
+            select: {
+              id: true,
+              name: true,
+              profilePicture: true,
+              userWebsocketConfig: {
+                select: {
+                  active: true,
+                  lastLatitude: true,
+                  lastLongitude: true,
+                },
+              },
+              status: {
+                select: {
+                  status: true,
+                  color: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      if (!followedUsers) {
+        return Result.err(new NotFoundError());
+      }
+
+      const data = followedUsers.positionFollowedOf.map((user) => {
+        let lastPosition = null;
+        if (user.userWebsocketConfig?.lastLatitude && user.userWebsocketConfig?.lastLongitude) {
+          lastPosition = {
+            latitude: user.userWebsocketConfig.lastLatitude,
+            longitude: user.userWebsocketConfig.lastLongitude,
+          };
+        }
+        let active = false;
+        if (user.userWebsocketConfig?.active) {
+          active = user.userWebsocketConfig.active;
+        }
+
+        return {
+          userId: user.id,
+          name: user.name,
+          profilePicture: user.profilePicture,
+          lastPosition,
+          status: user.status,
+          active,
+        };
+      });
+
+      return Result.ok(data);
+    } catch (e) {
+      return Result.err(handleDbExceptions(e));
+    }
+  },
+
+  async UpdateUserPosition(userId: string, position: Position): Promise<Result<void>> {
+    try {
+      await prisma.userWebsocketConfig.update({
+        where: { userId },
+        data: {
+          lastLatitude: position.latitude,
+          lastLongitude: position.longitude,
         },
       });
       return Result.ok(undefined);

@@ -48,7 +48,7 @@ export const wsConfigController = {
     }
 
     ///TODO: Use message bus to notify other services
-    userSubscribedUserInfoHandler({
+    await userSubscribedUserInfoHandler({
       type: "userSubscribedUserinfo",
       data: {
         userId: req.user.sub,
@@ -76,7 +76,7 @@ export const wsConfigController = {
     }
 
     ///TODO: Use message bus to notify other services
-    UserUnsubscribedUserInfoHandler({
+    await UserUnsubscribedUserInfoHandler({
       type: "userUnsubscribedUserInfo",
       data: {
         userId: req.user.sub,
