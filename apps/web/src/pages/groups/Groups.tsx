@@ -6,7 +6,7 @@ import { Avatar } from "@/components/Avatar";
 import { Button } from "@/components/ui/button"; // Import Button component
 import { useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import CustomCardFooter from "@/components/CustomCardFooter";
+import CustomCardFooter from "@/components/card/CustomCardFooter";
 
 function Groups() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ function Groups() {
         <CardHeader>
           <CardTitle className="text-3xl">My groups</CardTitle>
         </CardHeader>
-        <CardContent className="flex justify-center w-full">
+        <CardContent className="flex justify-center w-full overflow-auto">
           {isLoading ? (
             <LoadingSpinner size={50} />
           ) : (

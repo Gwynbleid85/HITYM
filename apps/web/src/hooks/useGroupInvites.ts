@@ -14,6 +14,8 @@ const QUERY_KEYS = {
 
 const MUTATION_KEYS = {
   inviteUser: "inviteUser",
+  acceptInvite: "acceptInvite",
+  rejectInvite: "rejectInvite",
 };
 
 // Hook to invite a user to a group
@@ -52,4 +54,54 @@ export const useInvites = () => {
   });
 
   return { data, isLoading };
+};
+
+// Hook to accept an invite
+export const useAcceptInvite = (inviteId: string) => {
+  const { authData } = usePersistentData();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.acceptInvite],
+    mutationFn: () =>
+      api.user.groupsInvitesAcceptCreate(inviteId, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      }),
+
+    onSuccess: () => {
+      // Invalidate the query to refetch the data
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.invites],
+      });
+    },
+  });
+
+  return mutation;
+};
+
+// Hook to reject an invite
+export const useRejectInvite = (inviteId: string) => {
+  const { authData } = usePersistentData();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.rejectInvite],
+    mutationFn: () =>
+      api.user.groupsInvitesDelete(inviteId, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      }),
+
+    onSuccess: () => {
+      // Invalidate the query to refetch the data
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.invites],
+      });
+    },
+  });
+
+  return mutation;
 };

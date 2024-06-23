@@ -1,4 +1,4 @@
-import CustomCardFooter from "@/components/CustomCardFooter";
+import CustomCardFooter from "@/components/card/CustomCardFooter";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";

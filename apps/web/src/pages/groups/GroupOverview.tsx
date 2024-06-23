@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { useGroupExtended } from "@/hooks/useGroups";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import CustomCardFooter from "@/components/CustomCardFooter";
+import CustomCardFooter from "@/components/card/CustomCardFooter";
 
 function GroupOverview() {
   const navigate = useNavigate();
