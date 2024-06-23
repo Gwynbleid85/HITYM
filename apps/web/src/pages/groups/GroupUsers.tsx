@@ -20,42 +20,38 @@ function Groups() {
 
   return (
     <>
-      <Card className="flex flex-col items-center justify-center w-full max-w-sm min-w-72 bg-background/95 rounded-xl shadow-xl">
+      <Card className="w-[95vw] sm:max-w-[640px] max-h-[70vh] flex flex-col items-center justify-center bg-background/95 rounded-xl shadow-xl">
         <CardHeader>
           <CardTitle className="text-3xl">Group members</CardTitle>
         </CardHeader>
-        {isLoading ? (
-          <LoadingSpinner size={50} className="" />
-        ) : (
-          <div>
-            <CardContent className="flex justify-center">
-              <ScrollArea className=" w-fit rounded-md max-h-72 border-2 ">
-                {groupExtended?.data?.users?.map((user) => (
-                  <div className="flex items-center" key={user.id}>
-                    <Button variant="ghost" className="flex justify-start space-x-4 w-full h-fit px-10 ">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={user.profilePicture} />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex items-start">
-                        <h4 className="font-semibold">{user.name}</h4>
-                      </div>
-                    </Button>
-                    <Button variant="ghost">
-                      <X color="red" size={20} />
-                    </Button>
-                  </div>
-                ))}
-              </ScrollArea>
-            </CardContent>
-            {/* TODO redirect to invite*/}
-            <CustomCardFooter
-              buttonText="Invite user"
-              buttonOnClick={() => navigate("/home")}
-              backPath={`/groups/${id}`}
-            />
-          </div>
-        )}
+        <CardContent className="flex justify-center w-full overflow-auto">
+          {isLoading ? (
+            <LoadingSpinner size={50} />
+          ) : (
+            <ScrollArea className="rounded-md border-2 w-full overflow-auto ">
+              {groupExtended?.data?.users?.map((user) => (
+                <div className="grid grid-cols-[1fr_auto] w-full items-center" key={user.id}>
+                  {/* Button 1: Left Side (Full Width) */}
+                  <Button variant="ghost" className=" truncate flex items-center justify-start space-x-4 px-3 h-fit">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={user.profilePicture} />
+                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="truncate">
+                      <h4 className="font-semibold">{user.name}</h4>
+                    </div>
+                  </Button>
+                  {/* Button 2: Right Side */}
+                  <Button variant="ghost" className="px-3 justify-self-end ">
+                    <X color="red" size={20} />
+                  </Button>
+                </div>
+              ))}
+            </ScrollArea>
+          )}
+        </CardContent>
+        {/* TODO redirect to invite*/}
+        <CustomCardFooter buttonText="Invite user" buttonOnClick={() => navigate("/home")} backPath={`/groups/${id}`} />
       </Card>
     </>
   );

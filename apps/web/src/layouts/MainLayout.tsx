@@ -7,7 +7,6 @@ export function MainLayout() {
   const { isLoggedIn } = useUserContext();
 
   return (
-    //TODO center, compute
     <>
       {isLoggedIn() ? <Navbar /> : null}
       <Map />

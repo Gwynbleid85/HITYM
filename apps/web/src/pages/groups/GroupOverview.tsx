@@ -14,7 +14,7 @@ function GroupOverview() {
 
   return (
     <>
-      <Card className="flex flex-col items-center justify-center w-full max-w-sm min-w-72 bg-background/95 rounded-xl shadow-xl">
+      <Card className="w-[95vw] sm:max-w-[640px] max-h-[80vh] flex flex-col items-center justify-center bg-background/95 rounded-xl shadow-xl">
         <CardHeader>
           <CardTitle className="text-3xl">Group overview</CardTitle>
         </CardHeader>

@@ -55,7 +55,7 @@ function GroupEditForm() {
         title: `Group was updated!`,
       });
       navigate(`/groups/${id}`); // Navigate to group overview
-    } catch (e) {
+    } catch (e: any) {
       // Handle error
       console.error(e);
       toast({
@@ -66,13 +66,13 @@ function GroupEditForm() {
   };
 
   return (
-    <Card className="w-full max-w-sm bg-background/95 rounded-xl shadow-xl">
+    <Card className="w-[95vw] sm:max-w-[640px] max-h-[80vh] flex flex-col items-center justify-center bg-background/95 rounded-xl shadow-xl">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
           <CardHeader className="items-center justify-center">
             <CardTitle className="text-3xl">Editing group</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-3">
+          <CardContent className="grid gap-3 w-full">
             <FormField
               control={form.control}
               name="name"
