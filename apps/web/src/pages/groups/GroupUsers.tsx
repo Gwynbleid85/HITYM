@@ -28,6 +28,7 @@ function Groups() {
           {isLoading ? (
             <LoadingSpinner size={50} />
           ) : (
+            
             <ScrollArea className="rounded-md border-2 w-full overflow-auto ">
               {groupExtended?.data?.users?.map((user) => (
                 <div className="grid grid-cols-[1fr_auto] w-full items-center" key={user.id}>
