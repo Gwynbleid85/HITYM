@@ -57,7 +57,6 @@ const handleClose = (user: string) => {
 
   // Clear user broadcast groups
   clearAllBroadcastGroups(user);
-  console.log(websocketState);
 };
 
 const handleAuth = async (connection: WebSocket, message: RawData) => {
