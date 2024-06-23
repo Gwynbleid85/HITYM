@@ -98,8 +98,10 @@ const handleAuth = async (connection: WebSocket, message: RawData) => {
 
   // Configure allowedBroadcastGroups for user
   addToAllowedGroups(userId, positionSharedWith);
+  console.log(websocketState);
   // Update requestBroadcastGroups for followed users
   addToRequestGroups(userId, positionFollowedOf);
+  console.log(websocketState);
 
   // Get welcome data from db
   const welcomeMessage = await getWelcomeMessage(userId);
@@ -120,8 +122,6 @@ const handleAuth = async (connection: WebSocket, message: RawData) => {
 
   await userConnectedHandler(loggedInEvent);
   // messageBus.publish(loggedInEvent);
-
-  console.log(websocketState);
 
   // Configure connection event listeners
   connection.removeListener("message", handleAuth);

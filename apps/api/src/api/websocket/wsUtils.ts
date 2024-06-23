@@ -13,10 +13,7 @@ export const addToRequestGroups = (userId: string, usersToSubscribe: string[]) =
     websocketState.requestBroadcastGroups[user].add(userId);
 
     // Merge requested and allowed broadcast groups
-    websocketState.broadcastGroups[userId] = setIntersection(
-      websocketState.requestBroadcastGroups[userId] || new Set(),
-      websocketState.allowedBroadcastGroups[userId] || new Set()
-    );
+    updateBroadcastGroups(user);
   }
 };
 
@@ -28,47 +25,37 @@ export const removeFromRequestGroups = (userId: string, usersToUnsubscribe: stri
       websocketState.requestBroadcastGroups[user] = new Set();
     }
     websocketState.requestBroadcastGroups[user].delete(userId);
+    if (websocketState.requestBroadcastGroups[user].size === 0) {
+      delete websocketState.requestBroadcastGroups[user];
+    }
 
     // Merge requested and allowed broadcast groups
-    websocketState.broadcastGroups[userId] = setIntersection(
-      websocketState.requestBroadcastGroups[userId] || new Set(),
-      websocketState.allowedBroadcastGroups[userId] || new Set()
-    );
+    updateBroadcastGroups(userId);
   }
 };
 
 // Add users to allowedBroadcastGroups
 export const addToAllowedGroups = (userId: string, usersToShareWith: string[]) => {
-  if (!websocketState.allowedBroadcastGroups[userId]) {
-    websocketState.allowedBroadcastGroups[userId] = new Set();
-  }
   websocketState.allowedBroadcastGroups[userId] = new Set([
-    ...websocketState.allowedBroadcastGroups[userId],
+    ...(websocketState.allowedBroadcastGroups[userId] || []),
     ...usersToShareWith,
   ]);
 
   // Update broadcastGroups for user
-  websocketState.broadcastGroups[userId] = setIntersection(
-    websocketState.requestBroadcastGroups[userId] || new Set(),
-    websocketState.allowedBroadcastGroups[userId] || new Set()
-  );
+  updateBroadcastGroups(userId);
 };
 
 // Remove users from allowedBroadcastGroups
 export const removeFromAllowedGroups = (userId: string, usersToUnshareWith: string[]) => {
-  if (!websocketState.allowedBroadcastGroups[userId]) {
-    websocketState.allowedBroadcastGroups[userId] = new Set();
-  } else {
+  if (websocketState.allowedBroadcastGroups[userId]) {
+    // Remove users from allowedBroadcastGroups
     usersToUnshareWith.forEach((user) => {
       websocketState.allowedBroadcastGroups[userId]?.delete(user);
     });
   }
 
   // Update broadcastGroups for user
-  websocketState.broadcastGroups[userId] = setIntersection(
-    websocketState.requestBroadcastGroups[userId] || new Set(),
-    websocketState.allowedBroadcastGroups[userId] || new Set()
-  );
+  updateBroadcastGroups(userId);
 };
 
 // Clear all broadcast groups for a user
@@ -82,6 +69,18 @@ export const clearAllBroadcastGroups = (userId: string) => {
     if (websocketState.requestBroadcastGroups[user]?.size === 0) {
       delete websocketState.requestBroadcastGroups[user];
     }
+  }
+  updateBroadcastGroups(userId);
+};
+
+// Update broadcast groups for a user
+export const updateBroadcastGroups = (userId: string) => {
+  const newSet: Set<string> = setIntersection(
+    websocketState.requestBroadcastGroups[userId] || new Set(),
+    websocketState.allowedBroadcastGroups[userId] || new Set()
+  );
+  if (newSet.size !== 0) {
+    websocketState.broadcastGroups[userId] = newSet;
   }
 };
 
