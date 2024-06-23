@@ -12,6 +12,7 @@ import InviteAction from "@/components/invites/InviteAction";
 
 function PendingInvites() {
   const navigate = useNavigate();
+
   const { data: pendingInvites, isLoading } = useInvites();
 
   return (
