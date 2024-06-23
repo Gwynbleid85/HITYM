@@ -34,7 +34,7 @@ function Groups() {
                   className=" flex justify-start space-x-4 w-full h-fit px-2"
                   onClick={() => handleClick(group.id)}
                 >
-                  <Avatar name={group.name} url={group.imageUrl} size="12"/>
+                  <Avatar name={group.name} url={group.imageUrl} size="12" />
                   <div className="flex flex-col items-start">
                     <h4 className="font-semibold ">{group.name}</h4>
                     <p className="text-sm text-muted-foreground w-full">{group.description}</p>
