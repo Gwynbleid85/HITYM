@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { X } from "lucide-react";
-import CustomCardFooter from "@/components/CustomCardFooter";
+import CustomCardFooter from "@/components/card/CustomCardFooter";
 
 function Groups() {
   const navigate = useNavigate();

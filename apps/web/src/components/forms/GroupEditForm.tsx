@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { updateGroupSchema } from "@/validationSchemas/group.validationSchemas";
 import { useGroup, useGroupUpdate } from "@/hooks/useGroups";
 import { useNavigate, useParams } from "react-router-dom";
-import CustomCardFooter from "../CustomCardFooter";
+import CustomCardFooter from "../card/CustomCardFooter";
 
 function GroupEditForm() {
   const navigate = useNavigate();

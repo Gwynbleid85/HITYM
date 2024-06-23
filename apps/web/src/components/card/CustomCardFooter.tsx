@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { CardFooter } from "./ui/card";
-import { ButtonLoading } from "./ui/button-loading";
-import { Separator } from "./ui/separator";
+import { CardFooter } from "../ui/card";
+import { ButtonLoading } from "../ui/button-loading";
+import { Separator } from "../ui/separator";
 
 interface CustomCardFooterProps {
   buttonText: string;
