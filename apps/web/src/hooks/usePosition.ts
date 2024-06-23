@@ -214,48 +214,33 @@ const usePosition = () => {
    * Get user position and send it to the server
    */
   const updatePosition = () => {
-    console.log("Updating user position");
-
     const options = {
       enableHighAccuracy: true,
       timeout: 2000,
-      maximumAge: 1,
+      maximumAge: 0,
     };
 
-    if (!navigator || !navigator.geolocation) {
-      toast({
-        title: "Geolocation is not supported by your browser",
-        variant: "destructive",
-      });
-      console.log("Geolocation is not supported by your browser");
+    function success(pos: GeolocationPosition) {
+      const crd = pos.coords;
 
-      return;
+      console.log("Position updated");
+
+      sendJsonMessage({
+        type: "userChangedPosition",
+        sender: userContext.user?.id,
+        data: {
+          latitude: crd.latitude,
+          longitude: crd.longitude,
+        },
+      } as UserChangedPositionMessage);
+    }
+
+    function error(err: any) {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
     }
 
     navigator.geolocation.getCurrentPosition(success, error, options);
   };
-  function success(pos: GeolocationPosition) {
-    const crd = pos.coords;
-
-    setMyPosition({
-      latitude: crd.latitude,
-      longitude: crd.longitude,
-    });
-
-    sendJsonMessage({
-      type: "userChangedPosition",
-      sender: userContext.user?.id,
-      data: {
-        latitude: crd.latitude,
-        longitude: crd.longitude,
-      },
-    } as UserChangedPositionMessage);
-    console.log("User position updated: [", crd.latitude, ", ", crd.longitude, "]");
-  }
-
-  function error(err: any) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
-  }
 
   return {
     users,
