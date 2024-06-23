@@ -36,7 +36,7 @@ function GroupCreateForm() {
       });
       // Redirect to groups page
       navigate("/groups");
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       toast({
         title: e.error.message,
@@ -46,13 +46,13 @@ function GroupCreateForm() {
   };
 
   return (
-    <Card className="w-full max-w-sm bg-background/95 rounded-xl shadow-xl">
+    <Card className="w-[95vw] sm:max-w-[640px] max-h-[80vh] flex flex-col items-center justify-center bg-background/95 rounded-xl shadow-xl">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardHeader className="items-center justify-center">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+          <CardHeader className="items-center justify-center" >
             <CardTitle className="text-3xl">Create new group</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-3">
+          <CardContent className="grid gap-3 w-full">
             <FormField
               control={form.control}
               name="name"
@@ -82,7 +82,12 @@ function GroupCreateForm() {
             />
           </CardContent>
 
-          <CustomCardFooter buttonText="Create group" isSubmitting={form.formState.isSubmitting} buttonType="submit" backPath="/groups"/>
+          <CustomCardFooter
+            buttonText="Create group"
+            isSubmitting={form.formState.isSubmitting}
+            buttonType="submit"
+            backPath="/groups"
+          />
         </form>
       </Form>
     </Card>

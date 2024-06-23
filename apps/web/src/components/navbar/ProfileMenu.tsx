@@ -16,7 +16,7 @@ import { useUserContext } from "@/context/UserContext";
 import { Avatar } from "../Avatar";
 
 function ProfileMenu() {
-  const { deleteAuthData, authData } = usePersistentData();
+  const { deleteAuthData } = usePersistentData();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { userContext, updateUser } = useUserContext();
@@ -29,7 +29,7 @@ function ProfileMenu() {
     // Delete the token from local storage
     deleteAuthData();
     // Delete the user data from context
-    updateUser({ user: null, state: "loggedOut" }); //TODO
+    updateUser({ user: null, state: "loggedOut" });
 
     // Redirect to login page
     navigate("/login");

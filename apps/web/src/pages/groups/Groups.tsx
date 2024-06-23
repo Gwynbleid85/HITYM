@@ -18,38 +18,36 @@ function Groups() {
 
   return (
     <>
-      <Card className="flex flex-col items-center justify-center w-full max-w-sm min-w-72 bg-background/95 rounded-xl shadow-xl">
+      <Card className="w-[95vw] sm:max-w-[640px] max-h-[80vh] flex flex-col items-center justify-center bg-background/95 rounded-xl shadow-xl">
         <CardHeader>
           <CardTitle className="text-3xl">My groups</CardTitle>
         </CardHeader>
-        {isLoading ? (
-          <LoadingSpinner size={50} className="" />
-        ) : (
-          <div>
-            <CardContent className="flex justify-center">
-              <ScrollArea className=" w-fit rounded-md max-h-72 border-2 ">
-                {groups?.data?.map((group) => (
-                  <Button
-                    key={group.id}
-                    variant="ghost"
-                    className="flex justify-start space-x-4 w-full h-fit px-10 "
-                    onClick={() => handleClick(group.id)}
-                  >
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage src={group.imageUrl} />
-                      <AvatarFallback>{group.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col items-start">
-                      <h4 className="font-semibold">{group.name}</h4>
-                      <p className="text-sm text-muted-foreground">{group.description}</p>
-                    </div>
-                  </Button>
-                ))}
-              </ScrollArea>
-            </CardContent>
-            <CustomCardFooter buttonText="Create new" buttonOnClick={() => navigate("/groups/create")} backPath="/" />
-          </div>
-        )}
+        <CardContent className="flex justify-center w-full">
+          {isLoading ? (
+            <LoadingSpinner size={50} />
+          ) : (
+            <ScrollArea className="rounded-md border-2 w-full overflow-auto">
+              {groups?.data?.map((group) => (
+                <Button
+                  key={group.id}
+                  variant="ghost"
+                  className=" flex justify-start space-x-4 max-w-full h-fit px-2"
+                  onClick={() => handleClick(group.id)}
+                >
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={group.imageUrl} />
+                    <AvatarFallback>{group.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-start">
+                    <h4 className="font-semibold ">{group.name}</h4>
+                    <p className="text-sm text-muted-foreground w-full">{group.description}</p>
+                  </div>
+                </Button>
+              ))}
+            </ScrollArea>
+          )}
+        </CardContent>
+        <CustomCardFooter buttonText="Create new" buttonOnClick={() => navigate("/groups/create")} backPath="/" />
       </Card>
     </>
   );
