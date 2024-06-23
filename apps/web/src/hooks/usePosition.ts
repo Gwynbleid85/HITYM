@@ -1,45 +1,58 @@
 import { useEffect, useState } from "react";
-import useWebSocket, { ReadyState } from "react-use-websocket";
-import {
-  isWsMessage,
-  type LoggedInMessage,
-  type PositionChangedMessage,
-  type UserConnectedMessage,
-  type WsMessage,
-} from "../types/wsMessage";
-import { set } from "react-hook-form";
+import useWebSocket from "react-use-websocket";
 
-const DEFAULT_POSITION_X = 51.505;
-const DEFAULT_POSITION_Y = -0.09;
+import usePersistentData from "./usePersistentData";
+import { useUserContext } from "@/context/UserContext";
 
-const useWebsockets = () => {
-  const [lastMessage, setLastMessage] = useState<WsMessage | null>();
-  const [messages, setMessages] = useState<WsMessage[]>([]);
-  const [positions, setPositions] = useState<{ [key: string]: [number, number] }>({});
-  const [id, setId] = useState<string>("");
+import type { Position, UserStatusSimple } from "@/types/Api";
+import type {
+  AuthMessage,
+  UserChangedPositionMessage,
+  UserConnectedMessage,
+  UserDisconnectedMessage,
+  UserStatusUpdatedMessage,
+  WelcomeMessage,
+  WsMessage,
+} from "../../../../packages/shared-types/WsMessages";
 
-  const WS_URL = "ws://127.0.0.1:8000";
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(WS_URL, {
-    share: true,
-    shouldReconnect: () => true,
-    onOpen: () => {
-      sendJsonMessage({
-        sender: "unknown",
-        event: "auth",
-        token: localStorage.getItem("JWT"),
-      });
+const WS_URL = import.meta.env.VITE_WS_URL as string;
+
+export type UserInfo = {
+  name: string;
+  profilePicture: string | null;
+  position: Position | null;
+  status: UserStatusSimple | null;
+  active: boolean;
+};
+
+const usePosition = () => {
+  const [users, setUsers] = useState<{ [key: string]: UserInfo }>({});
+  const { authData } = usePersistentData();
+  const { userContext } = useUserContext();
+
+  // Configure WebSocket connection
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket(
+    WS_URL,
+    {
+      share: true,
+      shouldReconnect: () => true,
+      onOpen: () => {
+        console.log("WebSocket connection opened, trying to authenticate");
+
+        sendJsonMessage({
+          sender: "unauthorized user",
+          type: "auth",
+          data: {
+            token: authData?.token,
+          },
+        } as AuthMessage);
+      },
+      onClose: (event) => {
+        console.log("WebSocket connection closed", event.code, event.reason);
+      },
     },
-  });
-
-  // Run when the connection state (readyState) changes
-  // useEffect(() => {
-  //   console.log("Connection state changed");
-  //   if (readyState === ReadyState.OPEN) {
-  //     sendJsonMessage({
-  //       event: "userConnected",
-  //     });
-  //   }
-  // }, [readyState]);
+    userContext.state === "loggedIn"
+  );
 
   // Run when a new WebSocket message is received (lastJsonMessage)
   useEffect(() => {
@@ -47,71 +60,174 @@ const useWebsockets = () => {
 
     const message = lastJsonMessage as WsMessage;
     console.log("New message received", message);
-    setLastMessage(message);
-    setMessages([...messages, message]);
+    handleWsMessage(message);
+  }, [lastJsonMessage]);
 
-    switch (message.event) {
-      case "positionChanged":
+  const handleWsMessage = (message: WsMessage) => {
+    switch (message.type) {
+      case "userChangedPosition":
         handlePositionChanged(message);
         break;
-      case "loggedIn":
-        handleLoggedIn(message);
+      case "welcome":
+        handleWelcome(message);
         break;
       case "userConnected":
         handleUserConnected(message);
         break;
+      case "userDisconnected":
+        handleUserDisconnected(message);
+        break;
+      case "userStatusUpdated":
+        handleUserStatusUpdated(message);
+        break;
+
+      default:
+        console.warn(`Unknown message type: ${message.type}`);
+        break;
     }
-  }, [lastJsonMessage]);
-
-  const handlePositionChanged = (message: PositionChangedMessage) => {
-    setPositions((val) => ({
-      ...val,
-      [message.sender]: [message.data.x, message.data.y],
-    }));
   };
 
-  const handleLoggedIn = (message: LoggedInMessage) => {
-    setId(message.data.id);
-    setPositions((val) => ({
-      ...val,
-      [message.sender]: [DEFAULT_POSITION_X, DEFAULT_POSITION_Y],
-    }));
-    console.log(`Logged in as ${message.sender}`);
+  /**
+   * Handle Welcome message
+   * @param message received message
+   */
+  const handleWelcome = (message: WelcomeMessage) => {
+    // Load followed users positions
+    const newUsers: { [key: string]: UserInfo } = {};
+    message.data.followedUsers.forEach((user) => {
+      // Get last positions
+      let lastPosition = null;
+      if (user.lastPosition?.latitude && user.lastPosition?.longitude) {
+        lastPosition = {
+          latitude: user.lastPosition.latitude,
+          longitude: user.lastPosition.longitude,
+        };
+      }
+
+      newUsers[user.userId] = {
+        name: user.name,
+        profilePicture: user.profilePicture,
+        position: lastPosition,
+        status: user.status,
+        active: user.active,
+      };
+    });
+
+    setUsers(newUsers);
   };
 
-  const updatePositionRelative = (x: number, y: number) => {
-    console.log(`X: ${positions[id] ? positions[id][0] + x : x}`);
-    console.log(`Y: ${positions[id] ? positions[id][1] + y : y}`);
-
-    setPositions((val) => ({
-      ...val,
-      [id]: [val[id] ? val[id][0] + x : x, val[id] ? val[id][1] + y : y],
-    }));
-    sendJsonMessage({
-      event: "positionChanged",
-      data: {
-        x: positions[id] ? positions[id][0] + x : DEFAULT_POSITION_X,
-        y: positions[id] ? positions[id][1] + y : DEFAULT_POSITION_Y,
-      },
+  /**
+   * Handle position changed message
+   * @param message received message
+   */
+  const handlePositionChanged = (message: UserChangedPositionMessage) => {
+    setUsers((val) => {
+      const user = val[message.sender];
+      if (user) {
+        return {
+          ...val,
+          [message.sender]: {
+            ...user,
+            position: {
+              latitude: message.data.latitude,
+              longitude: message.data.longitude,
+            },
+          },
+        };
+      }
+      return val;
     });
   };
 
+  /**
+   * Handle user connected message
+   * @param message received message
+   */
   const handleUserConnected = (message: UserConnectedMessage) => {
-    setPositions((val) => ({
-      ...val,
-      [message.sender]: [DEFAULT_POSITION_X, DEFAULT_POSITION_Y],
-    }));
+    setUsers((val) => {
+      const user = val[message.data.userId];
+      if (user) {
+        return {
+          ...val,
+          [message.data.userId]: {
+            ...user,
+            active: true,
+          },
+        };
+      }
+      return val;
+    });
+  };
+
+  /**
+   * Handle user disconnected message
+   * @param message received message
+   */
+  const handleUserDisconnected = (message: UserDisconnectedMessage) => {
+    setUsers((val) => {
+      const user = val[message.data.userId];
+      if (user) {
+        return {
+          ...val,
+          [message.data.userId]: {
+            ...user,
+            active: false,
+          },
+        };
+      }
+      return val;
+    });
+  };
+
+  /**
+   * Handle user status updated message
+   * @param message received message
+   */
+  const handleUserStatusUpdated = (message: UserStatusUpdatedMessage) => {
+    setUsers((val) => {
+      const user = val[message.sender];
+      if (user) {
+        return {
+          ...val,
+          [message.sender]: {
+            ...user,
+            status: message.data.status,
+          },
+        };
+      }
+      return val;
+    });
+  };
+
+  /**
+   * Update user position
+   * Propagate user position to other users
+   * @param lat New latitude
+   * @param lon New longitude
+   */
+  const updatePosition = (lat: number, lon: number) => {
+    console.log(`Lat: ${lat}`);
+    console.log(`Lon: ${lon}`);
+
+    sendJsonMessage({
+      type: "userChangedPosition",
+      sender: userContext.user?.id,
+      data: {
+        latitude: lat,
+        longitude: lon,
+      },
+    } as UserChangedPositionMessage);
   };
 
   return {
-    sendJsonMessage,
-    lastMessage,
-    messages,
-    readyState,
-    positions,
-    id,
-    updatePositionRelative,
+    users,
+    updatePosition,
   };
 };
 
-export default useWebsockets;
+function isWsMessage(message: unknown): message is WsMessage {
+  // Adjust the check according to the structure of WsMessage
+  return (message as WsMessage) !== undefined && (message as WsMessage) !== null;
+}
+
+export default usePosition;

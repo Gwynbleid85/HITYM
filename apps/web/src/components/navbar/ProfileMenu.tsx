@@ -1,5 +1,4 @@
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +13,7 @@ import usePersistentData from "@/hooks/usePersistentData";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../ui/use-toast";
 import { useUserContext } from "@/context/UserContext";
+import { Avatar } from "../Avatar";
 
 function ProfileMenu() {
   const { deleteAuthData } = usePersistentData();
@@ -38,10 +38,7 @@ function ProfileMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Avatar className="w-14 h-14 shadow-sm cursor-pointer">
-          <AvatarImage src={userContext.user?.profilePicture} />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <Avatar name={userContext.user?.name || ""} imageUrl={userContext.user?.profilePicture} size={14} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2">
         <DropdownMenuLabel>{userContext.user?.name}</DropdownMenuLabel>
