@@ -40,11 +40,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Map REST routes
-app.use("/user", userRouter);
-app.use("/users", usersRouter);
-app.use("/groups", groupRouter);
-app.use("/places", placeRouter);
-app.use("/group-events", groupEventRouter);
+app.use("/api/user", userRouter);
+app.use("/api/users", usersRouter);
+app.use("/api/groups", groupRouter);
+app.use("/api/places", placeRouter);
+app.use("/api/group-events", groupEventRouter);
 
 // Default route returning 404
 app.use((_req, res) => {
