@@ -67,8 +67,8 @@ export class GroupsTests extends ApiBase {
       "Response contains description": (r) => r.json().hasOwnProperty("description"),
       "Response contains correct user count": (r) => r.json().users.length === 1,
       "Response contains users status": (r) => r.json().users[0].status.status === "status updated",
-      "Response contains group events property": (r) => r.json().hasOwnProperty("groupEvents"),
-      "Response contains zero group events": (r) => r.json().groupEvents.length === 0,
+      "Response contains group events property": (r) => r.json().hasOwnProperty("events"),
+      "Response contains zero group events": (r) => r.json().events.length === 0,
     });
   }
 
