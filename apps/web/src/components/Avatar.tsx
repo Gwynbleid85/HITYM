@@ -14,7 +14,7 @@ export const Avatar: FC<AvatarProps> = (props) => {
 
   let imageUrl = props.url;
   if (imageUrl) {
-    if (imageUrl.startsWith("/")) imageUrl = process.env.NEXT_PUBLIC_API_URL + imageUrl;
+    if (imageUrl.startsWith("/")) imageUrl = `${import.meta.env.VITE_STATIC_FILES_URL}${imageUrl}`;
 
     return (
       <AvatarSimple {...otherProps} className={clsx(`shadow-sm`, className)}>

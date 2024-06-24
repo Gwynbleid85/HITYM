@@ -5,7 +5,7 @@ import { userController } from "../controllers/user.controller";
 const usersRouter = Router();
 
 /**
- * GET /users
+ * GET /api/users
  * @summary Get all users
  * @tags users
  * @security BearerAuth
@@ -15,7 +15,7 @@ const usersRouter = Router();
 usersRouter.get("/", auth, userController.getAllUsers);
 
 /**
- * GET /users/{id}/user-status
+ * GET /api/users/{id}/user-status
  * @summary Get user-status by user
  * @tags users
  * @security BearerAuth
@@ -27,7 +27,7 @@ usersRouter.get("/", auth, userController.getAllUsers);
 usersRouter.get("/:id/user-status", auth, userController.getUserStatus);
 
 /**
- * POST /users/{id}/groups/invites
+ * POST /api/users/{id}/groups/invites
  * @summary Invite user to group
  * @tags group-invite
  * @security BearerAuth

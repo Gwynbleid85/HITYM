@@ -65,7 +65,7 @@ const checkImageId = async (id: string, imageType: ImageType) => {
 
 const storage = multer.diskStorage({
   destination: (req, _file, cb) => {
-    const uploadPath = path.join(__dirname, "../../..", "uploads", req.imageType);
+    const uploadPath = path.join(__dirname, "../../..", "public", req.imageType);
 
     // Create directory if it doesn't exist
     if (!fs.existsSync(uploadPath)) {

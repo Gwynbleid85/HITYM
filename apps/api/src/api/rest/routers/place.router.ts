@@ -6,7 +6,7 @@ import uploadSingleFile from "../../../application/middlewares/fileUpload";
 const placeRouter = Router();
 
 /**
- * POST /places
+ * POST /api/places
  * @summary Create a new place
  * @tags place
  * @security BearerAuth
@@ -18,7 +18,7 @@ const placeRouter = Router();
 placeRouter.post("/", auth, placeController.createPlace);
 
 /**
- * GET /places
+ * GET /api/places
  * @summary Get all places
  * @tags place
  * @security BearerAuth
@@ -29,7 +29,7 @@ placeRouter.post("/", auth, placeController.createPlace);
 placeRouter.get("/", auth, placeController.getAllPlaces);
 
 /**
- * PUT /places/{id}
+ * PUT /api/places/{id}
  * @summary Update a place
  * @tags place
  * @security BearerAuth
@@ -43,7 +43,7 @@ placeRouter.get("/", auth, placeController.getAllPlaces);
 placeRouter.put("/:id", auth, placeController.updatePlace);
 
 /**
- * PUT /places/{id}/image
+ * PUT /api/places/{id}/image
  * @summary Update place image
  * @tags place
  * @security BearerAuth
@@ -57,7 +57,7 @@ placeRouter.put("/:id", auth, placeController.updatePlace);
 placeRouter.put("/:id/image", auth, uploadSingleFile("placeImages"), placeController.updatePlaceImage);
 
 /**
- * DELETE /places/{id}
+ * DELETE /api/places/{id}
  * @summary Delete a place
  * @tags place
  * @security BearerAuth

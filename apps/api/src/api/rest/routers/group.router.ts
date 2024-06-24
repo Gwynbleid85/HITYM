@@ -6,7 +6,7 @@ import uploadSingleFile from "../../../application/middlewares/fileUpload";
 const groupRouter = Router();
 
 /**
- * POST /groups
+ * POST /api/groups
  * @summary Create a new group
  * @tags group
  * @security BearerAuth
@@ -18,7 +18,7 @@ const groupRouter = Router();
 groupRouter.post("/", auth, groupController.createGroup);
 
 /**
- * GET /groups/{id}
+ * GET /api/groups/{id}
  * @summary Get group by ID
  * @tags group
  * @security BearerAuth
@@ -31,7 +31,7 @@ groupRouter.post("/", auth, groupController.createGroup);
 groupRouter.get("/:id", auth, groupController.getGroupById);
 
 /**
- * GET /groups/{id}/extended
+ * GET /api/groups/{id}/extended
  * @summary Get group by ID with users and events
  * @tags group
  * @security BearerAuth
@@ -44,7 +44,7 @@ groupRouter.get("/:id", auth, groupController.getGroupById);
 groupRouter.get("/:id/extended", auth, groupController.getGroupByIdExtended);
 
 /**
- * PUT /groups/{id}
+ * PUT /api/groups/{id}
  * @summary Update a group
  * @tags group
  * @security BearerAuth
@@ -58,7 +58,7 @@ groupRouter.get("/:id/extended", auth, groupController.getGroupByIdExtended);
 groupRouter.put("/:id", auth, groupController.updateGroup);
 
 /**
- * PUT /groups/{id}/image
+ * PUT /api/groups/{id}/image
  * @summary Update group image
  * @tags group
  * @security BearerAuth
@@ -72,7 +72,7 @@ groupRouter.put("/:id", auth, groupController.updateGroup);
 groupRouter.put("/:id/image", auth, uploadSingleFile("groupImages"), groupController.updateImage);
 
 /**
- * DELETE /groups/{id}
+ * DELETE /api/groups/{id}
  * @summary Delete a group
  * @tags group
  * @security BearerAuth
@@ -84,7 +84,7 @@ groupRouter.put("/:id/image", auth, uploadSingleFile("groupImages"), groupContro
 groupRouter.delete("/:id", auth, groupController.deleteGroup);
 
 /**
- * DELETE /groups/{id}/users/{userId}
+ * DELETE /api/groups/{id}/users/{userId}
  * @summary Remove user from group
  * @tags group
  * @security BearerAuth
@@ -98,7 +98,7 @@ groupRouter.delete("/:id", auth, groupController.deleteGroup);
 groupRouter.delete("/:id/users/:userId", auth, groupController.removeUser);
 
 /**
- * GET /groups/{id}/events/historical
+ * GET /api/groups/{id}/events/historical
  * @summary Get group events history
  * @tags group
  * @security BearerAuth
