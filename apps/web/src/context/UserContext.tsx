@@ -16,6 +16,7 @@ interface UserContextValue {
   updateUser: (userData: UserValue) => void;
   fetchUser: () => void;
   isLoggedIn: () => boolean;
+  isAuthorized: (userId: string) => boolean;
 }
 
 const UserContext = createContext<UserContextValue>({
@@ -23,6 +24,7 @@ const UserContext = createContext<UserContextValue>({
   updateUser: () => {},
   fetchUser: () => {},
   isLoggedIn: () => false,
+  isAuthorized: () => false,
 });
 
 export const useUserContext = () => useContext(UserContext); // Custom hook for accessing context
@@ -36,6 +38,10 @@ export const UserProvider = ({ children }: any) => {
 
   const isLoggedIn = () => {
     return userContext.state === "loggedIn";
+  };
+
+  const isAuthorized = (userId: string) => {
+    return userContext.user?.id === userId;
   };
 
   const updateUser = (newUserData: UserValue) => {
@@ -64,6 +70,8 @@ export const UserProvider = ({ children }: any) => {
   };
 
   return (
-    <UserContext.Provider value={{ userContext, updateUser, fetchUser, isLoggedIn }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ userContext, updateUser, fetchUser, isLoggedIn, isAuthorized }}>
+      {children}
+    </UserContext.Provider>
   );
 };

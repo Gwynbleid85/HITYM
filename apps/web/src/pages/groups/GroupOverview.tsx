@@ -5,12 +5,14 @@ import { useGroupExtended } from "@/hooks/useGroups";
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CustomCardFooter from "@/components/card/CustomCardFooter";
+import { useUserContext } from "@/context/UserContext";
 
 function GroupOverview() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id: groupId } = useParams();
+  const { isAuthorized } = useUserContext();
 
-  //   const { data: groups, isLoading } = useGroupExtended(id);
+  const { data: groupExtended, isLoading } = useGroupExtended(groupId as string); 
 
   return (
     <>
@@ -19,16 +21,17 @@ function GroupOverview() {
           <CardTitle className="text-3xl">Group overview</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col w-full pb-3">
-          <Button variant="secondary" className="my-3" onClick={() => navigate(`/groups/${id}/events`)}>
+          <Button variant="secondary" className="my-3" onClick={() => navigate(`/groups/${groupId}/events`)}>
             <span>Show events</span>
           </Button>
-          <Button variant="secondary" onClick={() => navigate(`/groups/${id}/users`)}>
+          <Button variant="secondary" onClick={() => navigate(`/groups/${groupId}/users`)}>
             <span>Show members</span>
           </Button>
         </CardContent>
         <CustomCardFooter
+          isAuthorized={isAuthorized(groupExtended?.data.createdById as string)}
           buttonText="Edit group"
-          buttonOnClick={() => navigate(`/groups/${id}/edit`)}
+          buttonOnClick={() => navigate(`/groups/${groupId}/edit`)}
           backPath="/groups"
         />
       </Card>
