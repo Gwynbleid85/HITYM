@@ -115,7 +115,7 @@ export const groupEventRepository = {
     }
   },
 
-  async canUserEdit(userId: string, eventId: string): Promise<boolean> {
+  async canUserEdit(eventId: string, userId: string): Promise<boolean> {
     try {
       const event = await prisma.groupEvent.findUnique({
         where: { id: eventId },
