@@ -20,6 +20,11 @@ const navigationItems: NavigationItems = {
       href: "/groups",
       icon: UsersRound,
     },
+    {
+      label: "Choose on Map",
+      href: "/choose-on-map",
+      icon: Menu,
+    },
   ],
 };
 
