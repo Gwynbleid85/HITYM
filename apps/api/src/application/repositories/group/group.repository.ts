@@ -115,9 +115,9 @@ export const groupRepository = {
   },
 
   // Remove user from group
-  // @param userId The ID of the user
   // @param groupId The ID of the group
-  async removeUser(userId: string, groupId: string): Promise<Result<void>> {
+  // @param userId The ID of the user
+  async removeUser(groupId: string, userId: string): Promise<Result<void>> {
     try {
       await prisma.group.update({
         where: { id: groupId },
