@@ -17,7 +17,10 @@ export const Avatar: FC<AvatarProps> = (props) => {
     if (imageUrl.startsWith("/")) imageUrl = `${import.meta.env.VITE_STATIC_FILES_URL}${imageUrl}`;
 
     return (
-      <AvatarSimple {...otherProps} className={clsx(`shadow-sm`, className)}>
+      <AvatarSimple
+        {...otherProps}
+        className={clsx(`shadow-sm rounded-full border-2 border-white w-14 h-14`, className)}
+      >
         <AvatarImage src={imageUrl} />
       </AvatarSimple>
     );
@@ -26,7 +29,10 @@ export const Avatar: FC<AvatarProps> = (props) => {
   const fallbackData = stringAvatar(name);
 
   return (
-    <AvatarSimple {...otherProps} className={clsx(`shadow-sm select-none text-lg `, className)}>
+    <AvatarSimple
+      {...otherProps}
+      className={clsx(`shadow-sm select-none text-lg rounded-full border-2 border-white w-14 h-14`, className)}
+    >
       <AvatarFallback style={{ backgroundColor: fallbackData.color }} className="font-bold">
         {fallbackData.name}
       </AvatarFallback>
