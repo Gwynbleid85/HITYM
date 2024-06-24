@@ -1,0 +1,70 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+stages:
+  - build
+  - test
+
+build-frontend-job:
+  image: node:22-alpine
+  stage: build
+  before_script:
+    - npm install
+    - cd apps/web
+    - npm install
+  script:
+    - echo "Building the frontend project"
+    - npm run build
+  artifacts:
+    paths:
+    #   - apps/web/dist/
+      - apps/web/node_modules/
+      - node_modules/
+
+build-backend-job:
+  image: node:22-alpine
+  stage: build
+  before_script:
+    - npm install
+    - cd apps/api
+    - npm install
+  script:
+    - echo "Building the backend"
+    - npm run
+  artifacts:
+    paths:
+      - apps/api/node_modules/
+      - node_modules/
+
+test-job:
+  image: grafana/k6:0.51.0
+  stage: test
+  dependencies:
+    - build-backend-job
+  before_script:
+    - apk add --no-cache nodejs npm
+    - npm install
+    - npm run --prefix apps/api start &
+  script:
+    - echo "Running k6 tests"
+    - cd apps/tests/k6
+    - k6 run main.js
+
+lint-backend-job:
+  image: node:22-alpine
+  stage: test
+  dependencies:
+    - build-backend-job
+  script:
+    - echo "Linting backend"
+    - npm run --prefix apps/api lint
+
+lint-frontend-job:
+  image: node:22-alpine
+  stage: test
+  dependencies:
+    - build-frontend-job
+  script:
+    - echo "Linting frontend"
+    - npm run --prefix apps/web lint
