@@ -4,7 +4,7 @@ import { MapContainer } from "react-leaflet/MapContainer";
 import { TileLayer } from "react-leaflet/TileLayer";
 import usePosition from "@/hooks/usePosition";
 import { MapUserMarker } from "./MapUserMarker";
-import { Marker } from "react-leaflet";
+import { useUserContext } from "@/context/UserContext";
 
 type MapProps = {} & React.ComponentProps<typeof MapContainer>;
 
@@ -12,6 +12,7 @@ export const Map: FC<MapProps> = (props) => {
   const { children, ...otherProps } = props;
 
   const { users, myPosition, trackPosition } = usePosition();
+  const { userContext } = useUserContext();
 
   return (
     <MapContainer
@@ -28,15 +29,11 @@ export const Map: FC<MapProps> = (props) => {
       />
 
       {Object.entries(users).map(([userId, user]) => {
-        if (!user.position) {
+        if (!user.position || userId === userContext.user?.id) {
           return null;
         }
         return <MapUserMarker key={userId} userId={userId} user={user} />;
       })}
-      {trackPosition && myPosition && (
-        <Marker position={[51.505, -0.09]} />
-        // <CurrentLocationMarker latitude={myPosition.latitude} longitude={myPosition.longitude} />
-      )}
       {children}
     </MapContainer>
   );
