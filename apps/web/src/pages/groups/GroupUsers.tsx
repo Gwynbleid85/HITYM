@@ -24,7 +24,7 @@ import { ButtonLoading } from "@/components/ui/button-loading";
 import { useUserContext } from "@/context/UserContext";
 
 // Component to display the group members
-function Groups() {
+function GroupUsers() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isAuthorized } = useUserContext();
@@ -61,7 +61,7 @@ function Groups() {
               {groupExtended?.data?.users?.map((user) => (
                 <div className="grid grid-cols-[1fr_auto] w-full items-center" key={user.id}>
                   {/* Button 1: Left Side (Full Width) */}
-                  <Button variant="ghost" className=" truncate flex items-center justify-start space-x-4 px-3 h-fit">
+                  <Button variant="ghost" className="cursor-auto truncate flex items-center justify-start space-x-4 px-3 h-fit">
                     <Avatar name={user.name} url={user.profilePicture} size="12" />
                     <div className="truncate">
                       <h4 className="font-semibold">{user.name}</h4>
@@ -112,4 +112,4 @@ function Groups() {
   );
 }
 
-export default Groups;
+export default GroupUsers;
