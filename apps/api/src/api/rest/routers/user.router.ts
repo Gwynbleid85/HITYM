@@ -8,7 +8,7 @@ import uploadSingleFile from "../../../application/middlewares/fileUpload";
 const userRouter = Router();
 
 /**
- * POST /user/registration
+ * POST /api/user/registration
  * @summary Create new user
  * @tags user
  * @param {UserRegistrationRequest} request.body.required - User registration data
@@ -18,7 +18,7 @@ const userRouter = Router();
 userRouter.post("/registration", userController.registerUser);
 
 /**
- * POST /user/login
+ * POST /api/user/login
  * @summary Login user
  * @tags user
  * @param {UserLoginRequest} request.body.required - User login data
@@ -28,7 +28,7 @@ userRouter.post("/registration", userController.registerUser);
 userRouter.post("/login", userController.loginUser);
 
 /**
- * GET /user
+ * GET /api/user
  * @summary Get user data
  * @tags user
  * @security BearerAuth
@@ -39,7 +39,7 @@ userRouter.post("/login", userController.loginUser);
 userRouter.get("/", auth, userController.getUser);
 
 /**
- * GET /user/test/authorization
+ * GET /api/user/test/authorization
  * @summary Test authorization
  * @tags test
  * @security BearerAuth
@@ -49,7 +49,7 @@ userRouter.get("/", auth, userController.getUser);
 userRouter.get("/test/authorization", auth, userController.testAuthorization);
 
 /**
- * DELETE /user
+ * DELETE /api/user
  * @summary Delete user
  * @tags user
  * @security BearerAuth
@@ -60,7 +60,7 @@ userRouter.get("/test/authorization", auth, userController.testAuthorization);
 userRouter.delete("/", auth, userController.deleteUser);
 
 /**
- * PUT /user
+ * PUT /api/user
  * @summary Update user
  * @tags user
  * @security BearerAuth
@@ -72,7 +72,7 @@ userRouter.delete("/", auth, userController.deleteUser);
 userRouter.put("/", auth, userController.updateUser);
 
 /**
- * PUT /user/password
+ * PUT /api/user/password
  * @summary Update user password
  * @tags user
  * @security BearerAuth
@@ -84,7 +84,7 @@ userRouter.put("/", auth, userController.updateUser);
 userRouter.put("/password", auth, userController.updatePassword);
 
 /**
- * PUT /user/profilePicture
+ * PUT /api/user/profilePicture
  * @summary Update user profile picture
  * @tags user
  * @security BearerAuth
@@ -96,7 +96,7 @@ userRouter.put("/password", auth, userController.updatePassword);
 userRouter.put("/profilePicture", auth, uploadSingleFile("profilePictures"), userController.updateProfilePicture);
 
 /**
- * POST /user/user-status
+ * POST /api/user/user-status
  * @summary Update user status
  * @tags user
  * @security BearerAuth
@@ -108,7 +108,7 @@ userRouter.put("/profilePicture", auth, uploadSingleFile("profilePictures"), use
 userRouter.post("/user-status", auth, userController.updateUserStatus);
 
 /**
- * DELETE /user/user-status
+ * DELETE /api/user/user-status
  * @summary Delete user status
  * @tags user
  * @security BearerAuth
@@ -119,7 +119,7 @@ userRouter.post("/user-status", auth, userController.updateUserStatus);
 userRouter.delete("/user-status", auth, userController.deleteUserStatus);
 
 /**
- * GET /user/places
+ * GET /api/user/places
  * @summary Get all places created by user
  * @tags user
  * @security BearerAuth
@@ -131,7 +131,7 @@ userRouter.delete("/user-status", auth, userController.deleteUserStatus);
 userRouter.get("/places", auth, userController.getOwnedPlaces);
 
 /**
- * GET /user/places/favorites
+ * GET /api/user/places/favorites
  * @summary Get all favorite places of user
  * @tags user
  * @security BearerAuth
@@ -143,7 +143,7 @@ userRouter.get("/places", auth, userController.getOwnedPlaces);
 userRouter.get("/places/favorites", auth, userController.getFavoritePlaces);
 
 /**
- * POST /user/places/favorites
+ * POST /api/user/places/favorites
  * @summary Add favorite place
  * @tags user
  * @security BearerAuth
@@ -156,7 +156,7 @@ userRouter.get("/places/favorites", auth, userController.getFavoritePlaces);
 userRouter.post("/places/favorites", auth, userController.addFavoritePlace);
 
 /**
- * DELETE /user/places/favorites/{placeId}
+ * DELETE /api/user/places/favorites/{placeId}
  * @summary Remove favorite place
  * @tags user
  * @security BearerAuth
@@ -169,7 +169,7 @@ userRouter.post("/places/favorites", auth, userController.addFavoritePlace);
 userRouter.delete("/places/favorites/:placeId", auth, userController.removeFavoritePlace);
 
 /**
- * GET /user/groups
+ * GET /api/user/groups
  * @summary Get all groups user is member of
  * @tags user
  * @security BearerAuth
@@ -181,7 +181,7 @@ userRouter.delete("/places/favorites/:placeId", auth, userController.removeFavor
 userRouter.get("/groups", auth, userController.getUserGroups);
 
 /**
- * GET /user/groups/invites
+ * GET /api/user/groups/invites
  * @summary Get user invites
  * @tags group-invite
  * @security BearerAuth
@@ -191,7 +191,7 @@ userRouter.get("/groups", auth, userController.getUserGroups);
 userRouter.get("/groups/invites", auth, userController.getUserInvites);
 
 /**
- * POST /user/groups/invites/{id}/accept
+ * POST /api/user/groups/invites/{id}/accept
  * @summary Accept group invite
  * @tags group-invite
  * @security BearerAuth
@@ -203,7 +203,7 @@ userRouter.get("/groups/invites", auth, userController.getUserInvites);
 userRouter.post("/groups/invites/:id/accept", auth, userController.acceptGroupInvite);
 
 /**
- * DELETE /user/groups/invites/{id}
+ * DELETE /api/user/groups/invites/{id}
  * @summary Decline group invite
  * @tags group-invite
  * @security BearerAuth
@@ -215,7 +215,7 @@ userRouter.post("/groups/invites/:id/accept", auth, userController.acceptGroupIn
 userRouter.delete("/groups/invites/:id", auth, userController.declineGroupInvite);
 
 /**
- * POST /user/position-sharing/subscriptions
+ * POST /api/user/position-sharing/subscriptions
  * @summary Subscribe to user data
  * @tags position-sharing
  * @security BearerAuth
@@ -228,7 +228,7 @@ userRouter.delete("/groups/invites/:id", auth, userController.declineGroupInvite
 userRouter.post("/position-sharing/subscriptions", auth, wsConfigController.subscribeToUserPosition);
 
 /**
- * DELETE /user/position-sharing/subscriptions
+ * DELETE /api/user/position-sharing/subscriptions
  * @summary Unsubscribe from user data
  * @tags position-sharing
  * @security BearerAuth
@@ -241,7 +241,7 @@ userRouter.post("/position-sharing/subscriptions", auth, wsConfigController.subs
 userRouter.delete("/position-sharing/subscriptions", auth, wsConfigController.unsubscribeToUserPosition);
 
 /**
- * POST /user/position-sharing/share-with/groups
+ * POST /api/user/position-sharing/share-with/groups
  * @summary Share position with group
  * @tags position-sharing
  * @security BearerAuth
@@ -254,7 +254,7 @@ userRouter.delete("/position-sharing/subscriptions", auth, wsConfigController.un
 userRouter.post("/position-sharing/share-with/groups", auth, wsConfigController.sharePositionWithGroup);
 
 /**
- * DELETE /user/position-sharing/share-with/groups
+ * DELETE /api/user/position-sharing/share-with/groups
  * @summary Unshare position with group
  * @tags position-sharing
  * @security BearerAuth

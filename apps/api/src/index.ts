@@ -46,6 +46,9 @@ app.use("/api/groups", groupRouter);
 app.use("/api/places", placeRouter);
 app.use("/api/group-events", groupEventRouter);
 
+// Serve static files
+app.use("/api/public", express.static("public"));
+
 // Default route returning 404
 app.use((_req, res) => {
   res.status(404).send("Not found");

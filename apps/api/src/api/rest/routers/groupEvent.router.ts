@@ -6,7 +6,7 @@ import uploadSingleFile from "../../../application/middlewares/fileUpload";
 const groupEventRouter = Router();
 
 /**
- * POST /group-events
+ * POST /api/group-events
  * @summary Create new group event
  * @tags group-events
  * @security BearerAuth
@@ -18,7 +18,7 @@ const groupEventRouter = Router();
 groupEventRouter.post("/", auth, groupEventController.createGroupEvent);
 
 /**
- * GET /group-events/{id}
+ * GET /api/group-events/{id}
  * @summary Get group event by ID
  * @tags group-events
  * @security BearerAuth
@@ -30,7 +30,7 @@ groupEventRouter.post("/", auth, groupEventController.createGroupEvent);
 groupEventRouter.get("/:id", auth, groupEventController.getGroupEventById);
 
 /**
- * PUT /group-events/{id}
+ * PUT /api/group-events/{id}
  * @summary Update group event
  * @tags group-events
  * @security BearerAuth
@@ -44,7 +44,7 @@ groupEventRouter.get("/:id", auth, groupEventController.getGroupEventById);
 groupEventRouter.put("/:id", auth, groupEventController.updateGroupEvent);
 
 /**
- * PUT /group-events/{id}/image
+ * PUT /api/group-events/{id}/image
  * @summary Update group event image
  * @tags group-events
  * @security BearerAuth
@@ -58,7 +58,7 @@ groupEventRouter.put("/:id", auth, groupEventController.updateGroupEvent);
 groupEventRouter.put("/:id/image", auth, uploadSingleFile("eventImages"), groupEventController.updateGroupEventImage);
 
 /**
- * DELETE /group-events/{id}
+ * DELETE /api/group-events/{id}
  * @summary Delete group event
  * @tags group-events
  * @security BearerAuth
