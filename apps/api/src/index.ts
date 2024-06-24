@@ -27,7 +27,7 @@ expressJSDocSwagger(app)(options);
 const server = http.createServer(app);
 
 // Create a WebSocket server
-const wsServer = new WebSocketServer({ server });
+const wsServer = new WebSocketServer({ server, path: "/api/ws" });
 wsServer.on("connection", onWsConnection);
 
 // CORS middleware
