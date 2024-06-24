@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import React from "react";
 import { useGroupExtended } from "@/hooks/useGroups";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,14 +8,41 @@ import { useNavigate, useParams } from "react-router-dom";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { X } from "lucide-react";
 import CustomCardFooter from "@/components/card/CustomCardFooter";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useRemoveUserFromGroup } from "@/hooks/useGroups";
+import { useToast } from "@/components/ui/use-toast";
+import { ButtonLoading } from "@/components/ui/button-loading";
 
+// Component to display the group members
 function Groups() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { data: groupExtended, isLoading } = useGroupExtended(id as string);
+  const { toast } = useToast();
+  const { id: groupId } = useParams();
+  const { data: groupExtended, isLoading } = useGroupExtended(groupId as string);
+  const { mutateAsync: removeUser, isPending } = useRemoveUserFromGroup(groupId as string);
 
-  const handleClick = (id: string) => {
-    navigate(`/groups/${id}`); // Navigate directly
+  const handleRemoveUser = async (userId: string) => {
+    try {
+      await removeUser(userId);
+      toast({
+        title: `User was removed from the group!`,
+      });
+    } catch (e: any) {
+      toast({
+        title: "Could not remove the user.",
+        variant: "destructive",
+      });
+      console.error(e);
+    }
   };
 
   return (
@@ -28,21 +55,43 @@ function Groups() {
           {isLoading ? (
             <LoadingSpinner size={50} />
           ) : (
-            
             <ScrollArea className="rounded-md border-2 w-full overflow-auto ">
               {groupExtended?.data?.users?.map((user) => (
                 <div className="grid grid-cols-[1fr_auto] w-full items-center" key={user.id}>
                   {/* Button 1: Left Side (Full Width) */}
                   <Button variant="ghost" className=" truncate flex items-center justify-start space-x-4 px-3 h-fit">
-                    <Avatar name={user.name} url={user.profilePicture} size="12"/>
+                    <Avatar name={user.name} url={user.profilePicture} size="12" />
                     <div className="truncate">
                       <h4 className="font-semibold">{user.name}</h4>
                     </div>
                   </Button>
                   {/* Button 2: Right Side */}
-                  <Button variant="ghost" className="px-3 justify-self-end ">
-                    <X color="red" size={20} />
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="ghost" className="px-3 justify-self-end ">
+                        <X color="red" size={20} />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Are you sure to remove the group member?</DialogTitle>
+                        <DialogDescription>User {user.name} will be removed from the group.</DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <DialogFooter>
+                          {isPending ? (
+                            <ButtonLoading />
+                          ) : (
+                            <DialogClose asChild>
+                              <Button variant="destructive" onClick={() => handleRemoveUser(user.id)}>
+                                Remove member
+                              </Button>
+                            </DialogClose>
+                          )}
+                        </DialogFooter>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               ))}
             </ScrollArea>
@@ -51,8 +100,8 @@ function Groups() {
         {/* TODO redirect to invite*/}
         <CustomCardFooter
           buttonText="Invite user"
-          buttonOnClick={() => navigate(`/groups/${id}/users/invite`)}
-          backPath={`/groups/${id}`}
+          buttonOnClick={() => navigate(`/groups/${groupId}/users/invite`)}
+          backPath={`/groups/${groupId}`}
         />
       </Card>
     </>
