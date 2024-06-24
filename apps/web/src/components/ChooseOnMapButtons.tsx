@@ -26,7 +26,6 @@ export const ChooseOnMapButtons = () => {
   const onCancel = () => {
     navigate({
       pathname: returnUrl,
-      search: `?${createSearchParams([["asdf", "/asdf/asdf"]])}`,
     });
   };
 
