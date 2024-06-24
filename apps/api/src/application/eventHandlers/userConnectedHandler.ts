@@ -16,7 +16,6 @@ export const userConnectedHandler = async (event: UserConnected) => {
     sender: "server",
     data,
   };
-  console.log(receivers);
 
   if (receivers) {
     broadcastToGroup(newWsMessage, [...receivers]);

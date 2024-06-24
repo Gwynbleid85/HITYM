@@ -12,7 +12,7 @@ const navigationItems: NavigationItems = {
   links: [
     {
       label: "Home",
-      href: "/home", 
+      href: "/home",
       icon: Home,
     },
     {
