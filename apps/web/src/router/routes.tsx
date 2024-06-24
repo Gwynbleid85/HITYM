@@ -14,6 +14,7 @@ import { useUserContext } from "@/context/UserContext";
 import PendingInvites from "@/pages/invites/PendingInvites";
 import UserEditForm from "@/components/forms/UserEditForm";
 import UserStatusEdit from "@/components/forms/UserStatusEdit";
+import ChooseOnMap from "@/pages/ChooseOnMap";
 
 // Layout for Public Routes (Login and Signup), checks if user is logged in
 // If user is logged in, redirect to home page
@@ -54,6 +55,7 @@ const ProfileRoutes: RouteObject[] = [
 ];
 
 const routes: RouteObject[] = [
+  { path: "choose-on-map", element: <ChooseOnMap /> },
   {
     path: "/",
     element: <MainLayout />,

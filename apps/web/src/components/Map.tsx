@@ -1,13 +1,16 @@
-import React from "react";
+import React, { type FC } from "react";
 
 import { MapContainer } from "react-leaflet/MapContainer";
 import { TileLayer } from "react-leaflet/TileLayer";
 import usePosition from "@/hooks/usePosition";
 import { MapUserMarker } from "./MapUserMarker";
-import { PositionConfig } from "./PositionConfig";
 import { Marker } from "react-leaflet";
 
-export function Map() {
+type MapProps = {} & React.ComponentProps<typeof MapContainer>;
+
+export const Map: FC<MapProps> = (props) => {
+  const { children, ...otherProps } = props;
+
   const { users, myPosition, trackPosition } = usePosition();
 
   return (
@@ -17,6 +20,7 @@ export function Map() {
       zoom={12}
       style={{ height: "100vh", width: "100vw" }}
       className="z-0"
+      {...otherProps}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -33,9 +37,9 @@ export function Map() {
         <Marker position={[51.505, -0.09]} />
         // <CurrentLocationMarker latitude={myPosition.latitude} longitude={myPosition.longitude} />
       )}
-      <PositionConfig />
+      {children}
     </MapContainer>
   );
-}
+};
 
 export default Map;
