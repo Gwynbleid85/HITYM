@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB in bytes
+const ACCEPTED_FILE_TYPES = ["image/jpeg", "image/png"];
+
+// User validation schemas
 export const userRegistrationDataSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
@@ -11,81 +15,40 @@ export const userLoginDataSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
-export const deleteUserSchema = z.object({
-  id: z.string(),
-});
-
 export const updateUserSchema = z.object({
-  id: z.string(),
-
-  name: z.string().min(2),
-  bio: z.string().nullable(),
+  name: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters." })
+    .max(50, { message: "Name must be at most 50 characters." }),
+  bio: z.string().optional(),
+  image: z
+    .instanceof(FileList)
+    .optional() // Make the image field optional
+    .refine((fileList) => {
+      if (fileList && fileList[0]) {
+        const file = fileList[0];
+        return ACCEPTED_FILE_TYPES.includes(file.type);
+      }
+      return true;
+    }, "Only jpg and png files are accepted.")
+    .refine((fileList) => {
+      if (fileList && fileList[0]) {
+        const file = fileList[0];
+        return file.size <= MAX_FILE_SIZE;
+      }
+      return true;
+    }, "File size must not exceed 3MB."),
 });
 
 export const updatePasswordSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    password: z.string().min(6),
-  }),
-});
-
-export const updateProfilePictureSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    profilePicture: z.string(),
-  }),
+  password: z.string().min(6),
 });
 
 export const updateUserStatusSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    status: z.string(),
-    color: z.string(),
-  }),
-});
-
-export const deleteUserStatusSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-});
-
-export const getOwnedPlacesSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-});
-
-export const getFavoritePlacesSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
+  status: z.string(),
+  color: z.string(),
 });
 
 export const addFavoritePlaceSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    placeId: z.string(),
-  }),
-});
-
-export const removeFavoritePlaceSchema = z.object({
-  params: z.object({
-    id: z.string(),
-    placeId: z.string(),
-  }),
-});
-
-export const getUserGroupsSchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
+  placeId: z.string(),
 });

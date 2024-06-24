@@ -12,6 +12,7 @@ import GroupUsers from "@/pages/groups/GroupUsers";
 import UserInvite from "@/pages/invites/UserInvite";
 import { useUserContext } from "@/context/UserContext";
 import PendingInvites from "@/pages/invites/PendingInvites";
+import UserEditForm from "@/components/forms/UserEditForm";
 
 // Layout for Public Routes (Login and Signup), checks if user is logged in
 // If user is logged in, redirect to home page
@@ -44,6 +45,12 @@ const GroupRoutes: RouteObject[] = [
   { path: ":id", element: <GroupOverview /> },
 ];
 
+// User Routes
+const UserRoutes: RouteObject[] = [
+  { path: "edit", element: <UserEditForm /> },
+  { path: "invites", element: <PendingInvites /> },
+];
+
 const routes: RouteObject[] = [
   {
     path: "/",
@@ -61,7 +68,7 @@ const routes: RouteObject[] = [
         children: [
           { path: "home", element: <Home /> },
           { path: "groups/*", element: <Outlet />, children: GroupRoutes },
-          { path: "invite", element: <PendingInvites /> },
+          { path: "profile/*", element: <Outlet />, children: UserRoutes },
         ],
       },
       // Public routes
