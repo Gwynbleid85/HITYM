@@ -1,7 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { UpdateImageRequest, UpdateUserRequest, UserLoginRequest, UserRegistrationRequest } from "@/types/Api";
+import type {
+  UpdateImageRequest,
+  UpdateUserRequest,
+  UpdateUserStatusRequest,
+  UserLoginRequest,
+  UserRegistrationRequest,
+} from "@/types/Api";
 import { Api } from "@/types/Api";
 import usePersistentData from "./usePersistentData";
+import { useUserContext } from "@/context/UserContext";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
@@ -10,6 +17,7 @@ const api = new Api({ baseUrl: baseURL });
 const QUERY_KEYS = {
   user: "user",
   users: "users",
+  userStatus: "userStatus",
 };
 
 const MUTATION_KEYS = {
@@ -17,6 +25,8 @@ const MUTATION_KEYS = {
   userLogin: "userLogin",
   userUpdate: "userUpdate",
   userProfilePictureUpdate: "userProfilePictureUpdate",
+  userStatusUpdate: "userStatusUpdate",
+  userStatusDelete: "userStatusDelete",
 };
 
 //
@@ -109,7 +119,6 @@ export const useUserUpdate = () => {
   return mutation;
 };
 
-
 // Hook for updating user profile picture
 export const useUserProfilePictureUpdate = () => {
   const queryClient = useQueryClient();
@@ -133,4 +142,55 @@ export const useUserProfilePictureUpdate = () => {
   });
 
   return mutation;
+};
+
+// Hook for updating user status
+export const useUserStatusUpdate = () => {
+  const { authData } = usePersistentData();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.userStatusUpdate],
+    mutationFn: (payload: UpdateUserStatusRequest) =>
+      api.user.userStatusCreate(payload, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      }),
+  });
+
+  return mutation;
+};
+
+// Hook for deleting user status
+export const useUserStatusDelete = () => {
+  const { authData } = usePersistentData();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.userStatusDelete],
+    mutationFn: () =>
+      api.user.userStatusDelete({
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      }),
+  });
+
+  return mutation;
+};
+
+// Hook for getting user status
+export const useUserStatus = (userId: string) => {
+  const { authData } = usePersistentData();
+
+  const { data, isLoading, isSuccess } = useQuery({
+    queryKey: [QUERY_KEYS.userStatus, userId],
+    queryFn: () =>
+      api.users.userStatusDetail(userId, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      }),
+  });
+
+  return { data, isLoading, isSuccess };
 };
