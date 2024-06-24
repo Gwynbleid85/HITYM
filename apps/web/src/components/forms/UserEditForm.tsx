@@ -15,7 +15,6 @@ import { Avatar } from "../Avatar";
 import { Separator } from "../ui/separator";
 
 // Type for the user edit form, union of the user data and the image
-
 interface UpdateRequest extends UpdateUserRequest {
   image: FileList; // Needs to be FileList, because forms treat file inputs as FileList
 }
