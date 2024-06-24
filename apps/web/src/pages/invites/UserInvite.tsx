@@ -29,8 +29,14 @@ function UserInvite() {
   // Filter the users based on searching
   const filteredUsers = allUsers?.data.filter((user) => user.name.toLowerCase().includes(searchUser.toLowerCase()));
 
-  const handleUserClick = (userId: string) => {
+  // Function to handle
+  const handleUserChoose = (userId: string) => {
     setSelectedUserId(userId);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchUser(e.target.value);
+    setSelectedUserId("");
   };
 
   const handleSubmit = async () => {
@@ -62,21 +68,16 @@ function UserInvite() {
             <>
               {/* Search Input */}
               <div className="w-full p-4">
-                <Input
-                  placeholder="Search by name..."
-                  value={searchUser}
-                  onChange={(e) => setSearchUser(e.target.value)}
-                />
+                <Input placeholder="Search by name..." value={searchUser} onChange={handleSearchChange} />
               </div>
               <ScrollArea className="rounded-md border-2 w-full overflow-auto ">
                 {filteredUsers?.map((user) => (
                   <Button
                     key={user.id}
                     variant={selectedUserId === user.id ? "default" : "ghost"}
-                    onClick={() => handleUserClick(user.id)}
+                    onClick={() => handleUserChoose(user.id)}
                     className=" flex justify-start space-x-4 w-full h-fit px-2"
                   >
-                    {/* TODO avatar color */}
                     <Avatar name={user.name} url={user.profilePicture} size="12" />
                     <div className="flex flex-col items-start">
                       <h4 className="font-semibold ">{user.name}</h4>

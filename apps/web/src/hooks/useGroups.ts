@@ -16,6 +16,7 @@ const QUERY_KEYS = {
 const MUTATION_KEYS = {
   groupCreate: "groupCreate",
   groupUpdate: "groupUpdate",
+  removeUserFromGroup: "removeUserFromGroup",
 };
 
 // Hook to get all groups for the user using react-query
@@ -117,5 +118,31 @@ export const useGroupUpdate = (id: string) => {
   });
 
   // TODO update the picture
+  return mutation;
+};
+
+
+// Hook to remove a user from a group using react-query
+export const useRemoveUserFromGroup = (groupId: string) => {
+  const queryClient = useQueryClient();
+  const { authData } = usePersistentData();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.removeUserFromGroup],
+    mutationFn: (userId: string) =>
+      api.groups.usersDelete(groupId, userId, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
+        },
+      }),
+
+    onSuccess: () => {
+      //Invalidate extended group info (so that updated groups users list was shown)
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.groupExtended],
+      });
+    },
+  });
+
   return mutation;
 };
