@@ -14,6 +14,7 @@ import type {
   WelcomeMessage,
   WsMessage,
 } from "../../../../packages/shared-types/WsMessages";
+import { useToast } from "@/components/ui/use-toast";
 
 const WS_URL = import.meta.env.VITE_WS_URL as string;
 
@@ -30,8 +31,11 @@ export type UserInfo = {
 
 const usePosition = () => {
   const [users, setUsers] = useState<{ [key: string]: UserInfo }>({});
+  const [myPosition, setMyPosition] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [trackPosition, setTrackPosition] = useState<boolean>(false);
   const { authData } = usePersistentData();
   const { userContext } = useUserContext();
+  const { toast } = useToast();
 
   // Configure WebSocket connection
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
@@ -201,42 +205,64 @@ const usePosition = () => {
     });
   };
 
+  const invertTrackPosition = () => {
+    setTrackPosition((val) => !val);
+  };
+
   /**
    * Update user position
    * Get user position and send it to the server
    */
   const updatePosition = () => {
+    console.log("Updating user position");
+
     const options = {
       enableHighAccuracy: true,
       timeout: 2000,
-      maximumAge: 0,
+      maximumAge: 1,
     };
 
-    function success(pos: GeolocationPosition) {
-      const crd = pos.coords;
+    if (!navigator || !navigator.geolocation) {
+      toast({
+        title: "Geolocation is not supported by your browser",
+        variant: "destructive",
+      });
+      console.log("Geolocation is not supported by your browser");
 
-      console.log("Position updated");
-
-      sendJsonMessage({
-        type: "userChangedPosition",
-        sender: userContext.user?.id,
-        data: {
-          latitude: crd.latitude,
-          longitude: crd.longitude,
-        },
-      } as UserChangedPositionMessage);
-    }
-
-    function error(err: any) {
-      console.warn(`ERROR(${err.code}): ${err.message}`);
+      return;
     }
 
     navigator.geolocation.getCurrentPosition(success, error, options);
   };
+  function success(pos: GeolocationPosition) {
+    const crd = pos.coords;
+
+    setMyPosition({
+      latitude: crd.latitude,
+      longitude: crd.longitude,
+    });
+
+    sendJsonMessage({
+      type: "userChangedPosition",
+      sender: userContext.user?.id,
+      data: {
+        latitude: crd.latitude,
+        longitude: crd.longitude,
+      },
+    } as UserChangedPositionMessage);
+    console.log("User position updated: [", crd.latitude, ", ", crd.longitude, "]");
+  }
+
+  function error(err: any) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  }
 
   return {
     users,
     updatePosition,
+    myPosition,
+    trackPosition,
+    invertTrackPosition,
   };
 };
 

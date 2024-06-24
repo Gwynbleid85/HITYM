@@ -4,22 +4,11 @@ import { MapContainer } from "react-leaflet/MapContainer";
 import { TileLayer } from "react-leaflet/TileLayer";
 import usePosition from "@/hooks/usePosition";
 import { MapUserMarker } from "./MapUserMarker";
-
-const stringToColor = (str: string) => {
-  let hash = 0;
-  str.split("").forEach((char) => {
-    hash = char.charCodeAt(0) + ((hash << 5) - hash);
-  });
-  let colour = "#";
-  for (let i = 0; i < 3; i++) {
-    const value = (hash >> (i * 8)) & 0xff;
-    colour += value.toString(16).padStart(2, "0");
-  }
-  return colour;
-};
+import { PositionConfig } from "./PositionConfig";
+import { Marker } from "react-leaflet";
 
 export function Map() {
-  const { users } = usePosition();
+  const { users, myPosition, trackPosition } = usePosition();
 
   return (
     <MapContainer
@@ -40,6 +29,11 @@ export function Map() {
         }
         return <MapUserMarker key={userId} userId={userId} user={user} />;
       })}
+      {trackPosition && myPosition && (
+        <Marker position={[51.505, -0.09]} />
+        // <CurrentLocationMarker latitude={myPosition.latitude} longitude={myPosition.longitude} />
+      )}
+      <PositionConfig />
     </MapContainer>
   );
 }

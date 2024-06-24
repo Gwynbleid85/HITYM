@@ -82,9 +82,6 @@ export const userController = {
     }
     const user = userRes.value;
 
-    console.log("User password", user.password);
-    console.log("Request password", request.body.password);
-
     ///TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
     if (request.body.password.localeCompare(user.password)) {
       return res.status(400).json({
