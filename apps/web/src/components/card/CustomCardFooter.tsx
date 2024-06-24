@@ -10,7 +10,8 @@ interface CustomCardFooterProps {
   backPath: string;
   buttonOnClick?: () => void;
   buttonType?: "button" | "submit";
-  isSubmitting?: boolean; // Added isSubmitting prop
+  isSubmitting?: boolean;
+  isAuthorized?: boolean;
 }
 
 const CustomCardFooter: React.FC<CustomCardFooterProps> = ({
@@ -19,6 +20,7 @@ const CustomCardFooter: React.FC<CustomCardFooterProps> = ({
   buttonOnClick,
   buttonType = "button",
   isSubmitting = false, // Default to false if not provided
+  isAuthorized = true, // Default to true if not provided
 }) => {
   const navigate = useNavigate();
 
@@ -29,13 +31,17 @@ const CustomCardFooter: React.FC<CustomCardFooterProps> = ({
         <Button variant="secondary" size="icon" onClick={() => navigate(backPath)}>
           <ArrowLeft />
         </Button>
-
-        {isSubmitting && buttonType === "submit" ? (
-          <ButtonLoading />
-        ) : (
-          <Button className="px-5 h-fit" onClick={buttonOnClick} type={buttonType}>
-            <span className="py-1">{buttonText}</span>
-          </Button>
+        {isAuthorized && ( // Wrap in conditional rendering for authorization
+          <div>
+            {isSubmitting && buttonType === "submit" ? (
+              <ButtonLoading />
+            ) : (
+              // Only show second button even if first condition is met
+              <Button className="px-5 h-fit" onClick={buttonOnClick} type={buttonType}>
+                <span className="py-1">{buttonText}</span>
+              </Button>
+            )}
+          </div>
         )}
       </CardFooter>
     </>

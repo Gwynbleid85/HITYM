@@ -21,11 +21,13 @@ import {
 import { useRemoveUserFromGroup } from "@/hooks/useGroups";
 import { useToast } from "@/components/ui/use-toast";
 import { ButtonLoading } from "@/components/ui/button-loading";
+import { useUserContext } from "@/context/UserContext";
 
 // Component to display the group members
 function Groups() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAuthorized } = useUserContext();
   const { id: groupId } = useParams();
   const { data: groupExtended, isLoading } = useGroupExtended(groupId as string);
   const { mutateAsync: removeUser, isPending } = useRemoveUserFromGroup(groupId as string);
@@ -65,33 +67,35 @@ function Groups() {
                       <h4 className="font-semibold">{user.name}</h4>
                     </div>
                   </Button>
-                  {/* Button 2: Right Side */}
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="ghost" className="px-3 justify-self-end ">
-                        <X color="red" size={20} />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Are you sure to remove the group member?</DialogTitle>
-                        <DialogDescription>User {user.name} will be removed from the group.</DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
+                  {/* Button for removing user: Show only if loggen in user is the owner of group */}
+                  {isAuthorized(groupExtended.data.createdById) && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="ghost" className="px-3 justify-self-end ">
+                          <X color="red" size={20} />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Are you sure to remove the group member?</DialogTitle>
+                          <DialogDescription>User {user.name} will be removed from the group.</DialogDescription>
+                        </DialogHeader>
                         <DialogFooter>
-                          {isPending ? (
-                            <ButtonLoading />
-                          ) : (
-                            <DialogClose asChild>
-                              <Button variant="destructive" onClick={() => handleRemoveUser(user.id)}>
-                                Remove member
-                              </Button>
-                            </DialogClose>
-                          )}
+                          <DialogFooter>
+                            {isPending ? (
+                              <ButtonLoading />
+                            ) : (
+                              <DialogClose asChild>
+                                <Button variant="destructive" onClick={() => handleRemoveUser(user.id)}>
+                                  Remove member
+                                </Button>
+                              </DialogClose>
+                            )}
+                          </DialogFooter>
                         </DialogFooter>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                      </DialogContent>
+                    </Dialog>
+                  )}
                 </div>
               ))}
             </ScrollArea>
