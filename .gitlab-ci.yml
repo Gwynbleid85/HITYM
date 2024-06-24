@@ -1,6 +1,8 @@
 workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+   rules:
+     - if: $CI_MERGE_REQUEST_ID
+       when: always
+     - when: never
 
 stages:
   - build
