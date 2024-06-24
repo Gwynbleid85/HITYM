@@ -15,7 +15,7 @@ export interface UpdateImageRequest {
    * New image to upload
    * @format binary
    */
-  image: File;
+  image: File; //TODO
 }
 
 /** Update image with ID */

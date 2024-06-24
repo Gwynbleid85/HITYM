@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { UserLoginRequest, UserRegistrationRequest } from "@/types/Api";
+import type { UpdateImageRequest, UpdateUserRequest, UserLoginRequest, UserRegistrationRequest } from "@/types/Api";
 import { Api } from "@/types/Api";
 import usePersistentData from "./usePersistentData";
 
@@ -15,6 +15,8 @@ const QUERY_KEYS = {
 const MUTATION_KEYS = {
   userRegistrate: "userRegistrate",
   userLogin: "userLogin",
+  userUpdate: "userUpdate",
+  userProfilePictureUpdate: "userProfilePictureUpdate",
 };
 
 //
@@ -63,4 +65,72 @@ export const useUsers = () => {
   });
 
   return { data, isLoading };
+};
+
+// Hook for fetching a logged in user
+export const useUser = () => {
+  const { authData } = usePersistentData();
+
+  const { data, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.user],
+    queryFn: () =>
+      api.user.userList({
+        headers: {
+          Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
+        },
+      }),
+  });
+
+  return { data, isLoading };
+};
+
+// Hook for updating user data
+export const useUserUpdate = () => {
+  const queryClient = useQueryClient();
+  const { authData } = usePersistentData();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.userUpdate],
+    mutationFn: (payload: UpdateUserRequest) =>
+      api.user.userUpdate(payload, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      }),
+
+    onSuccess: () => {
+      // Invalidate the query to refetch the data
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.user],
+      });
+    },
+  });
+
+  return mutation;
+};
+
+
+// Hook for updating user profile picture
+export const useUserProfilePictureUpdate = () => {
+  const queryClient = useQueryClient();
+  const { authData } = usePersistentData();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.userProfilePictureUpdate],
+    mutationFn: (payload: UpdateImageRequest) =>
+      api.user.profilePictureUpdate(payload, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      }),
+
+    onSuccess: () => {
+      // Invalidate the query to refetch the data
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.user],
+      });
+    },
+  });
+
+  return mutation;
 };
