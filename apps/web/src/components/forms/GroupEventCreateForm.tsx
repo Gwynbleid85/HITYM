@@ -164,7 +164,7 @@ function GroupEventCreateForm() {
             buttonText="Create event"
             isSubmitting={form.formState.isSubmitting}
             buttonType="submit"
-            backPath={`/groups/${groupId}/events"`}
+            backPath={`/groups/${groupId}/events`}
           />
         </form>
       </Form>
