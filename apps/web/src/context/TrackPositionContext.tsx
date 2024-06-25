@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import useWebSocket from "react-use-websocket";
-
-import usePersistentData from "./usePersistentData";
-import { useUserContext } from "@/context/UserContext";
-
+import { useUserContext } from "./UserContext";
+import usePersistentData from "@/hooks/usePersistentData";
 import type {
   AuthMessage,
   AuthRequiredMessage,
@@ -29,15 +27,34 @@ export type UserInfo = {
   active: boolean;
 };
 
-const usePosition = () => {
-  const [users, setUsers] = useState<{ [key: string]: UserInfo }>({});
+interface TrackPositionValue {
+  usersPositions: { [key: string]: UserInfo };
+
+  myPosition: { latitude: number; longitude: number } | null;
+  updatePosition: () => void;
+
+  trackPosition: boolean;
+  invertTrackPosition: () => void;
+}
+
+const TrackPositionContext = createContext<TrackPositionValue>({
+  usersPositions: {},
+  myPosition: null,
+  updatePosition: () => {},
+  trackPosition: false,
+  invertTrackPosition: () => {},
+});
+
+export const useTrackPositionContext = () => useContext(TrackPositionContext);
+
+export const TrackPositionProvider = ({ children }: any) => {
+  const [usersPositions, setUsersPositions] = useState<{ [key: string]: UserInfo }>({});
   const [myPosition, setMyPosition] = useState<{ latitude: number; longitude: number } | null>(null);
   const [trackPosition, setTrackPosition] = useState<boolean>(false);
-  const { authData } = usePersistentData();
   const { userContext } = useUserContext();
+  const { authData } = usePersistentData();
   const { toast } = useToast();
 
-  // Configure WebSocket connection
   const { sendJsonMessage, lastJsonMessage } = useWebSocket(
     WS_URL,
     {
@@ -119,7 +136,7 @@ const usePosition = () => {
       };
     });
 
-    setUsers(newUsers);
+    setUsersPositions(newUsers);
   };
 
   /**
@@ -127,7 +144,7 @@ const usePosition = () => {
    * @param message received message
    */
   const handlePositionChanged = (message: UserChangedPositionMessage) => {
-    setUsers((val) => {
+    setUsersPositions((val) => {
       const user = val[message.sender];
       if (user) {
         return {
@@ -150,7 +167,7 @@ const usePosition = () => {
    * @param message received message
    */
   const handleUserConnected = (message: UserConnectedMessage) => {
-    setUsers((val) => {
+    setUsersPositions((val) => {
       const user = val[message.data.userId];
       if (user) {
         return {
@@ -170,7 +187,7 @@ const usePosition = () => {
    * @param message received message
    */
   const handleUserDisconnected = (message: UserDisconnectedMessage) => {
-    setUsers((val) => {
+    setUsersPositions((val) => {
       const user = val[message.data.userId];
       if (user) {
         return {
@@ -190,7 +207,7 @@ const usePosition = () => {
    * @param message received message
    */
   const handleUserStatusUpdated = (message: UserStatusUpdatedMessage) => {
-    setUsers((val) => {
+    setUsersPositions((val) => {
       const user = val[message.sender];
       if (user) {
         return {
@@ -257,18 +274,23 @@ const usePosition = () => {
     console.warn(`ERROR(${err.code}): ${err.message}`);
   }
 
-  return {
-    users,
-    updatePosition,
-    myPosition,
-    trackPosition,
-    invertTrackPosition,
-  };
+  return (
+    <TrackPositionContext.Provider
+      value={{
+        usersPositions,
+        myPosition,
+        invertTrackPosition,
+        trackPosition,
+        updatePosition,
+      }}
+    >
+      {children}
+    </TrackPositionContext.Provider>
+  );
 };
 
+// Check if the message is a WsMessage
 function isWsMessage(message: unknown): message is WsMessage {
   // Adjust the check according to the structure of WsMessage
   return (message as WsMessage) !== undefined && (message as WsMessage) !== null;
 }
-
-export default usePosition;
