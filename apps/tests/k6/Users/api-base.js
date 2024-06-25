@@ -1,4 +1,4 @@
-const apiBaseUrl = __ENV.URL || "http://localhost:3000";
+const apiBaseUrl = __ENV.URL || "http://localhost:3000/api";
 
 export class ApiBase {
   constructor() {

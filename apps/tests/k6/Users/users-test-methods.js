@@ -29,7 +29,7 @@ export class UsersTests extends ApiBase {
 
     let response = http.post(`${userApiUrl}/registration`, payload, this.getOptions());
     check(response, {
-      "Create is status 200": (r) => r.status === 201,
+      "Create is status 201": (r) => r.status === 201,
       "Response contains id": (r) => r.json().hasOwnProperty("id"),
       "Response contains email": (r) => r.json().hasOwnProperty("email"),
       "Response contains name": (r) => r.json().hasOwnProperty("name"),
