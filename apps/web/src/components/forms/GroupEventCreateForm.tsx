@@ -122,7 +122,6 @@ function GroupEventCreateForm() {
                           mode="single"
                           selected={field.value ? new Date(field.value) : undefined}
                           onSelect={field.onChange}
-                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           initialFocus
                         />
                       </PopoverContent>
