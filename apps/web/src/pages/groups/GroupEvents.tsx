@@ -62,7 +62,8 @@ function GroupEvents() {
                   {/* Button 1: Left Side (Full Width) */}
                   <Button
                     variant="ghost"
-                    className="cursor-auto truncate flex items-center justify-start space-x-4 px-3 h-fit"
+                    className="truncate flex items-center justify-start space-x-4 px-3 h-fit"
+                    onClick={() => navigate(`/groups/${groupId}/events/${event.id}`)}
                   >
                     <Avatar name={event.name} url={event.imageUrl} size="12" />
                     <div className="truncate">

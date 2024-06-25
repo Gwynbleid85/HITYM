@@ -7,12 +7,13 @@ const baseURL = import.meta.env.VITE_API_URL;
 
 const api = new Api({ baseUrl: baseURL }).api;
 
-const QUERY_KEYS = {};
+const QUERY_KEYS = {
+  places: "places",
+};
 
 const MUTATION_KEYS = {
   placeCreate: "placeCreate",
 };
-
 
 // Hook to create a place using react-query
 export const useCreatePlace = () => {
@@ -29,4 +30,21 @@ export const useCreatePlace = () => {
   });
 
   return mutation;
+};
+
+// Hook to get all places for the user using react-query
+export const usePlaces = () => {
+  const { authData } = usePersistentData();
+
+  const { data, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.places],
+    queryFn: () =>
+      api.userPlacesList({
+        headers: {
+          Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
+        },
+      }),
+  });
+
+  return { data, isLoading };
 };

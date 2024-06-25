@@ -16,6 +16,9 @@ import UserEditForm from "@/components/forms/UserEditForm";
 import UserStatusEdit from "@/components/forms/UserStatusEdit";
 import ChooseOnMap from "@/pages/ChooseOnMap";
 import PlaceCreateForm from "@/components/forms/PlaceCreateForm";
+import GroupEventOverview from "@/pages/groups/GroupEventOverview";
+import GroupEventEditForm from "@/components/forms/GroupEventEditForm";
+import GroupEventCreateForm from "@/components/forms/GroupEventCreateForm";
 
 // Layout for Public Routes (Login and Signup), checks if user is logged in
 // If user is logged in, redirect to home page
@@ -41,6 +44,9 @@ const Redirect = () => {
 const GroupRoutes: RouteObject[] = [
   { index: true, element: <Groups /> },
   { path: "create", element: <GroupCreateForm /> },
+  { path: ":groupId/events/:eventId/edit", element: <GroupEventEditForm /> },
+  { path: ":groupId/events/:eventId", element: <GroupEventOverview /> },
+  { path: ":groupId/events/create", element: <GroupEventCreateForm /> },
   { path: ":id/events", element: <GroupEvents /> },
   { path: ":id/users/invite", element: <UserInvite /> },
   { path: ":id/users", element: <GroupUsers /> },
