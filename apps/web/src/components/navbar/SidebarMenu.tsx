@@ -1,5 +1,13 @@
-import { Menu, Home, UsersRound } from "lucide-react";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, Home, UsersRound, LandPlot } from "lucide-react";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 import { useLocation } from "react-router-dom";
 import type { NavigationItems } from "@/types/Navigation";
@@ -21,9 +29,9 @@ const navigationItems: NavigationItems = {
       icon: UsersRound,
     },
     {
-      label: "Choose on Map",
-      href: "/choose-on-map",
-      icon: Menu,
+      label: "Create place",
+      href: "/places/create",
+      icon: LandPlot,
     },
   ],
 };
@@ -40,7 +48,8 @@ export function SidebarMenu() {
       </SheetTrigger>
       <SheetContent side="left" className="px-3 py-4 rounded-r-lg bg-background/95">
         <SheetHeader className="flex flex-row justify-between items-center space-y-0">
-          <span className="text-lg font-semibold text-foreground mx-3">HITYM</span>
+          <SheetTitle className="ml-3 text-xl">HITYM</SheetTitle>
+          <SheetDescription></SheetDescription>
         </SheetHeader>
         <div className="h-full">
           <div className="mt-5 flex flex-col w-full gap-1">

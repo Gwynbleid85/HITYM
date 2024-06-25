@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, UserRoundPlus, Star, Pencil } from "lucide-react";
+import { LogOut, User, UserRoundPlus, Pencil } from "lucide-react";
 import usePersistentData from "@/hooks/usePersistentData";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../ui/use-toast";
@@ -51,10 +51,6 @@ function ProfileMenu() {
         <DropdownMenuItem onClick={() => navigate("/profile/status")}>
           <Pencil className="mr-2 h-4 w-4" />
           <span>My status</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate("/profile/favourite")}>
-          <Star className="mr-2 h-4 w-4" />
-          <span>Favourite places</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate("/profile/invites")}>
           <UserRoundPlus className="mr-2 h-4 w-4" />
