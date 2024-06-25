@@ -21,6 +21,12 @@ function stringToColor(string: string) {
 // Generate avatar based on name
 export function stringAvatar(name: string) {
   const nameUpperLetters = name.replace(/[^A-Z]+/g, "");
+  if (nameUpperLetters.length < 2) {
+    return {
+      color: stringToColor(name),
+      name: name[0],
+    };
+  }
   return {
     color: stringToColor(name),
     name: `${nameUpperLetters[0]}${nameUpperLetters[1]}`,
