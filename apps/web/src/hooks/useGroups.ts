@@ -1,6 +1,6 @@
 import usePersistentData from "@/hooks/usePersistentData";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { CreateGroupRequest, UpdateGroupRequest } from "@/types/Api";
+import type { CreateGroupRequest, UpdateGroupRequest, UpdateImageRequest } from "@/types/Api";
 import { Api } from "@/types/Api";
 
 const baseURL = import.meta.env.VITE_API_URL;
@@ -16,6 +16,7 @@ const QUERY_KEYS = {
 const MUTATION_KEYS = {
   groupCreate: "groupCreate",
   groupUpdate: "groupUpdate",
+  groupProfilePictureUpdate: "groupProfilePictureUpdate",
   removeUserFromGroup: "removeUserFromGroup",
 };
 
@@ -116,11 +117,32 @@ export const useGroupUpdate = (id: string) => {
       });
     },
   });
-
-  // TODO update the picture
   return mutation;
 };
 
+// Hook to update group profile picture using react-query
+export const useGroupProfilePictureUpdate = (id: string) => {
+  const queryClient = useQueryClient();
+  const { authData } = usePersistentData();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.groupProfilePictureUpdate],
+    mutationFn: (payload: UpdateImageRequest) =>
+      api.groups.imageUpdate(id, payload, {
+        headers: {
+          Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
+        },
+      }),
+    onSuccess: () => {
+      //Invalidate group list
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.groupExtended],
+      });
+    },
+  });
+
+  return mutation;
+};
 
 // Hook to remove a user from a group using react-query
 export const useRemoveUserFromGroup = (groupId: string) => {

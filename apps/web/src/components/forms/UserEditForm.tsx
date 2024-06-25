@@ -2,7 +2,7 @@ import { useUserContext } from "@/context/UserContext";
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import type { UpdateUserRequest, UpdateImageRequest } from "@/types/Api";
+import type { UpdateUserRequest } from "@/types/Api";
 import { updateUserSchema } from "@/validationSchemas/user.validationSchemas";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
