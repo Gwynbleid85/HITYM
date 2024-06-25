@@ -156,8 +156,6 @@ export class UsersTests extends ApiBase {
     });
   }
 
-  //TODO: Test updating profile picture
-
   GetNonExistingUserStatus() {
     const response = http.get(`${userApiUrl}/${newUserId}/user-status`, this.getOptions());
     check(response, {

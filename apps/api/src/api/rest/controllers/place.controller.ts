@@ -27,7 +27,6 @@ export const placeController = {
   },
 
   // Get all places
-  ///TODO: Add filtering and paging
   async getAllPlaces(_req: Request, res: Response) {
     const result = await placeRepository.getAll();
     if (result.isErr) {

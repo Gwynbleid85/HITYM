@@ -10,7 +10,6 @@ export const groupInviteRepository = {
   // @returns The created invite
   async create(newInvite: NewGroupInvite): Promise<Result<GroupInvite>> {
     try {
-      ///TODO: Test relation constraints
       const createdInvite = await prisma.groupInvite.create({ data: newInvite });
       return Result.ok(createdInvite);
     } catch (e) {

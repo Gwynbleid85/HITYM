@@ -93,7 +93,6 @@ export const groupEventController = {
    * @param req Request object
    * @param res Response object
    */
-  ///TODO: Add authorization to image endpoints
   async updateGroupEventImage(req: Request, res: Response) {
     const updatedEvent = await groupEventRepository.updateImage(req.imageId, req.finalImageName);
     return res.status(200).json(updatedEvent);
