@@ -12,7 +12,7 @@ import { useUserContext } from "@/context/UserContext";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
-const api = new Api({ baseUrl: baseURL });
+const api = new Api({ baseUrl: baseURL }).api;
 
 const QUERY_KEYS = {
   user: "user",
@@ -35,7 +35,7 @@ export const useUserRegistrate = () => {
 
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.userRegistrate],
-    mutationFn: (payload: UserRegistrationRequest) => api.user.registrationCreate(payload),
+    mutationFn: (payload: UserRegistrationRequest) => api.userRegistrationCreate(payload),
 
     onSuccess: () => {
       //TODO
@@ -50,7 +50,7 @@ export const useUserLogin = () => {
 
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.userLogin],
-    mutationFn: (payload: UserLoginRequest) => api.user.loginCreate(payload),
+    mutationFn: (payload: UserLoginRequest) => api.userLoginCreate(payload),
 
     onSuccess: () => {
       //TODO
@@ -67,7 +67,7 @@ export const useUsers = () => {
   const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.users],
     queryFn: () =>
-      api.users.usersList({
+      api.usersList({
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -84,7 +84,7 @@ export const useUser = () => {
   const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.user],
     queryFn: () =>
-      api.user.userList({
+      api.userList({
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -102,7 +102,7 @@ export const useUserUpdate = () => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.userUpdate],
     mutationFn: (payload: UpdateUserRequest) =>
-      api.user.userUpdate(payload, {
+      api.userUpdate(payload, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },
@@ -127,7 +127,7 @@ export const useUserProfilePictureUpdate = () => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.userProfilePictureUpdate],
     mutationFn: (payload: UpdateImageRequest) =>
-      api.user.profilePictureUpdate(payload, {
+      api.userProfilePictureUpdate(payload, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },
@@ -151,7 +151,7 @@ export const useUserStatusUpdate = () => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.userStatusUpdate],
     mutationFn: (payload: UpdateUserStatusRequest) =>
-      api.user.userStatusCreate(payload, {
+      api.userUserStatusCreate(payload, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },
@@ -168,7 +168,7 @@ export const useUserStatusDelete = () => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.userStatusDelete],
     mutationFn: () =>
-      api.user.userStatusDelete({
+      api.userUserStatusDelete({
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },
@@ -185,7 +185,7 @@ export const useUserStatus = (userId: string) => {
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: [QUERY_KEYS.userStatus, userId],
     queryFn: () =>
-      api.users.userStatusDetail(userId, {
+      api.usersUserStatusDetail(userId, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },

@@ -15,6 +15,7 @@ import PendingInvites from "@/pages/invites/PendingInvites";
 import UserEditForm from "@/components/forms/UserEditForm";
 import UserStatusEdit from "@/components/forms/UserStatusEdit";
 import ChooseOnMap from "@/pages/ChooseOnMap";
+import PlaceCreateForm from "@/components/forms/PlaceCreateForm";
 
 // Layout for Public Routes (Login and Signup), checks if user is logged in
 // If user is logged in, redirect to home page
@@ -54,8 +55,13 @@ const ProfileRoutes: RouteObject[] = [
   { path: "status", element: <UserStatusEdit /> },
 ];
 
+// Places Routes
+const PlacesRoutes: RouteObject[] = [
+  { path: "create/choose-on-map", element: <ChooseOnMap /> },
+  { path: "create", element: <PlaceCreateForm /> },
+];
+
 const routes: RouteObject[] = [
-  { path: "choose-on-map", element: <ChooseOnMap /> },
   {
     path: "/",
     element: <MainLayout />,
@@ -73,6 +79,7 @@ const routes: RouteObject[] = [
           { path: "home", element: <Home /> },
           { path: "groups/*", element: <Outlet />, children: GroupRoutes },
           { path: "profile/*", element: <Outlet />, children: ProfileRoutes },
+          { path: "places/*", element: <Outlet />, children: PlacesRoutes },
         ],
       },
       // Public routes

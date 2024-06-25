@@ -54,7 +54,7 @@ export const UserProvider = ({ children }: any) => {
 
     if (authData) {
       // Cant user tanstack-query here, because it break!
-      const newUser = await fetch(`${baseURL}/user`, {
+      const newUser = await fetch(`${baseURL}/api/user`, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },

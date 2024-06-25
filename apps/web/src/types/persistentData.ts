@@ -1,9 +1,9 @@
-// TODO all other fields from API
+import type { CreatePlaceRequest } from "./Api";
 
 export interface AuthData {
   token: string;
 }
 
 export interface AppData {
-  //TODO
+  newPlace: CreatePlaceRequest | undefined;
 }

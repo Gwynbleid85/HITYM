@@ -6,7 +6,7 @@ import { Api } from "@/types/Api";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
-const api = new Api({ baseUrl: baseURL });
+const api = new Api({ baseUrl: baseURL }).api;
 
 const QUERY_KEYS = {
   invites: "invites",
@@ -25,7 +25,7 @@ export const useInviteUserToGroup = (userId: string) => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.inviteUser],
     mutationFn: (payload: InviteUserToGroupRequest) =>
-      api.users.groupsInvitesCreate(userId, payload, {
+      api.usersGroupsInvitesCreate(userId, payload, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },
@@ -46,7 +46,7 @@ export const useInvites = () => {
   const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.invites],
     queryFn: () =>
-      api.user.groupsInvitesList({
+      api.userGroupsInvitesList({
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -64,7 +64,7 @@ export const useAcceptInvite = (inviteId: string) => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.acceptInvite],
     mutationFn: () =>
-      api.user.groupsInvitesAcceptCreate(inviteId, {
+      api.userGroupsInvitesAcceptCreate(inviteId, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },
@@ -89,7 +89,7 @@ export const useRejectInvite = (inviteId: string) => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.rejectInvite],
     mutationFn: () =>
-      api.user.groupsInvitesDelete(inviteId, {
+      api.userGroupsInvitesDelete(inviteId, {
         headers: {
           Authorization: `Bearer ${authData.token}`,
         },
