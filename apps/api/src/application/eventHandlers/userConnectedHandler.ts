@@ -4,12 +4,10 @@ import { userWsConfigRepository } from "../repositories/userWebsocketConfig/user
 import { broadcastToGroup } from "../../api/websocket/wsUtils";
 
 export const userConnectedHandler = async (event: UserConnected) => {
-  console.log(event);
-
   await userWsConfigRepository.UpdateConnectionStatus(event.data.userId, true);
 
   // Send all subscribed users a message that the user has logged in
-  const receivers = websocketState.broadcastGroups[event.data.userId];
+  const receivers = websocketState.requestBroadcastGroups[event.data.userId];
   const { type, data } = event;
   const newWsMessage = {
     type,

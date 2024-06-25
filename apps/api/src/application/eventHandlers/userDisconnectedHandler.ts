@@ -4,12 +4,11 @@ import { userWsConfigRepository } from "../repositories/userWebsocketConfig/user
 import { broadcastToGroup } from "../../api/websocket/wsUtils";
 
 export const userDisconnectedHandler = (event: UserDisconnected) => {
-  console.log(event);
-
   userWsConfigRepository.UpdateConnectionStatus(event.data.userId, false);
 
   // Send all subscribed users a message that the user has disconnected
-  const receivers = websocketState.broadcastGroups[event.data.userId];
+  const receivers = websocketState.requestBroadcastGroups[event.data.userId];
+
   const { type, data } = event;
   const newWsMessage = {
     type,

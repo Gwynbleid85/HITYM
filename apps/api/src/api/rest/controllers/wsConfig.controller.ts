@@ -74,12 +74,20 @@ export const wsConfigController = {
       return;
     }
 
+    const usersToUnsubscribe = await groupRepository.getGroupUsers(groupId);
+    if (usersToUnsubscribe.isErr) {
+      handleRepositoryErrors(usersToUnsubscribe.error, res);
+      return;
+    }
+
+    const usersToUnsubscribeIds = usersToUnsubscribe.value.map((user) => user.id);
+
     ///TODO: Use message bus to notify other services
     await UserUnsubscribedUserInfoHandler({
       type: "userUnsubscribedUserInfo",
       data: {
         userId: req.user.sub,
-        usersToUnsubscribe: result.value,
+        usersToUnsubscribe: usersToUnsubscribeIds,
       },
     } as UserUnsubscribedUserInfo);
 
@@ -124,12 +132,22 @@ export const wsConfigController = {
     const request = await parseRequest(userUnsharePositionWithGroupSchema, req, res);
     if (!request) return;
 
+    const groupId = request.body.groupId;
+
     // Unshare position with group
-    const result = await userWsConfigRepository.UnsharePositionsWithGroup(req.user.sub, request.body.groupId);
+    const result = await userWsConfigRepository.UnsharePositionsWithGroup(req.user.sub, groupId);
     if (result.isErr) {
       handleRepositoryErrors(result.error, res);
       return;
     }
+
+    const usersToUnsharePositionWith = await groupRepository.getGroupUsers(groupId);
+    if (usersToUnsharePositionWith.isErr) {
+      handleRepositoryErrors(usersToUnsharePositionWith.error, res);
+      return;
+    }
+
+    const usersToUnsharePositionWithIds = usersToUnsharePositionWith.value.map((user) => user.id);
 
     ///TODO: Use message bus to notify other services
     userUnsharedPositionWithGroupHandler({
@@ -137,7 +155,7 @@ export const wsConfigController = {
       data: {
         userId: req.user.sub,
         groupId: request.body.groupId,
-        groupMembers: result.value,
+        groupMembers: usersToUnsharePositionWithIds,
       },
     } as UserUnsharedPositionWithGroup);
 

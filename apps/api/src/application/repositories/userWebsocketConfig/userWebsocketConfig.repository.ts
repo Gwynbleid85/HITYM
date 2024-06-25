@@ -20,7 +20,9 @@ export const userWsConfigRepository = {
           },
           positionFollowedOf: {
             select: {
-              id: true,
+              users: {
+                select: { id: true },
+              },
             },
           },
         },
@@ -29,10 +31,14 @@ export const userWsConfigRepository = {
         return Result.err(new NotFoundError());
       }
       const { positionSharedWith, positionFollowedOf, userId } = userWsConfig;
+      let positionSharedWithIds = new Set(positionSharedWith.flatMap((group) => group.users.map((user) => user.id)));
+      positionSharedWithIds.delete(userId);
+      let positionFollowedOfIds = new Set(positionFollowedOf.flatMap((group) => group.users.map((user) => user.id)));
+      positionFollowedOfIds.delete(userId);
       return Result.ok({
         userId,
-        positionSharedWith: positionSharedWith.flatMap((group) => group.users.map((user) => user.id)),
-        positionFollowedOf: positionFollowedOf.map((user) => user.id),
+        positionSharedWith: [...positionSharedWithIds],
+        positionFollowedOf: [...positionFollowedOfIds],
       });
     } catch (e) {
       return Result.err(handleDbExceptions(e));
@@ -70,33 +76,18 @@ export const userWsConfigRepository = {
     }
   },
 
-  async UnsharePositionsWithGroup(userId: string, groupId: string): Promise<Result<string[]>> {
+  async UnsharePositionsWithGroup(userId: string, groupId: string): Promise<Result<void>> {
     try {
-      const res = await prisma.userWebsocketConfig.update({
+      await prisma.userWebsocketConfig.update({
         where: { userId },
         data: {
           positionSharedWith: {
             disconnect: { id: groupId },
           },
         },
-        select: {
-          positionSharedWith: {
-            select: {
-              users: {
-                select: { id: true },
-              },
-            },
-            where: {
-              id: groupId,
-            },
-          },
-        },
       });
-      if (!res.positionSharedWith[0]) {
-        return Result.err(new NotFoundError());
-      }
 
-      return Result.ok(res.positionSharedWith[0].users.map((user) => user.id));
+      return Result.ok(undefined);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -133,32 +124,18 @@ export const userWsConfigRepository = {
     }
   },
 
-  async UnfollowGroupPosition(userId: string, groupId: string): Promise<Result<string[]>> {
+  async UnfollowGroupPosition(userId: string, groupId: string): Promise<Result<void>> {
     try {
-      const res = await prisma.userWebsocketConfig.update({
+      await prisma.userWebsocketConfig.update({
         where: { userId },
         data: {
-          positionSharedWith: {
+          positionFollowedOf: {
             disconnect: { id: groupId },
           },
         },
-        select: {
-          positionFollowedOf: {
-            select: {
-              users: {
-                select: { id: true },
-              },
-            },
-            where: {
-              id: groupId,
-            },
-          },
-        },
       });
-      if (!res.positionFollowedOf[0]) {
-        return Result.err(new NotFoundError());
-      }
-      return Result.ok(res.positionFollowedOf[0].users.map((user) => user.id));
+
+      return Result.ok(undefined);
     } catch (e) {
       return Result.err(handleDbExceptions(e));
     }
@@ -213,6 +190,10 @@ export const userWsConfigRepository = {
         return Result.err(new NotFoundError());
       }
 
+      if (!followedUsers.positionFollowedOf[0]) {
+        return Result.ok([]);
+      }
+
       const data = followedUsers.positionFollowedOf[0]?.users.map((user) => {
         let lastPosition = null;
         if (user.userWebsocketConfig?.lastLatitude && user.userWebsocketConfig?.lastLongitude) {
@@ -235,6 +216,7 @@ export const userWsConfigRepository = {
           active,
         };
       });
+
       if (!data) {
         return Result.err(new NotFoundError());
       }
