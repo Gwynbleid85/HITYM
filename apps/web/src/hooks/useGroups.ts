@@ -5,7 +5,7 @@ import { Api } from "@/types/Api";
 
 const baseURL = import.meta.env.VITE_API_URL;
 
-const api = new Api({ baseUrl: baseURL });
+const api = new Api({ baseUrl: baseURL }).api;
 
 const QUERY_KEYS = {
   groups: "groups",
@@ -27,7 +27,7 @@ export const useGroups = () => {
   const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.groups],
     queryFn: () =>
-      api.user.groupsList({
+      api.userGroupsList({
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -44,7 +44,7 @@ export const useGroup = (id: string) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.group, id],
     queryFn: () =>
-      api.groups.groupsDetail(id, {
+      api.groupsDetail(id, {
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -61,7 +61,7 @@ export const useGroupExtended = (id: string) => {
   const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.groupExtended, id],
     queryFn: () =>
-      api.groups.extendedDetail(id, {
+      api.groupsExtendedDetail(id, {
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -79,7 +79,7 @@ export const useGroupCreate = () => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.groupCreate],
     mutationFn: (payload: CreateGroupRequest) =>
-      api.groups.groupsCreate(payload, {
+      api.groupsCreate(payload, {
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -104,7 +104,7 @@ export const useGroupUpdate = (id: string) => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.groupUpdate],
     mutationFn: (payload: UpdateGroupRequest) =>
-      api.groups.groupsUpdate(id, payload, {
+      api.groupsUpdate(id, payload, {
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -128,7 +128,7 @@ export const useGroupProfilePictureUpdate = (id: string) => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.groupProfilePictureUpdate],
     mutationFn: (payload: UpdateImageRequest) =>
-      api.groups.imageUpdate(id, payload, {
+      api.groupsImageUpdate(id, payload, {
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },
@@ -152,7 +152,7 @@ export const useRemoveUserFromGroup = (groupId: string) => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.removeUserFromGroup],
     mutationFn: (userId: string) =>
-      api.groups.usersDelete(groupId, userId, {
+      api.groupsUsersDelete(groupId, userId, {
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },

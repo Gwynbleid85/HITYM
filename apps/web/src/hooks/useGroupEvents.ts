@@ -4,7 +4,7 @@ import type { CreateGroupRequest, UpdateGroupRequest } from "@/types/Api";
 import { Api } from "@/types/Api";
 
 const baseURL = import.meta.env.VITE_API_URL;
-const api = new Api({ baseUrl: baseURL });
+const api = new Api({ baseUrl: baseURL }).api;
 
 const QUERY_KEYS = {
   groupEvent: "groupEvent",
@@ -26,7 +26,7 @@ export const useRemoveGroupEvent = () => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.removeGroupEvent],
     mutationFn: (eventId: string) =>
-      api.groupEvents.groupEventsDelete(eventId, {
+      api.groupEventsDelete(eventId, {
         headers: {
           Authorization: `Bearer ${authData.token}`, // Add Bearer token to headers
         },

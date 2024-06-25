@@ -49,6 +49,3 @@ export const updateUserStatusSchema = z.object({
   color: z.string(),
 });
 
-export const addFavoritePlaceSchema = z.object({
-  placeId: z.string(),
-});
