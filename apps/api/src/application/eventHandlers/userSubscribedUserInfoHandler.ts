@@ -2,8 +2,6 @@ import { addToRequestGroups, getWelcomeMessage, sendToUser } from "../../api/web
 import type { UserSubscribedUserInfo } from "../../core/Events";
 
 export const userSubscribedUserInfoHandler = async (event: UserSubscribedUserInfo) => {
-  console.log(event);
-
   const userId = event.data.userId;
 
   addToRequestGroups(userId, event.data.usersToSubscribe);

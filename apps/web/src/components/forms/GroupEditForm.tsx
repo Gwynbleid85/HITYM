@@ -62,9 +62,7 @@ function GroupEditForm() {
       // Update profile picture
       // If the new profile picture was selected
       if (values.image[0]) {
-        console.log(values.image[0]);
         const imageResult = await updateGroupProfilePicture({ image: values.image[0] });
-        console.log(imageResult.data);
       }
       // Update user info
       await updateGroupInfo({ name: values.name, description: values.description });

@@ -3,8 +3,6 @@ import type { UserUnsharedPositionWithGroup } from "../../core/Events";
 import { groupRepository } from "../repositories/group/group.repository";
 
 export const userUnsharedPositionWithGroupHandler = async (event: UserUnsharedPositionWithGroup) => {
-  console.log(event);
-
   const userId = event.data.userId;
   const groupId = event.data.groupId;
 

@@ -38,7 +38,6 @@ function UserStatusEdit() {
   }, [userStatus]);
 
   const onSubmit = async (values: UpdateUserStatusRequest) => {
-    console.log("Here");
     try {
       await updateUserStatus(values);
       toast({

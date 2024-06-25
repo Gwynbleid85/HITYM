@@ -69,7 +69,6 @@ export const TrackPositionProvider = ({ children }: any) => {
     if (!isWsMessage(lastJsonMessage)) return;
 
     const message = lastJsonMessage as WsMessage;
-    console.log(`New message received [${message.type}]`, message);
     handleWsMessage(message);
   }, [lastJsonMessage]);
 
@@ -231,8 +230,6 @@ export const TrackPositionProvider = ({ children }: any) => {
    * Get user position and send it to the server
    */
   const updatePosition = () => {
-    console.log("Updating user position");
-
     const options = {
       enableHighAccuracy: true,
       timeout: 2000,
@@ -244,7 +241,6 @@ export const TrackPositionProvider = ({ children }: any) => {
         title: "Geolocation is not supported by your browser",
         variant: "destructive",
       });
-      console.log("Geolocation is not supported by your browser");
 
       return;
     }
@@ -267,7 +263,6 @@ export const TrackPositionProvider = ({ children }: any) => {
         longitude: crd.longitude,
       },
     } as UserChangedPositionMessage);
-    console.log("User position updated: [", crd.latitude, ", ", crd.longitude, "]");
   }
 
   function error(err: any) {

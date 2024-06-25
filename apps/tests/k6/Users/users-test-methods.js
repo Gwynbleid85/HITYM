@@ -79,7 +79,6 @@ export class UsersTests extends ApiBase {
     });
 
     newUserId = response.json().user.id;
-    console.log("Test User1 access token: " + response.json().token);
     this.SetAccessToken(response.json().token);
   }
 

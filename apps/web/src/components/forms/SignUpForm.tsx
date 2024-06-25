@@ -30,13 +30,11 @@ export function SignUpForm() {
   const onSubmit = async (values: UserRegistrationRequest) => {
     try {
       const result = await createUser(values);
-      console.log(result);
       toast({
         title: "Account successfully created.",
       });
       navigate("/login");
     } catch (error) {
-      console.error(error);
       toast({
         title: "Something went wrong.",
         variant: "destructive",

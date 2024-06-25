@@ -5,8 +5,6 @@ import type { UserChangedPositionMessage } from "../../../../../packages/shared-
 import { broadcastToGroup } from "../../api/websocket/wsUtils";
 
 export const userChangedPositionHandler = (event: UserChangedPosition) => {
-  console.log(event);
-
   // Send all subscribed users a message that the user changed his position
   const receivers = websocketState.broadcastGroups[event.data.userId];
   const { type, data } = event;

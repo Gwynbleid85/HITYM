@@ -43,9 +43,7 @@ function UserEditForm() {
       // Update profile picture
       // If the new profile picture was selected
       if (values.image[0]) {
-        console.log(values.image[0]);
         const profilePictureResult = await updateUserProfilePicture({ image: values.image[0] });
-        console.log(profilePictureResult.data);
       }
       // Update user info
       const userResult = await updateUserInfo({ name: values.name, bio: values.bio });

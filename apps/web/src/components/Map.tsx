@@ -1,4 +1,4 @@
-import React, { useEffect, type FC } from "react";
+import React, { type FC } from "react";
 
 import { MapContainer } from "react-leaflet/MapContainer";
 import { TileLayer } from "react-leaflet/TileLayer";
@@ -14,10 +14,6 @@ export const Map: FC<MapProps> = (props) => {
 
   const { usersPositions, myPosition, trackPosition } = useTrackPositionContext();
   const { userContext } = useUserContext();
-
-  useEffect(() => {
-    console.log("Map rendered");
-  }, []);
 
   return (
     <MapContainer

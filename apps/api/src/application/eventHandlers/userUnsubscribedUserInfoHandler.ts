@@ -2,8 +2,6 @@ import { getWelcomeMessage, removeFromRequestGroups, sendToUser } from "../../ap
 import type { UserUnsubscribedUserInfo } from "../../core/Events";
 
 export const UserUnsubscribedUserInfoHandler = async (event: UserUnsubscribedUserInfo) => {
-  console.log(event);
-
   const userId = event.data.userId;
   const usersToUnsubscribe = event.data.usersToUnsubscribe;
 
