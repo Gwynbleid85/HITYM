@@ -170,7 +170,7 @@ export interface SharePositionWithGroupRequest {
 /** Unshare position with group */
 export interface UnsharePositionWithGroupRequest {
   /** Group to unshare position with */
-  groupId: string[];
+  groupId: string;
 }
 
 /** Group with users and events */

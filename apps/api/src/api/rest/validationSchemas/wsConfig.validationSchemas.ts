@@ -36,7 +36,7 @@ export const userSharePositionWithGroupSchema = z.object({
 /**
  * Unshare position with group
  * @typedef {object} UnsharePositionWithGroupRequest
- * @property {string[]} groupId.required - Group to unshare position with
+ * @property {string} groupId.required - Group to unshare position with
  */
 export const userUnsharePositionWithGroupSchema = z.object({
   body: z.object({
