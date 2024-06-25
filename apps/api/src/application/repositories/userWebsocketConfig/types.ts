@@ -18,7 +18,7 @@ export type FollowedUsers = {
 
 /**
  * User websocket config
- * @typedef {object} UserWebsocketConfig
+ * @typedef {object} PositionSharingConfig
  * @property {string[]} sharingWith - Ids of groups the user is sharing their position with
  * @property {string[]} following - Ids of groups the user is following
  */

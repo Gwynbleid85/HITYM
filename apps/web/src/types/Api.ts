@@ -242,7 +242,7 @@ export interface UserStatusSimple {
 }
 
 /** User websocket config */
-export interface UserWebsocketConfig {
+export interface PositionSharingConfig {
   /** Ids of groups the user is sharing their position with */
   sharingWith?: string[];
   /** Ids of groups the user is following */
@@ -1351,7 +1351,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     userPositionSharingConfigList: (params: RequestParams = {}) =>
-      this.request<any, Error>({
+      this.request<PositionSharingConfig, Error>({
         path: `/api/user/position-sharing/config`,
         method: "GET",
         secure: true,
