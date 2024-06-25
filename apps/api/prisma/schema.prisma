@@ -24,18 +24,17 @@ model User {
   profilePicture String?
 
   // Relations
-  userWebsocketConfig UserWebsocketConfig?  @relation("UserWebsocketConfig")
-  followdBy           UserWebsocketConfig[] @relation("FollowedBy")
-  inGroups            Group[]               @relation("UsersInGroup")
-  status              UserStatus?           @relation("UserStatus")
-  places              Place[]               @relation("FavoritePlaces")
-  placeCreatedBy      Place[]               @relation("PlaceCreatedBy")
-  groupCreatedBy      Group[]               @relation("GroupCreatedBy")
-  eventCreatedBy      GroupEvent[]          @relation("EventCreatedBy")
-  invitedToGroup      GroupInvite[]         @relation("InvitedUser")
-  invitedBy           GroupInvite[]         @relation("InvitedBy")
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
+  userWebsocketConfig UserWebsocketConfig? @relation("UserWebsocketConfig")
+  inGroups            Group[]              @relation("UsersInGroup")
+  status              UserStatus?          @relation("UserStatus")
+  places              Place[]              @relation("FavoritePlaces")
+  placeCreatedBy      Place[]              @relation("PlaceCreatedBy")
+  groupCreatedBy      Group[]              @relation("GroupCreatedBy")
+  eventCreatedBy      GroupEvent[]         @relation("EventCreatedBy")
+  invitedToGroup      GroupInvite[]        @relation("InvitedUser")
+  invitedBy           GroupInvite[]        @relation("InvitedBy")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 }
 
 model UserWebsocketConfig {
@@ -44,7 +43,7 @@ model UserWebsocketConfig {
   user   User   @relation("UserWebsocketConfig", fields: [userId], references: [id])
 
   positionSharedWith Group[] @relation("PositionSharedWith")
-  positionFollowedOf User[]  @relation("FollowedBy")
+  positionFollowedOf Group[] @relation("FollowedGroups")
 
   // Last position
   lastLatitude  Float?
@@ -95,9 +94,9 @@ model Group {
   createdBy   User   @relation("GroupCreatedBy", fields: [createdById], references: [id])
   createdById String
 
-  positionSharedBy UserWebsocketConfig[] @relation("PositionSharedWith")
-
-  inivites GroupInvite[] @relation("InviteToGroup")
+  positionSharedBy   UserWebsocketConfig[] @relation("PositionSharedWith")
+  positionFollowedBy UserWebsocketConfig[] @relation("FollowedGroups")
+  inivites           GroupInvite[]         @relation("InviteToGroup")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

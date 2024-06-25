@@ -25,6 +25,7 @@ import { groupRepository } from "../../../application/repositories/group/group.r
 import { groupInviteRepository } from "../../../application/repositories/groupInvite/groupInvite.repository";
 import { userStatusUpdatedHandler } from "../../../application/eventHandlers/userStatusUpdatedHandler";
 import type { UserStatusUpdated } from "../../../core/Events";
+import { userWsConfigRepository } from "../../../application/repositories/userWebsocketConfig/userWebsocketConfig.repository";
 
 export const userController = {
   /*

@@ -15,3 +15,14 @@ export type FollowedUsers = {
   status: UserStatusSimple | null;
   active: boolean;
 };
+
+/**
+ * User websocket config
+ * @typedef {object} UserWebsocketConfig
+ * @property {string[]} sharingWith - Ids of groups the user is sharing their position with
+ * @property {string[]} following - Ids of groups the user is following
+ */
+export type PositionSharingConfig = {
+  sharingWith: string[];
+  following: string[];
+};

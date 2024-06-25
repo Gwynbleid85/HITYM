@@ -27,7 +27,7 @@ import { useUserContext } from "@/context/UserContext";
 function GroupUsers() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isAuthorized } = useUserContext();
+  const { isAuthorized, userContext } = useUserContext();
   const { id: groupId } = useParams();
   const { data: groupExtended, isLoading } = useGroupExtended(groupId as string);
   const { mutateAsync: removeUser, isPending } = useRemoveUserFromGroup(groupId as string);
@@ -74,9 +74,11 @@ function GroupUsers() {
                   {isAuthorized(groupExtended.data.createdById) && (
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="ghost" className="px-3 justify-self-end ">
-                          <X color="red" size={20} />
-                        </Button>
+                        {user.id !== userContext.user?.id && (
+                          <Button variant="ghost" className="px-3 justify-self-end ">
+                            <X color="red" size={20} />
+                          </Button>
+                        )}
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
