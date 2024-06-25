@@ -15,6 +15,7 @@ export const placeController = {
 
     const result = await placeRepository.create({
       ...request.body,
+      imageUrl: null,
       createdById: req.user.sub,
     });
     if (result.isErr) {
