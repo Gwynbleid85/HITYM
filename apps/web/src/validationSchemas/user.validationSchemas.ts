@@ -48,4 +48,3 @@ export const updateUserStatusSchema = z.object({
   status: z.string().max(50, { message: "Status must be at most 50 characters." }),
   color: z.string(),
 });
-

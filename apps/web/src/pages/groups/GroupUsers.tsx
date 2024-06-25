@@ -27,7 +27,7 @@ import { useUserContext } from "@/context/UserContext";
 function GroupUsers() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isAuthorized } = useUserContext();
+  const { isAuthorized, userContext } = useUserContext();
   const { id: groupId } = useParams();
   const { data: groupExtended, isLoading } = useGroupExtended(groupId as string);
   const { mutateAsync: removeUser, isPending } = useRemoveUserFromGroup(groupId as string);
@@ -61,7 +61,10 @@ function GroupUsers() {
               {groupExtended?.data?.users?.map((user) => (
                 <div className="grid grid-cols-[1fr_auto] w-full items-center" key={user.id}>
                   {/* Button 1: Left Side (Full Width) */}
-                  <Button variant="ghost" className="cursor-auto truncate flex items-center justify-start space-x-4 px-3 h-fit">
+                  <Button
+                    variant="ghost"
+                    className="cursor-auto truncate flex items-center justify-start space-x-4 px-3 h-fit"
+                  >
                     <Avatar name={user.name} url={user.profilePicture} size="12" />
                     <div className="truncate">
                       <h4 className="font-semibold">{user.name}</h4>
@@ -71,9 +74,11 @@ function GroupUsers() {
                   {isAuthorized(groupExtended.data.createdById) && (
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="ghost" className="px-3 justify-self-end ">
-                          <X color="red" size={20} />
-                        </Button>
+                        {user.id !== userContext.user?.id && (
+                          <Button variant="ghost" className="px-3 justify-self-end ">
+                            <X color="red" size={20} />
+                          </Button>
+                        )}
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>

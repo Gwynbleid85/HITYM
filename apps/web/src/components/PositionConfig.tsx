@@ -6,7 +6,7 @@ import { Label } from "./ui/label";
 import { LocateFixed } from "lucide-react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import usePosition from "@/hooks/usePosition";
+import { useTrackPositionContext } from "@/context/TrackPositionContext";
 
 type PositionConfigProps = {} & JSX.IntrinsicElements["div"];
 
@@ -14,7 +14,9 @@ export const PositionConfig: FC<PositionConfigProps> = (props) => {
   const { className, ...otherProps } = props;
   const [effect, setEffect] = useState(false);
   const map = useMap();
-  const { myPosition, trackPosition, invertTrackPosition, updatePosition } = usePosition();
+
+  const { myPosition, trackPosition, invertTrackPosition, updatePosition } = useTrackPositionContext();
+
   // If tracking is enabled, update the position every 2 seconds
   useInterval(() => {
     if (!trackPosition) return;

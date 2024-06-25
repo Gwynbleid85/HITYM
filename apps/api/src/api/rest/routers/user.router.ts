@@ -216,29 +216,29 @@ userRouter.delete("/groups/invites/:id", auth, userController.declineGroupInvite
 
 /**
  * POST /api/user/position-sharing/subscriptions
- * @summary Subscribe to user data
+ * @summary Subscribe to group positions
  * @tags position-sharing
  * @security BearerAuth
- * @param {SubscribeUserRequest} request.body.required - Users to subscribe to
+ * @param {SubscribeGroupRequest} request.body.required - Group to subscribe to
  * @return  204 - success response
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 404 - Not Found response - application/json
  */
-userRouter.post("/position-sharing/subscriptions", auth, wsConfigController.subscribeToUserPosition);
+userRouter.post("/position-sharing/subscriptions", auth, wsConfigController.subscribeToGroupPosition);
 
 /**
  * DELETE /api/user/position-sharing/subscriptions
- * @summary Unsubscribe from user data
+ * @summary Unsubscribe from group positions
  * @tags position-sharing
  * @security BearerAuth
- * @param {UnsubscribeUserRequest} request.body.required - Users to unsubscribe from
+ * @param {UnsubscribeGroupRequest} request.body.required - Group to unsubscribe from
  * @return  204 - success response
  * @return {Error} 400 - Bad request response - application/json
  * @return {Error} 401 - Unauthorized response - application/json
  * @return {Error} 404 - Not Found response - application/json
  */
-userRouter.delete("/position-sharing/subscriptions", auth, wsConfigController.unsubscribeToUserPosition);
+userRouter.delete("/position-sharing/subscriptions", auth, wsConfigController.unsubscribeToGroupPosition);
 
 /**
  * POST /api/user/position-sharing/share-with/groups
@@ -265,5 +265,16 @@ userRouter.post("/position-sharing/share-with/groups", auth, wsConfigController.
  * @return {Error} 404 - Not Found response - application/json
  */
 userRouter.delete("/position-sharing/share-with/groups", auth, wsConfigController.unsharePositionWithGroup);
+
+/**
+ * GET /api/user/position-sharing/config
+ * @summary Get position sharing config
+ * @tags position-sharing
+ * @security BearerAuth
+ * @return {PositionSharingConfig} 200 - success response - application/json
+ * @return {Error} 400 - Bad request response - application/json
+ * @return {Error} 401 - Unauthorized response - application/json
+ */
+userRouter.get("/position-sharing/config", auth, wsConfigController.getPositionSharingConfig);
 
 export default userRouter;

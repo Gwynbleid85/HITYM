@@ -1,9 +1,9 @@
 import { Marker, Popup } from "react-leaflet";
-import type { UserInfo } from "@/hooks/usePosition";
 import type { FC } from "react";
 import L from "leaflet";
 import { stringAvatar } from "@/utils";
 import { MapUserPopup } from "./MapUserPopup";
+import type { UserInfo } from "@/context/TrackPositionContext";
 
 const MARKER_SIZE = 40;
 const MARKER_SIZE_HALF = MARKER_SIZE / 2;

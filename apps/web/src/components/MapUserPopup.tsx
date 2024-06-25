@@ -35,11 +35,13 @@ export const MapUserPopup: FC<MapUserPopupProps> = (props) => {
           )}
         </div>
       </CardContent>
-      <CardFooter className=" p-0">
-        <div className={`text-sm rounded-md bg-gray-300 p-2 text-center text`} style={{ color: user.status?.color }}>
-          {user.status?.status}
-        </div>
-      </CardFooter>
+      {user.status && (
+        <CardFooter className=" p-0">
+          <div className={`text-sm rounded-md bg-gray-300 p-2 text-center text`} style={{ color: user.status?.color }}>
+            {user.status?.status}
+          </div>
+        </CardFooter>
+      )}
     </>
   );
 };

@@ -15,6 +15,7 @@ export const placeController = {
 
     const result = await placeRepository.create({
       ...request.body,
+      imageUrl: null,
       createdById: req.user.sub,
     });
     if (result.isErr) {
@@ -26,7 +27,6 @@ export const placeController = {
   },
 
   // Get all places
-  ///TODO: Add filtering and paging
   async getAllPlaces(_req: Request, res: Response) {
     const result = await placeRepository.getAll();
     if (result.isErr) {

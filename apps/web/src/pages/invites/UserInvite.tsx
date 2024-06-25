@@ -41,7 +41,6 @@ function UserInvite() {
 
   const handleSubmit = async () => {
     try {
-      console.log(groupId);
       await inviteUser({ groupId: groupId } as InviteUserToGroupRequest);
       toast({
         title: `User was invited!`,

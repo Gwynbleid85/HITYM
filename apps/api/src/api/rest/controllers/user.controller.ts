@@ -25,6 +25,7 @@ import { groupRepository } from "../../../application/repositories/group/group.r
 import { groupInviteRepository } from "../../../application/repositories/groupInvite/groupInvite.repository";
 import { userStatusUpdatedHandler } from "../../../application/eventHandlers/userStatusUpdatedHandler";
 import type { UserStatusUpdated } from "../../../core/Events";
+import { userWsConfigRepository } from "../../../application/repositories/userWebsocketConfig/userWebsocketConfig.repository";
 
 export const userController = {
   /*
@@ -49,8 +50,7 @@ export const userController = {
     const newUser: NewUser = request.body;
 
     // Hash password
-    ///TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
-    // newUser.password = hashSync(newUser.password, env.PASS_HASH_SALT);
+    newUser.password = hashSync(newUser.password, env.PASS_HASH_SALT);
 
     // Save new user to db
     const savedUser: Result<User> = await userRepository.create(newUser);
@@ -82,21 +82,13 @@ export const userController = {
     }
     const user = userRes.value;
 
-    ///TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
-    if (request.body.password.localeCompare(user.password)) {
+    // Check if password is correct
+    if (!compareSync(request.body.password, user.password)) {
       return res.status(400).json({
         name: "ValidationError",
         message: "Invalid password",
       });
     }
-
-    // Check if password is correct
-    // if (!compareSync(request.body.password, user.password)) {
-    //   return res.status(400).json({
-    //     name: "ValidationError",
-    //     message: "Invalid password",
-    //   });
-    // }
 
     // Generate jwt token
     const token = jwt.sign(
@@ -213,9 +205,7 @@ export const userController = {
     if (!request) return;
 
     // Hash new password
-    //TODO: Enable hashing when done debugging !!!!!!!!!!!!!!!!!!!
-    const newHashedPassword = request.body.password;
-    // const newHashedPassword = hashSync(request.body.password, env.PASS_HASH_SALT);
+    const newHashedPassword = hashSync(request.body.password, env.PASS_HASH_SALT);
 
     const result = await userRepository.updatePassword(req.user.sub, newHashedPassword);
     if (result.isErr) {

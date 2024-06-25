@@ -10,7 +10,7 @@ const AUTH_DATA_DEFAULT: AuthData = {
 };
 
 const APP_DATA_DEFAULT: AppData = {
-  newPlace: undefined
+  newPlace: undefined,
 };
 
 /**

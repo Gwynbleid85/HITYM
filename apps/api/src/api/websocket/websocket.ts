@@ -98,6 +98,7 @@ const handleAuth = async (connection: WebSocket, message: RawData) => {
 
   // Configure allowedBroadcastGroups for user
   addToAllowedGroups(userId, positionSharedWith);
+
   // Update requestBroadcastGroups for followed users
   addToRequestGroups(userId, positionFollowedOf);
 

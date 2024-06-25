@@ -12,7 +12,6 @@ export const createPlaceSchema = z.object({
   body: z.object({
     name: z.string().min(2),
     description: z.string().nullable(),
-    imageUrl: z.string().nullable(),
     position: z.object({
       latitude: z.number(),
       longitude: z.number(),

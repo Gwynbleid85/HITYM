@@ -2,7 +2,7 @@ import { useUserContext } from "@/context/UserContext";
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import type { UpdateUserRequest } from "@/types/Api";
+import type { UpdateUserRequest, UpdateImageRequest } from "@/types/Api";
 import { updateUserSchema } from "@/validationSchemas/user.validationSchemas";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,9 +43,7 @@ function UserEditForm() {
       // Update profile picture
       // If the new profile picture was selected
       if (values.image[0]) {
-        console.log(values.image[0]);
         const profilePictureResult = await updateUserProfilePicture({ image: values.image[0] });
-        console.log(profilePictureResult.data);
       }
       // Update user info
       const userResult = await updateUserInfo({ name: values.name, bio: values.bio });

@@ -18,6 +18,7 @@ const QUERY_KEYS = {
   user: "user",
   users: "users",
   userStatus: "userStatus",
+  userTrackConfig: "userTrackConfig",
 };
 
 const MUTATION_KEYS = {
@@ -27,6 +28,10 @@ const MUTATION_KEYS = {
   userProfilePictureUpdate: "userProfilePictureUpdate",
   userStatusUpdate: "userStatusUpdate",
   userStatusDelete: "userStatusDelete",
+  userFollowGroup: "userFollowGroup",
+  userUnfollowGroup: "userUnfollowGroup",
+  userSharePositionWithGroup: "userSharePositionWithGroup",
+  userStopSharingPositionWithGroup: "userStopSharingPositionWithGroup",
 };
 
 //
@@ -193,4 +198,120 @@ export const useUserStatus = (userId: string) => {
   });
 
   return { data, isLoading, isSuccess };
+};
+
+export const useUserTrackingConfig = () => {
+  const { authData } = usePersistentData();
+
+  const { data, isLoading, isSuccess } = useQuery({
+    queryKey: [QUERY_KEYS.userTrackConfig],
+    queryFn: () =>
+      api.userPositionSharingConfigList({
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+        },
+      }),
+  });
+
+  return { data, isLoading, isSuccess };
+};
+
+export const useFollowGroup = (groupId: string) => {
+  const { authData } = usePersistentData();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.userFollowGroup, groupId],
+    mutationFn: () =>
+      api.userPositionSharingSubscriptionsCreate(
+        { groupId },
+        {
+          headers: {
+            Authorization: `Bearer ${authData.token}`,
+          },
+        }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.userTrackConfig],
+      });
+    },
+  });
+
+  return mutation;
+};
+
+export const useUnfollowGroup = (groupId: string) => {
+  const { authData } = usePersistentData();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.userUnfollowGroup, groupId],
+    mutationFn: () =>
+      api.userPositionSharingSubscriptionsDelete(
+        { groupId },
+        {
+          headers: {
+            Authorization: `Bearer ${authData.token}`,
+          },
+        }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.userTrackConfig],
+      });
+    },
+  });
+
+  return mutation;
+};
+
+export const useSharePositionWithGroup = (groupId: string) => {
+  const { authData } = usePersistentData();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.userSharePositionWithGroup, groupId],
+    mutationFn: () =>
+      api.userPositionSharingShareWithGroupsCreate(
+        { groupId },
+        {
+          headers: {
+            Authorization: `Bearer ${authData.token}`,
+          },
+        }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.userTrackConfig],
+      });
+    },
+  });
+
+  return mutation;
+};
+
+export const useStopSharingPositionWithGroup = (groupId: string) => {
+  const { authData } = usePersistentData();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationKey: [MUTATION_KEYS.userStopSharingPositionWithGroup, groupId],
+    mutationFn: () =>
+      api.userPositionSharingShareWithGroupsDelete(
+        { groupId },
+        {
+          headers: {
+            Authorization: `Bearer ${authData.token}`,
+          },
+        }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.userTrackConfig],
+      });
+    },
+  });
+
+  return mutation;
 };

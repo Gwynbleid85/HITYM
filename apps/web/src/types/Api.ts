@@ -150,15 +150,15 @@ export interface InviteUserToGroupRequest {
 }
 
 /** Subscribe to user data */
-export interface SubscribeUserRequest {
-  /** Users to subscribe to */
-  userIds: string[];
+export interface SubscribeGroupRequest {
+  /** Group to subscribe to */
+  groupId: string;
 }
 
 /** Unsubscribe from user data */
-export interface UnsubscribeUserRequest {
-  /** Users to unsubscribe from */
-  userIds: string[];
+export interface UnsubscribeGroupRequest {
+  /** Group to unsubscribe from */
+  groupId: string;
 }
 
 /** Share position with group */
@@ -170,7 +170,7 @@ export interface SharePositionWithGroupRequest {
 /** Unshare position with group */
 export interface UnsharePositionWithGroupRequest {
   /** Group to unshare position with */
-  groupId: string[];
+  groupId: string;
 }
 
 /** Group with users and events */
@@ -239,6 +239,14 @@ export interface UserStatusSimple {
   status: string;
   /** Status color */
   color: string;
+}
+
+/** User websocket config */
+export interface PositionSharingConfig {
+  /** Ids of groups the user is sharing their position with */
+  sharingWith?: string[];
+  /** Ids of groups the user is following */
+  following?: string[];
 }
 
 /** User */
@@ -1262,11 +1270,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags position-sharing
      * @name UserPositionSharingSubscriptionsCreate
-     * @summary Subscribe to user data
+     * @summary Subscribe to group positions
      * @request POST:/api/user/position-sharing/subscriptions
      * @secure
      */
-    userPositionSharingSubscriptionsCreate: (data: SubscribeUserRequest, params: RequestParams = {}) =>
+    userPositionSharingSubscriptionsCreate: (data: SubscribeGroupRequest, params: RequestParams = {}) =>
       this.request<void, Error>({
         path: `/api/user/position-sharing/subscriptions`,
         method: "POST",
@@ -1281,11 +1289,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags position-sharing
      * @name UserPositionSharingSubscriptionsDelete
-     * @summary Unsubscribe from user data
+     * @summary Unsubscribe from group positions
      * @request DELETE:/api/user/position-sharing/subscriptions
      * @secure
      */
-    userPositionSharingSubscriptionsDelete: (data: UnsubscribeUserRequest, params: RequestParams = {}) =>
+    userPositionSharingSubscriptionsDelete: (data: UnsubscribeGroupRequest, params: RequestParams = {}) =>
       this.request<void, Error>({
         path: `/api/user/position-sharing/subscriptions`,
         method: "DELETE",
@@ -1330,6 +1338,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags position-sharing
+     * @name UserPositionSharingConfigList
+     * @summary Get position sharing config
+     * @request GET:/api/user/position-sharing/config
+     * @secure
+     */
+    userPositionSharingConfigList: (params: RequestParams = {}) =>
+      this.request<PositionSharingConfig, Error>({
+        path: `/api/user/position-sharing/config`,
+        method: "GET",
+        secure: true,
+        format: "json",
         ...params,
       }),
 

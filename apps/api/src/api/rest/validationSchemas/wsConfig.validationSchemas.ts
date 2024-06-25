@@ -2,23 +2,23 @@ import { z } from "zod";
 
 /**
  * Subscribe to user data
- * @typedef {object} SubscribeUserRequest
- * @property {string[]} userIds.required - Users to subscribe to
+ * @typedef {object} SubscribeGroupRequest
+ * @property {string} groupId.required - Group to subscribe to
  */
-export const userSubscribeUsersSchema = z.object({
+export const userSubscribeGroupSchema = z.object({
   body: z.object({
-    userIds: z.string().array(),
+    groupId: z.string(),
   }),
 });
 
 /**
  * Unsubscribe from user data
- * @typedef {object} UnsubscribeUserRequest
- * @property {string[]} userIds.required - Users to unsubscribe from
+ * @typedef {object} UnsubscribeGroupRequest
+ * @property {string} groupId.required - Group to unsubscribe from
  */
-export const userUnsubscribeUsersSchema = z.object({
+export const userUnsubscribeGroupSchema = z.object({
   body: z.object({
-    userIds: z.string().array(),
+    groupId: z.string(),
   }),
 });
 
@@ -36,7 +36,7 @@ export const userSharePositionWithGroupSchema = z.object({
 /**
  * Unshare position with group
  * @typedef {object} UnsharePositionWithGroupRequest
- * @property {string[]} groupId.required - Group to unshare position with
+ * @property {string} groupId.required - Group to unshare position with
  */
 export const userUnsharePositionWithGroupSchema = z.object({
   body: z.object({

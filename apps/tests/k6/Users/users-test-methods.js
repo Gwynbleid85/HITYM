@@ -29,7 +29,7 @@ export class UsersTests extends ApiBase {
 
     let response = http.post(`${userApiUrl}/registration`, payload, this.getOptions());
     check(response, {
-      "Create is status 200": (r) => r.status === 201,
+      "Create is status 201": (r) => r.status === 201,
       "Response contains id": (r) => r.json().hasOwnProperty("id"),
       "Response contains email": (r) => r.json().hasOwnProperty("email"),
       "Response contains name": (r) => r.json().hasOwnProperty("name"),
@@ -79,7 +79,6 @@ export class UsersTests extends ApiBase {
     });
 
     newUserId = response.json().user.id;
-    console.log("Test User1 access token: " + response.json().token);
     this.SetAccessToken(response.json().token);
   }
 
@@ -156,8 +155,6 @@ export class UsersTests extends ApiBase {
       "Password set to original": (r) => r.status === 200,
     });
   }
-
-  //TODO: Test updating profile picture
 
   GetNonExistingUserStatus() {
     const response = http.get(`${userApiUrl}/${newUserId}/user-status`, this.getOptions());
