@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const createGroupEventSchema = z.object({
   name: z.string().min(1).max(255),
-  description: z.string().max(255, {}).optional(),
+  description: z.string().max(255).optional(),
   date: z.date({
     required_error: "Please select a date.",
   }),
@@ -14,7 +14,11 @@ export const createGroupEventSchema = z.object({
 
 export const updateGroupEventSchema = z.object({
   name: z.string().min(1).max(255),
-  description: z.string().min(1).max(255).optional(),
-  date: z.date(),
-  placeId: z.string(),
+  description: z.string().max(255).optional(),
+  date: z.date({
+    required_error: "Please select a date.",
+  }),
+  placeId: z.string({
+    required_error: "Please select a place.",
+  })
 });

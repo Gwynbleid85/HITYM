@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "../ui/button";
-import { createSearchParams, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {  useNavigate, useParams,  } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "../ui/use-toast";
-import { useCreatePlace, usePlaces } from "@/hooks/usePlaces";
-import type { CreatePlaceRequest } from "@/types/Api";
-import { createPlaceSchema } from "@/validationSchemas/place.validationSchema";
+import { usePlaces } from "@/hooks/usePlaces";
 import CustomCardFooter from "../card/CustomCardFooter";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../ui/card";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -123,6 +121,11 @@ function GroupEventCreateForm() {
                           selected={field.value ? new Date(field.value) : undefined}
                           onSelect={field.onChange}
                           initialFocus
+                          disabled={(date) => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return date < today;
+                          }}
                         />
                       </PopoverContent>
                     </Popover>
