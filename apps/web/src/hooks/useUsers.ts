@@ -41,10 +41,6 @@ export const useUserRegistrate = () => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.userRegistrate],
     mutationFn: (payload: UserRegistrationRequest) => api.userRegistrationCreate(payload),
-
-    onSuccess: () => {
-      //TODO
-    },
   });
 
   return mutation;
@@ -56,10 +52,6 @@ export const useUserLogin = () => {
   const mutation = useMutation({
     mutationKey: [MUTATION_KEYS.userLogin],
     mutationFn: (payload: UserLoginRequest) => api.userLoginCreate(payload),
-
-    onSuccess: () => {
-      //TODO
-    },
   });
 
   return mutation;

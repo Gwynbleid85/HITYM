@@ -30,10 +30,6 @@ export const useInviteUserToGroup = (userId: string) => {
           Authorization: `Bearer ${authData.token}`,
         },
       }),
-
-    onSuccess: () => {
-      // TODO Invalidate the query to refetch the data
-    },
   });
 
   return mutation;

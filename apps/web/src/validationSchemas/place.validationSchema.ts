@@ -17,7 +17,6 @@ export const createPlaceSchema = z.object({
       })
       .refine((value) => value >= -180 && value <= 180, "Longitude must be between -180 and 180"), // Add range check
   }),
-  //TODO image?
 });
 
 export const updatePlaceSchema = z.object({

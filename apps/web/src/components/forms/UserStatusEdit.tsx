@@ -32,7 +32,7 @@ function UserStatusEdit() {
     if (isSuccess) {
       form.reset({
         status: userStatus?.data?.status,
-        color: "", // TODO color
+        color: "",
       });
     }
   }, [userStatus]);

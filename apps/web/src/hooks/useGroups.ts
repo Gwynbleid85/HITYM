@@ -113,7 +113,7 @@ export const useGroupUpdate = (id: string) => {
     onSuccess: () => {
       //Invalidate group list
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.groupExtended], //TODO or group?
+        queryKey: [QUERY_KEYS.groupExtended],
       });
     },
   });

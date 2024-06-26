@@ -44,7 +44,6 @@ function GroupEventEditForm() {
 
   const onSubmit = async (values: UpdateGroupEventRequest) => {
     try {
-      //TODO
       await updateGroupEventInfo(values);
       toast({
         title: "Group event updated successfully",

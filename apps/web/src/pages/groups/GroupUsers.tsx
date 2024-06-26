@@ -106,7 +106,6 @@ function GroupUsers() {
             </ScrollArea>
           )}
         </CardContent>
-        {/* TODO redirect to invite*/}
         <CustomCardFooter
           buttonText="Invite user"
           buttonOnClick={() => navigate(`/groups/${groupId}/users/invite`)}

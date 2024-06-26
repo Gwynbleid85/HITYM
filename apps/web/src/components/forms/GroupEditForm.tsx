@@ -69,7 +69,6 @@ function GroupEditForm() {
       toast({
         title: `Group was updated!`,
       });
-      // TODO update the picture instantly?
     } catch (e: any) {
       console.error(e);
       toast({

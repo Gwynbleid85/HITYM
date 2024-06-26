@@ -47,7 +47,7 @@ export function LoginForm() {
       navigate("/home");
     } catch (e: any) {
       toast({
-        title: e.error.message, //TODO
+        title: e.error.message,
         variant: "destructive",
       });
     }
