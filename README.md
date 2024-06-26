@@ -15,3 +15,27 @@ If you use this app, you will never be lost again!
 - Place - Certain position on the map with special meaning
 - UserStatus - User defined state (similar to Instagram "note" or discord status)
 - GroupEvent - Event(time and place) shared inside group
+
+
+### How to run the app
+ 1. Install dependencies:
+    ```
+    npm install
+    ```
+ 2. Create .env files in */apps/api* and */apps/web*. There are env.example files already.
+ 3. Create a container for the postgres database:
+    ```
+    docker-compose up
+    ```
+ 3. In folder */apps/api/prisma*, run prisma migrations:
+    ```
+    npm run migrate:up
+    ```
+ 4. In project root folder, start the app:
+    ```
+    npm run dev
+    ```
+
+Client is accessible on *http://localhost:5173/*.
+
+API docs are accessible on *http://localhost:3000/api-docs/*.
