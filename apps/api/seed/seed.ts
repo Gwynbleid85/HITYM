@@ -29,6 +29,16 @@ async function main() {
       data: users,
     });
 
+    // Create user websocket configs
+    for (const user of users) {
+      await tx.userWebsocketConfig.create({
+        data: {
+          userId: user.id,
+          active: false,
+        },
+      });
+    }
+
     // Create user statuses
     for (const [index, status] of userStatuses.entries()) {
       await tx.userStatus.create({
@@ -62,6 +72,7 @@ async function main() {
         await tx.group.create({
           data: {
             ...group,
+            createdById: users[groupIndex] ? users[groupIndex].id : "",
             users: {
               connect: users
                 .filter((_user, userIndex) => userIndex % (groupIndex + 1) === 0)
@@ -77,15 +88,12 @@ async function main() {
     // Create events
     await Promise.all(
       events.map(async (event, eventIndex) => {
-        await tx.event.create({
+        await tx.groupEvent.create({
           data: {
             ...event,
-            group: {
-              connect: { id: groups[eventIndex] ? groups[eventIndex].id : "" },
-            },
-            place: {
-              connect: { id: places[eventIndex] ? places[eventIndex].id : "" },
-            },
+            createdById: users[eventIndex] ? users[eventIndex].id : "",
+            groupId: groups[eventIndex] ? groups[eventIndex].id : "",
+            placeId: places[eventIndex] ? places[eventIndex].id : "",
           },
         });
       })

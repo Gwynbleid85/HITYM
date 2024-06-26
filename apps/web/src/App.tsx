@@ -1,54 +1,22 @@
-import themeOptions from "../mui.theme.json";
+import { RouterProvider } from "react-router-dom";
+import router from "./router";
+import { useUserContext } from "./context/UserContext";
+import { useEffect } from "react";
+import Map from "@/components/Map";
 
-import { createTheme, ThemeProvider, type PaletteColor, type ThemeOptions } from "@mui/material";
-import Home from "./pages/Home";
+function App() {
+  const { userContext, fetchUser } = useUserContext();
 
-declare module "@mui/material/styles" {
-  interface PaletteOptions {
-    custom: PaletteOptions["primary"];
-    dark: PaletteOptions["primary"];
-    light: PaletteOptions["primary"];
+  useEffect(() => {
+    fetchUser();
+    // Update user position every 10 seconds
+  }, []);
+
+  // App requires user to be logged in to use the app
+  if (userContext.state === "fetching") {
+    return <Map />;
   }
-}
-
-declare module "@mui/material/styles" {
-  interface Palette {
-    custom: PaletteColor;
-    dark: PaletteColor;
-    light: PaletteColor;
-  }
-}
-
-interface ColorOverrides {
-  custom: true;
-  light: true;
-  dark: true;
-}
-
-declare module "@mui/material/Button" {
-  interface ButtonPropsColorOverrides extends ColorOverrides {}
-}
-
-declare module "@mui/material/IconButton" {
-  interface IconButtonPropsColorOverrides extends ColorOverrides {}
-}
-
-declare module "@mui/material/ButtonGroup" {
-  interface ButtonGroupPropsColorOverrides extends ColorOverrides {}
-}
-
-declare module "@mui/material/AppBar" {
-  interface AppBarPropsColorOverrides extends ColorOverrides {}
-}
-
-export function App() {
-  const theme = createTheme(themeOptions as ThemeOptions);
-
-  return (
-    <ThemeProvider theme={theme}>
-      <Home />
-    </ThemeProvider>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

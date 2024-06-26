@@ -23,23 +23,40 @@ model User {
   // link to the user's profile picture
   profilePicture String?
 
-  lastActive DateTime?
+  // Relations
+  userWebsocketConfig UserWebsocketConfig? @relation("UserWebsocketConfig")
+  inGroups            Group[]              @relation("UsersInGroup")
+  status              UserStatus?          @relation("UserStatus")
+  places              Place[]              @relation("FavoritePlaces")
+  placeCreatedBy      Place[]              @relation("PlaceCreatedBy")
+  groupCreatedBy      Group[]              @relation("GroupCreatedBy")
+  eventCreatedBy      GroupEvent[]         @relation("EventCreatedBy")
+  invitedToGroup      GroupInvite[]        @relation("InvitedUser")
+  invitedBy           GroupInvite[]        @relation("InvitedBy")
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model UserWebsocketConfig {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation("UserWebsocketConfig", fields: [userId], references: [id])
+
+  positionSharedWith Group[] @relation("PositionSharedWith")
+  positionFollowedOf Group[] @relation("FollowedGroups")
 
   // Last position
   lastLatitude  Float?
   lastLongitude Float?
+  active        Boolean
 
-  inGroups       Group[]      @relation("UsersInGroup")
-  status         UserStatus[] @relation("UserStatus")
-  place          Place[]      @relation("FavoritePlaces")
-  placeCreatedBy Place[]      @relation("PlaceCreatedBy")
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model UserStatus {
   id     String @id @default(uuid())
-  user   User   @relation("UserStatus", fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation("UserStatus", fields: [userId], references: [id])
   userId String @unique
   status String
   color  String
@@ -51,14 +68,14 @@ model UserStatus {
 model Place {
   id          String  @id @default(uuid())
   name        String
-  description String
+  description String?
   imageUrl    String?
 
   latitude  Float
   longitude Float
 
-  events Event[] @relation("EventsInPlace")
-  users  User[]  @relation("FavoritePlaces")
+  events GroupEvent[] @relation("EventsInPlace")
+  users  User[]       @relation("FavoritePlaces")
 
   createdBy   User     @relation("PlaceCreatedBy", fields: [createdById], references: [id])
   createdById String
@@ -67,27 +84,52 @@ model Place {
 }
 
 model Group {
-  id          String  @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
-  description String
+  description String?
   imageUrl    String?
-  users       User[]  @relation("UsersInGroup")
-  events      Event[] @relation("EventsInGroup")
+  users       User[]       @relation("UsersInGroup")
+  events      GroupEvent[] @relation("EventsInGroup")
+
+  createdBy   User   @relation("GroupCreatedBy", fields: [createdById], references: [id])
+  createdById String
+
+  positionSharedBy   UserWebsocketConfig[] @relation("PositionSharedWith")
+  positionFollowedBy UserWebsocketConfig[] @relation("FollowedGroups")
+  inivites           GroupInvite[]         @relation("InviteToGroup")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Event {
+model GroupEvent {
   id          String   @id @default(uuid())
   name        String
-  description String
+  description String?
   groupId     String
   date        DateTime
   place       Place    @relation("EventsInPlace", fields: [placeId], references: [id])
   group       Group    @relation("EventsInGroup", fields: [groupId], references: [id])
   imageUrl    String?
+  craetedBy   User     @relation("EventCreatedBy", fields: [createdById], references: [id])
+  createdById String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   placeId     String
+}
+
+model GroupInvite {
+  id String @id @default(uuid())
+
+  groupId String
+  group   Group  @relation("InviteToGroup", fields: [groupId], references: [id])
+
+  invitedUserId String
+  invitedUser   User   @relation("InvitedUser", fields: [invitedUserId], references: [id])
+
+  invitedById String
+  invitedBy   User   @relation("InvitedBy", fields: [invitedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

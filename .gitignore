@@ -38,3 +38,7 @@ yarn-error.log*
 *.pem
 .vscode
 data
+apps/api/uploads
+apps/api/prisma/migrations
+apps/api/out.log
+apps/api/public

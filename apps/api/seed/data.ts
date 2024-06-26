@@ -9,9 +9,6 @@ export const generateUser = () => ({
   email: faker.internet.email(),
   password: faker.internet.password(),
   name: faker.person.fullName(),
-  lastActive: faker.date.recent(),
-  lastLatitude: faker.location.latitude(),
-  lastLongitude: faker.location.longitude(),
   bio: faker.person.bio(),
   profilePicture: faker.image.avatar(),
 });
