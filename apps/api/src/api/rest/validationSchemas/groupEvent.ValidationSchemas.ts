@@ -18,7 +18,6 @@ export const createGroupEventSchema = z.object({
     placeId: z.string(),
   }),
 });
-type XXX = z.infer<typeof createGroupEventSchema>;
 
 export const getGroupEventByIdSchema = z.object({
   params: z.object({
@@ -41,7 +40,7 @@ export const updateGroupEventSchema = z.object({
   body: z.object({
     name: z.string().min(1).max(255),
     description: z.string().min(1).max(255).nullable(),
-    date: z.date(),
+    date: z.coerce.date(),
     placeId: z.string(),
   }),
 });
