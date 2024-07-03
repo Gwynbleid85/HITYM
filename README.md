@@ -43,22 +43,22 @@ API docs are accessible on *http://localhost:3000/api-docs/*.
 ### Few examples from the app
 The app is intended mainly for mobile phones.
 #### Home page
-<img src="./docs/imgs/homePage.png" alt="Home page" width="250"/>
+<img src="./docs/imgs/homePage.png" alt="Home page" width="280"/>
 
 #### Creating new place, selecting position on map
-<img src="./docs/imgs/chooseOnMap.png" alt="Choose on map" width="250"/>
+<img src="./docs/imgs/chooseOnMap.png" alt="Choose on map" width="280"/>
 
 #### Listing your groups
-<img src="./docs/imgs/myGroups.png" alt="My groups" width="250"/>
+<img src="./docs/imgs/myGroups.png" alt="My groups" width="280"/>
 
 #### Info about the group
-<img src="./docs/imgs/groupInfo.png" alt="Group info" width="250"/>
+<img src="./docs/imgs/groupInfo.png" alt="Group info" width="280"/>
 
 #### Creating group event
-<img src="./docs/imgs/createEvent.png" alt="Create new event" width="250"/>
+<img src="./docs/imgs/createEvent.png" alt="Create new event" width="280"/>
 
 #### Info about the group event, possibility to navigate (via Google Maps) to the event place
-<img src="./docs/imgs/eventInfo.png" alt="Event info" width="250"/>
+<img src="./docs/imgs/eventInfo.png" alt="Event info" width="280"/>
 
 #### Invite new member to group
-<img src="./docs/imgs/inviteUser.png" alt="Invite user" width="250"/>
+<img src="./docs/imgs/inviteUser.png" alt="Invite user" width="280"/>
